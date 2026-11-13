@@ -1,0 +1,51 @@
+﻿aba;uf;servico_planilha;cnes;nome_painel;municipio;regiao;lat;lon
+DF GO MT MS;MS;Santa Casa De Corumba;2376334;Santa Casa de Corumbá;Corumbá;Centro-Oeste;-19.00615;-57.65307
+DF GO MT MS;GO;Hospital Estadual Da Mulher Dr Jurandir Do Nascimento;2339196;Hospital Estadual da Mulher Dr Jurandir do Nascimento;Goiânia;Centro-Oeste;-16.67631;-49.27904
+DF GO MT MS;DF;Hospital Regional Santa Maria;5717515;Hospital Regional Santa Maria;Brasília;Centro-Oeste;-16.03967;-48.03667
+DF GO MT MS;DF;Hospital Materno Infantil Dr Antonio Lisboa - Hmib;0010537;Hospital Materno Infantil Dr Antônio Lisboa - HMIB;Brasília;Centro-Oeste;-15.82446;-47.89723
+DF GO MT MS;MS;Hospital Regional De Mato Grosso Do Sul;0009725;Hospital Regional de Mato Grosso do Sul;Campo Grande;Centro-Oeste;-20.51349;-54.65421
+DF GO MT MS;MT;Santa Casa De Rondonopolis;2396866;Santa Casa de Rondonópolis;Rondonópolis;Centro-Oeste;-16.4625;-54.64345
+DF GO MT MS;MT;Hospital Santa Helena;2311682;Hospital Santa Helena;Cuiabá;Centro-Oeste;-15.58419;-56.09453
+AM TO PA;AM;Maternidade Municipal Dr Moura Tapajoz;2012480;Maternidade Municipal Dr Moura Tapajoz;Manaus;Norte;-3.0959;-60.05791
+AM TO PA;AM;Maternidade De Referencia Ana Braga;3151794;Maternidade de Referência Ana Braga;Manaus;Norte;-3.07686;-59.95674
+AM TO PA;PA;Hospital Municipal De Santarem;2329905;Hospital Municipal de Santarém;Santarém;Norte;-2.425;-54.71666
+AM TO PA;PA;Santa Casa De Misericordia Do Para;2752700;Santa Casa de Misericórdia do Pará;Belém;Norte;-1.4409;-48.48083
+AM TO PA;TO;Hospital E Maternidade D Regina S Campos De Palmas;2755157;Hospital e Maternidade D Regina S Campos de Palmas;Palmas;Norte;-10.16297;-48.35104
+AM TO PA;TO;Hospital Dom Orione De Araguaina;2755165;Hospital Dom Orione de Araguaína;Araguaína;Norte;-8.04201;-48.45947
+AP AC RR RO;RO;Hospital De Base Porto Velho;4001303;Hospital de Base Porto Velho;Porto Velho;Norte;-8.73611;-63.89009
+AP AC RR RO;RR;Hospital Materno Infantil N Sra De Nazareth;2566168;Hospital Materno Infantil N Sra de Nazareth;Boa Vista;Norte;2.81668;-60.67053
+AP AC RR RO;AC;Maternidade E Clinicas De Mulheres Barbara Heliodora;2000733;Maternidade e Clínicas de Mulheres Bárbara Heliodora;Rio Branco;Norte;-9.96971;-67.8125
+AP AC RR RO;AC;Hospital Da Mulher E Da Crianca Do Jurua;2000296;Hospital da Mulher e da Criança do Juruá;Cruzeiro do Sul;Norte;-7.63601;-72.67407
+AP AC RR RO;AP;Ses Ap Hospital Da Mulher;2020068;SES AP Hospital da Mulher;Macapá;Norte;0.04047;-51.05944
+CE MA PI;CE;Maternidade Escola Assis Chateaubriand (Ebserh);2481286;Maternidade Escola Assis Chateaubriand (Ebserh);Fortaleza;Nordeste;-3.74816;-38.55239
+CE MA PI;MA;Maternidade De Alta Complexidade Do Maranhao;2309254;Maternidade de Alta Complexidade do Maranhão;São Luís;Nordeste;-2.53904;-44.22083
+CE MA PI;PI;Nova Maternidade Dona Evangelina Rosa;2323397;Maternidade Dona Evangelina Rosa;Teresina;Nordeste;-5.0717;-42.77095
+CE MA PI;CE;Hospital Regional Norte;6848710;Hospital Regional Norte;Sobral;Nordeste;-3.66394;-40.37592
+CE MA PI;MA;Maternidade De Alto Risco De Imperatriz;2452383;Maternidade de Alto Risco de Imperatriz;Imperatriz;Nordeste;-5.5265;-47.4798
+CE MA PI;PI;Hospital Estadual Dirceu Arcoverde;8015899;Hospital Estadual Dirceu Arcoverde;Parnaíba;Nordeste;-2.90676;-41.78126
+BA PE RN;BA;Maternidade Professor Jose Maria De Magalhaes Neto;3956369;Maternidade Professor José Maria de Magalhães Neto;Salvador;Nordeste;-12.971;-38.511
+BA PE RN;BA;Hospital Do Oeste;3972925;Hospital do Oeste;Barreiras;Nordeste;-12.12549;-45.00051
+BA PE RN;BA;Hospital Estadual Da Crianca;6602533;Hospital Estadual da Criança;Feira de Santana;Nordeste;-12.2495;-38.9954
+BA PE RN;PE;Hospital Dom Malan;2430711;Hospital Dom Malan;Petrolina;Nordeste;-9.3949;-40.49996
+BA PE RN;PE;Instituto Materno Infantil De Pernanbuco - IMIP;0000434;IMIP;Recife;Nordeste;-8.0668;-34.8908
+BA PE RN;PE;Hospital Barao De Lucena;2427427;Hospital Barão de Lucena;Recife;Nordeste;-8.03851;-34.93884
+BA PE RN;RN;Hospital Maternidade Almeida Castro;2410281;Hospital Maternidade Almeida Castro;Mossoró;Nordeste;-5.18795;-37.34397
+BA PE RN;RN;Hospital Dr Jose Pedro Bezerra;2408570;Hospital Dr José Pedro Bezerra;Natal;Nordeste;-5.75441;-35.25635
+AL PB SE;PB;Instituto De Saude Elpidio De Almeida - Isea;2362287;Instituto de Saúde Elpídio de Almeida;Campina Grande;Nordeste;-7.22127;-35.87856
+AL PB SE;AL;Hospital Da Mulher Dra Nise Da Silveira;9923837;Hospital da Mulher Dra Nise da Silveira;Maceió;Nordeste;-9.65701;-35.72315
+AL PB SE;AL;Hospital Regional De Arapiraca;2005050;Hospital Regional de Arapiraca;Arapiraca;Nordeste;-9.7515;-36.66402
+AL PB SE;PB;Hospital Da Mulher Dona Creuza Pire;2707527;Maternidade Frei Damião;João Pessoa;Nordeste;-7.14577;-34.8917
+AL PB SE;SE;Hospital Santa Isabel;0002232;Hospital Santa Isabel;Aracaju;Nordeste;-10.59211;-36.94162
+ES MG RJ SP;RJ;Sms Hospital Municipal Albert Schweitzer;2298120;SMS Hospital Municipal Albert Schweitzer AP 51;Rio de Janeiro;Sudeste;-22.86607;-43.43868
+ES MG RJ SP;MG;Hospital Santa Casa De Montes Claros;2149990;Santa Casa de Montes Claros;Montes Claros;Sudeste;-16.72526;-43.87015
+ES MG RJ SP;ES;Hospital Estadual Dr Jayme Santos Neves;7257406;Hospital Estadual Dr Jayme Santos Neves;Serra;Sudeste;-20.19973;-40.22917
+ES MG RJ SP;SP;Hospital De Base De Sao Jose Do Rio Preto;2077396;Hospital de Base de São José do Rio Preto;São José do Rio Preto;Sudeste;-20.82815;-49.39761
+ES MG RJ SP;MG;Hospital Sofia Feldman;0026794;Hospital Sofia Feldman;Belo Horizonte;Sudeste;-19.83615;-43.91495
+ES MG RJ SP;RJ;Hospital Municipal Adao Pereira Nunes;2290227;Hospital Municipal Adão Pereira Nunes;Duque de Caxias;Sudeste;-22.67298;-43.28367
+ES MG RJ SP;SP;Hospital Das Clinicas Faepa Ribeirao Preto;2082187;Hospital das Clínicas FAEPA Ribeirão Preto;Ribeirão Preto;Sudeste;-21.16327;-47.85193
+PR RS SC;RS;Hospital Sao Vicente De Paulo;2246988;Hospital São Vicente de Paulo;Passo Fundo;Sul;-28.25926;-52.41425
+PR RS SC;PR;Complexo Hospitalar Do Trabalhador;0015369;Complexo Hospitalar do Trabalhador;Curitiba;Sul;-25.48474;-49.295
+PR RS SC;PR;HOSPITAL E MATERNIDADE LUÍSA DE MARILLAC (Substituição Do ROCIO);2715864;Hospital e Maternidade Luísa de Marillac;Curitiba;Sul;-25.49666;-49.31812
+PR RS SC;SC;HOSPITAL E MATERNIDADE MARIETA KONDER BORNHAUSEN;2522691;Hospital e Maternidade Marieta Konder Bornhausen;Itajaí;Sul;-26.91024;-48.65951
+PR RS SC;RS;Complexo Hospitalar Nossa Senhora Da Conceiçã0;2237571;Hospital Nossa Senhora da Conceição SA;Porto Alegre;Sul;-30.0161;-51.15863
+PR RS SC;SC;HOSPITAL MUNICIPAL RUTH CARDOSO (2 Mat Com Apoio Da SES);6854729;Hospital Municipal Ruth Cardoso;Balneário Camboriú;Sul;-27.00643;-48.63731

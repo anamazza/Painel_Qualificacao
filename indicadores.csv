@@ -1,0 +1,41 @@
+﻿id;n_planilha;eixo;dimensao;indicador;texto_planilha
+1;1;Atenção Obstétrica;Cuidado às Urgências e Emergências Obstétricas;Acolhimento com Classificação de Risco em Obstetrícia;Acolhimento com Classificação de Risco em Obstetrícia
+2;2;Atenção Obstétrica;Cuidado às Urgências e Emergências Obstétricas;Protocolos para Hemorragias, Hipertensão, Sepse e PCR;Protocolos para Hemorragias, Hipertensão, Sepse e PCR
+3;3;Atenção Obstétrica;Cuidado às Urgências e Emergências Obstétricas;Caixas para as urgências e emergências obstétricas disponíveis em todos os ambientes da maternidade;Caixas para as urgências e emergências obstétricas disponíveis em todos os ambientes da maternidade
+4;4;Atenção Obstétrica;Cuidado às Urgências e Emergências Obstétricas;Time de Resposta Rápida/TRR;Time de Resposta Rápida/TRR
+5;5;Atenção Obstétrica;Cuidado às Urgências e Emergências Obstétricas;Escore de alerta precoce: MEOWS;Escore de alerta precoce: MEOWS
+6;6;Atenção Obstétrica;Cuidado às Urgências e Emergências Obstétricas;Fluxo para acesso à UTI Adulto;Fluxo para acesso à UTI Adulto
+7;7;Atenção Obstétrica;Cuidado ao Puerpério e Recém-Nascido no Alojamento Conjunto;Atualização e monitoramento dos protocolos;Atualização e monitoramento dos protocolos
+8;8;Atenção Obstétrica;Cuidado ao Puerpério e Recém-Nascido no Alojamento Conjunto;Monitoramento do puerpério imediato;Monitoramento do puerpério imediato
+9;9;Atenção Obstétrica;Estratégias para redução de cesarianas;Ampliação da atuação da Enfermagem;Ampliação da atuação da Enfermagem
+10;10;Atenção Obstétrica;Estratégias para redução de cesarianas;Implementação do Plano de Parto;Implementação do Plano de Parto
+11;11;Atenção Obstétrica;Estratégias para redução de cesarianas;Ambiência do Quarto PPP e do Centro Obstétrico;Ambiência do Quarto PPP e do Centro Obstétrico
+12;12;Atenção Obstétrica;Estratégias para redução de cesarianas;Analgesia farmacológica para o parto;Analgesia farmacológica para o parto
+13;13;Atenção Obstétrica;Estratégias para redução de cesarianas;Monitoramento das cesáreas de acordo com a Classificação de Robson;Monitoramento das cesáreas de acordo com a Classificação de Robson
+14;14;Atenção Obstétrica;Cuidado ao Luto Materno e Parental;Ala/espaço específica;Ala/espaço específica
+15;15;Atenção Obstétrica;Cuidado ao Luto Materno e Parental;Presença do acompanhante;Presença do acompanhante
+16;16;Atenção Obstétrica;Cuidado ao Luto Materno e Parental;Monitoramento e publicização dos resultados;Monitoramento e publicização dos resultados
+17;17;Atenção Obstétrica;Atenção Integral às Mulheres em Situação de Violência Sexual Sala Lilás;Protocolo;Protocolo
+18;18;Atenção Obstétrica;Atenção Integral às Mulheres em Situação de Violência Sexual Sala Lilás;Equipe de referência;Equipe de referência
+19;19;Atenção Obstétrica;Atenção Integral às Mulheres em Situação de Violência Sexual Sala Lilás;Ambiente protegido;Ambiente protegido
+20;20;Atenção Obstétrica;Atenção Integral às Mulheres em Situação de Violência Sexual Sala Lilás;Insumos estratégicos/medicações;Insumos estratégicos/ medicações
+21;37;Atenção Neonatal;Qualificação do Cuidado Progressivo em Unidade Neonatal (UN);Contato pele a pele na UN desde a UTIN;Garante a continuidade do contato pele a pele na unidade neo, desde a UTIN
+22;38;Atenção Neonatal;Qualificação do Cuidado Progressivo em Unidade Neonatal (UN);Ambiência, alimentação e suporte para o responsável na UN;Ambiência, alimentação e suporte para a permanência do responsável pelo recém-nascido durante a internação na Unidade Neonatal, disponibilizando cadeiras ou poltronas ao lado do leito
+23;39;Atenção Neonatal;Qualificação do Cuidado Progressivo em Unidade Neonatal (UN);Cuidado progressivo neonatal (proporcionalidade de leitos e articulação da gestão do cuidado entre a UTIN, UCINCo e UCINCa);Tem instituído o cuidado progressivo neonatal, com proporcionalidade de leitos, e articula a gestão do cuidado entre a UTIN, UCINCo e UCINCa
+24;40;Atenção Neonatal;Qualificação do Cuidado Progressivo em Unidade Neonatal (UN);3ª etapa do método canguru (rotinas e integração ao cuidado neonatal, ambulatório e APS);Possui instituída a terceira etapa do método canguru, com rotinas estabelecidas e integração plena ao cuidado neonatal, com o suporte ambulatorial da maternidade e integrada à Atenção Primária em Saúde
+25;21;Gestão;Gestão Colegiada Perinatal;Equipe de referência;Equipe de referência
+26;22;Gestão;Gestão Colegiada Perinatal;Encontros periódicos;Encontros periódicos
+27;23;Gestão;Gestão Colegiada Perinatal;M&A dos encaminhamentos;M&A dos encaminhamentos
+28;24;Gestão;Gestão Colegiada Perinatal;Publicização das prioridades;Publicização das prioridades
+29;25;Gestão;Vinculação da Gestante ao local de parto;Mapa;Mapa
+30;26;Gestão;Vinculação da Gestante ao local de parto;Visita prévia da gestante e família;Visita prévia da gestante e família
+31;27;Gestão;Vinculação da Gestante ao local de parto;M&A;M&A
+32;28;Gestão;Vinculação da Gestante ao local de parto;Relatórios gerenciais da regulação;Relatórios gerenciais da regulação
+33;29;Gestão;Infraestrutura: habilitações/implantação;Quarto PPP;Quarto PPP
+34;30;Gestão;Infraestrutura: habilitações/implantação;CPN;CPN
+35;31;Gestão;Infraestrutura: habilitações/implantação;CGBP;CGBP
+36;32;Gestão;Infraestrutura: habilitações/implantação;AGPAR;AGPAR
+37;33;Gestão;Infraestrutura: habilitações/implantação;ASEG;ASEG
+38;34;Gestão;Monitoramento do Cuidado Obstétrico e Neonatal (SMCON);Módulo parto e nascimento;Módulo parto e nascimento
+39;35;Gestão;Monitoramento do Cuidado Obstétrico e Neonatal (SMCON);Módulo abortamento;Módulo abortamento
+40;36;Gestão;Monitoramento do Cuidado Obstétrico e Neonatal (SMCON);Módulo Neonatal;Módulo Neonatal

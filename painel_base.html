@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#279261"/>
+<meta name="robots" content="noindex"/>
+<title>Painel de Qualificação · Maternidades Estratégicas</title>
+<meta name="description" content="Classificação trimestral das práticas de atenção obstétrica, atenção neonatal e gestão nas maternidades estratégicas: Brasil, regiões, estados e maternidades."/>
+<style>
+:root{
+  --verde-lima:#7CB342; --verde-claro:#8FBC4E; --verde-fiocruz:#279261; --verde-esmeralda:#1B5F51; --verde-profundo:#154A4B;
+  --indigo:#0A213D; --indigo-escuro:#071830; --mint:#EDF6EF; --mint-card:#F6FBF7; --branco:#FFFFFF;
+  --texto:#1D3229; --texto-suave:#4E6A5C; --alerta:#C0392B; --ambar:#D68910; --ambar-claro:#FFF3DB;
+  --borda:#D8E8DC; --sombra:0 2px 12px rgba(14,122,86,.10); --sombra-alta:0 10px 28px rgba(10,33,61,.18);
+  --radius:14px; --largura:min(1320px, 100% - 2.6rem);
+  /* níveis de classificação (cores do documento "LISTA DE INDICADORES"; redefinidas pelo app a partir de DADOS.niveis) */
+  --n0:#AEB6B2; --n1:#C0392B; --n2:#E8912D; --n3:#279261; --n4:#1F5F99;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--mint); color:var(--texto);
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0; line-height:1.16; letter-spacing:-.02em; text-wrap:balance}
+h1{font-size:clamp(1.75rem,1.1rem+2.4vw,2.8rem); font-weight:800}
+h2{font-size:clamp(1.3rem,1rem+1vw,1.72rem); font-weight:800}
+h3{font-size:1.04rem; font-weight:700}
+p{margin:0}
+a{color:var(--verde-fiocruz)}
+button{font:inherit; cursor:pointer}
+select,input[type=search]{font:inherit; padding:.5rem .7rem; border:1.5px solid var(--borda); border-radius:10px; background:var(--branco); color:var(--texto); max-width:100%}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2.5px solid var(--verde-fiocruz); outline-offset:2px}
+.wrap{width:var(--largura); margin-inline:auto}
+.eyebrow{font-size:.68rem; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--verde-fiocruz)}
+.suave{color:var(--texto-suave)}
+.mono{font-variant-numeric:tabular-nums}
+
+/* ---------------- hero ---------------- */
+.hero{
+  background:
+    radial-gradient(1100px 520px at 88% 18%, rgba(39,146,97,.42) 0%, rgba(39,146,97,0) 60%),
+    radial-gradient(700px 380px at 70% 95%, rgba(124,179,66,.22) 0%, rgba(124,179,66,0) 65%),
+    linear-gradient(105deg, var(--indigo-escuro) 0%, var(--indigo) 46%, #0E3050 72%, var(--verde-profundo) 100%);
+  color:#F2F8F4; padding:3.6rem 0 3rem; position:relative; overflow:hidden;
+}
+.hero .eyebrow{color:var(--verde-lima)}
+.hero p.sub{margin-top:.9rem; max-width:66ch; color:#C9DCD0; font-size:1.02rem}
+.hero-blocos{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1.1rem}
+.hero-blocos span{display:inline-flex; align-items:center; gap:.45rem; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18); border-radius:999px; padding:.22rem .8rem; font-size:.78rem; font-weight:700; color:#E3F0E7}
+.hero-links{display:flex; gap:.55rem; flex-wrap:wrap; margin-top:1.3rem; align-items:center}
+.hero-links a{display:inline-flex; align-items:center; gap:.4rem; text-decoration:none; background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.35); color:#FFF; border-radius:999px; padding:.42rem 1rem; font-size:.86rem; font-weight:800; transition:background .15s}
+.hero-links a:hover{background:rgba(255,255,255,.24)}
+.faixa-stats{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:-1.3rem; position:relative; z-index:5}
+.stat{background:var(--branco); border:none; border-radius:12px; padding:.5rem .75rem; min-width:110px; max-width:230px; box-shadow:var(--sombra-alta); flex:0 1 auto}
+.stat .num{font-size:1.35rem; font-weight:800; color:var(--verde-esmeralda); letter-spacing:-.02em}
+.stat .rot{font-size:.62rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--texto-suave)}
+.stat .sub{font-size:.68rem; color:var(--texto-suave); margin-top:-.1rem}
+.stat-btn{cursor:pointer; text-align:left}
+.stat-btn:hover{background:var(--mint-card)}
+.stat-btn .num{color:var(--verde-fiocruz)}
+
+/* ---------------- trilho lateral ---------------- */
+.trilho{position:fixed; left:14px; top:50%; transform:translateY(-50%); z-index:1000; display:flex; flex-direction:column; gap:8px; background:rgba(255,255,255,.93); padding:9px; border-radius:28px; box-shadow:var(--sombra-alta); backdrop-filter:blur(6px); border:1px solid var(--borda)}
+.trilho button{position:relative; width:40px; height:40px; border-radius:50%; border:none; background:transparent; color:var(--texto-suave); display:grid; place-items:center; transition:background .15s, color .15s}
+.trilho button svg{width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.trilho button:hover{background:var(--mint); color:var(--verde-esmeralda)}
+.trilho button.ativo{background:var(--verde-fiocruz); color:#FFF}
+.trilho button::after{content:attr(data-rotulo); position:absolute; left:calc(100% + 10px); top:50%; transform:translateY(-50%); background:var(--indigo); color:#FFF; padding:.3rem .65rem; border-radius:8px; font-size:.76rem; font-weight:700; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s}
+.trilho button:hover::after,.trilho button:focus-visible::after{opacity:1}
+
+/* ---------------- recorte (filtros gerais, fixos no topo) ---------------- */
+.recorte{position:sticky; top:0; z-index:900; background:rgba(237,246,239,.94); backdrop-filter:blur(8px); border-bottom:1px solid var(--borda); padding:.6rem 0; margin-top:1.1rem}
+.recorte-linha{display:flex; gap:.7rem 1.1rem; flex-wrap:wrap; align-items:end}
+.filtro{display:flex; flex-direction:column; gap:.22rem; min-width:150px}
+.filtro > span{font-size:.64rem; font-weight:800; letter-spacing:.11em; text-transform:uppercase; color:var(--texto)}
+.recorte-resumo{font-size:.82rem; color:var(--texto-suave); margin-left:auto; text-align:right; line-height:1.35}
+.recorte-resumo b{color:var(--texto)}
+
+/* ---------------- seções e cards ---------------- */
+section{padding:2.2rem 0}
+section.alt{background:var(--branco)}
+section.alt .card{background:var(--mint-card)}
+.sec-head{margin-bottom:1.2rem}
+.sec-head p{max-width:none; margin-top:.35rem; color:var(--texto-suave)}
+.sec-head h2{display:flex; align-items:center; gap:1.1rem}
+.sec-head h2::after{content:""; flex:1; min-width:56px; height:3px; border-radius:2px; background:linear-gradient(90deg, var(--verde-fiocruz), rgba(39,146,97,.08))}
+.card{background:var(--branco); border:none; border-radius:var(--radius); box-shadow:var(--sombra); padding:1.15rem 1.25rem}
+.card h3{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
+.card .fonte{font-size:.72rem; color:var(--texto-suave); margin-top:.8rem}
+.card .sub{font-size:.82rem; color:var(--texto-suave); margin-top:.3rem}
+.grid-2{display:grid; grid-template-columns:1.6fr 1fr; gap:1.1rem; align-items:start}
+.grid-2 > *{min-width:0}
+.grid-eq{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; align-items:start}
+.grid-eq > *{min-width:0}
+.chip{display:inline-flex; align-items:center; gap:.35rem; border-radius:999px; padding:.22rem .7rem; font-size:.78rem; font-weight:700; background:var(--mint); color:var(--verde-esmeralda); border:1px solid var(--borda); text-decoration:none}
+.chip-acao{background:var(--verde-fiocruz); color:#FFF; border-color:var(--verde-fiocruz); cursor:pointer}
+.chip-acao:hover{background:var(--verde-esmeralda)}
+.chip-botao{cursor:pointer; background:var(--branco)}
+.chip-botao:hover{background:var(--mint)}
+.seg{display:inline-flex; border:1.5px solid var(--borda); border-radius:10px; overflow:hidden; background:var(--branco); flex-wrap:wrap}
+.seg button{border:none; background:transparent; padding:.4rem .8rem; font-weight:700; font-size:.84rem; color:var(--texto-suave); display:inline-flex; align-items:center; gap:.4rem}
+.seg button small{font-weight:600; font-size:.7rem; opacity:.85}
+.seg button.ativo{background:var(--verde-fiocruz); color:#FFF}
+.seg button:disabled{cursor:not-allowed; opacity:.5}
+.controles{display:flex; gap:.6rem 1rem; flex-wrap:wrap; align-items:center; margin-bottom:.9rem}
+
+/* ---------------- legenda dos níveis ---------------- */
+.legenda{display:flex; gap:.5rem 1.1rem; flex-wrap:wrap; margin-top:.8rem; font-size:.78rem; color:var(--texto-suave)}
+.legenda span{display:inline-flex; align-items:center; gap:.4rem}
+.q{width:14px; height:14px; border-radius:4px; display:inline-block; flex:none}
+.q.n0{background:var(--n0)} .q.n1{background:var(--n1)} .q.n2{background:var(--n2)} .q.n3{background:var(--n3)} .q.n4{background:var(--n4)}
+.q.nsi,.pilha i.nsi,td.c.nsi{background:repeating-linear-gradient(135deg, #E6ECE8 0 4px, #F8FAF9 4px 8px); box-shadow:inset 0 0 0 1px var(--borda)}
+.hero .q{box-shadow:0 0 0 1.5px rgba(255,255,255,.75)}
+
+/* ---------------- barras empilhadas ---------------- */
+.pilha{display:flex; gap:2px; height:22px; border-radius:5px; overflow:hidden; min-width:0}
+.pilha i{display:block; height:100%; min-width:3px; font-style:normal; font-size:.7rem; font-weight:800; line-height:22px; text-align:center; color:#FFF; overflow:hidden; white-space:nowrap; font-variant-numeric:tabular-nums}
+.pilha i.n0{background:var(--n0); color:var(--texto)} .pilha i.n1{background:var(--n1)} .pilha i.n2{background:var(--n2); color:var(--texto)}
+.pilha i.n3{background:var(--n3)} .pilha i.n4{background:var(--n4)} .pilha i.nsi{color:var(--texto-suave)}
+.pilha i:hover{filter:brightness(1.12)}
+.pilha.vazia{background:repeating-linear-gradient(135deg, #E6ECE8 0 4px, #F8FAF9 4px 8px); box-shadow:inset 0 0 0 1px var(--borda); font-size:.7rem; color:var(--texto-suave); align-items:center; justify-content:center; font-weight:700}
+.linhas{display:grid; gap:.35rem; margin-top:.9rem}
+.lin{display:grid; grid-template-columns:minmax(170px, 1.5fr) minmax(0, 3fr) 150px; gap:.7rem; align-items:center; padding:.2rem .35rem; border-radius:8px; border:none; background:transparent; text-align:left; color:var(--texto); width:100%}
+button.lin:hover,button.lin.ativa{background:var(--mint)}
+button.lin.ativa{box-shadow:inset 3px 0 0 var(--verde-fiocruz)}
+.lin .rot{font-size:.84rem; font-weight:600; line-height:1.25; min-width:0; overflow-wrap:anywhere}
+.lin .rot small{display:block; font-size:.7rem; color:var(--texto-suave); font-weight:600}
+.lin .rot b.num{display:inline-block; min-width:1.7rem; color:var(--texto-suave); font-weight:800; font-variant-numeric:tabular-nums}
+.lin .n{font-size:.78rem; font-weight:700; text-align:right; color:var(--texto-suave); line-height:1.25; font-variant-numeric:tabular-nums; white-space:nowrap}
+.lin .n b{color:var(--texto); font-size:.86rem}
+.lin.eixo .rot{font-weight:800; font-size:.9rem; color:var(--verde-esmeralda)}
+.lin.dim .rot{padding-left:.9rem}
+.lin .seta{display:inline-block; width:1rem; color:var(--verde-fiocruz); font-size:.8rem; transition:transform .15s}
+.lin.ativa .seta{transform:rotate(90deg)}
+.detalhe-ind{background:var(--mint-card); border:1px solid var(--borda); border-left:3px solid var(--verde-fiocruz); border-radius:10px; padding:.8rem 1.1rem .5rem; margin:.15rem 0 .7rem}
+.detalhe-ind .sub{font-size:.82rem; color:var(--texto-suave); margin:0 0 .3rem}
+.detalhe-ind .sub b{color:var(--texto)}
+.niveis-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:.2rem 1.6rem; align-items:start}
+.grupo-tit{margin:1rem 0 .1rem; font-size:.7rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--verde-esmeralda); display:flex; gap:.5rem; align-items:baseline; flex-wrap:wrap}
+.grupo-tit small{font-weight:700; letter-spacing:0; text-transform:none; color:var(--texto-suave); font-size:.78rem}
+
+/* ---------------- KPIs e listas laterais ---------------- */
+.kpi-lista{display:flex; flex-direction:column; gap:.3rem; margin-top:.6rem; font-size:.86rem}
+.kpi{display:flex; justify-content:space-between; align-items:baseline; gap:.8rem; border-bottom:1px dashed var(--borda); padding-bottom:.22rem}
+.kpi .v{font-weight:800; font-size:.95rem; text-align:right; font-variant-numeric:tabular-nums}
+.kpi .v small{font-weight:600; font-size:.72rem; color:var(--texto-suave); display:block}
+.num-grande{font-size:2.2rem; font-weight:800; letter-spacing:-.03em; color:var(--verde-esmeralda); line-height:1.1}
+.lateral{position:sticky; top:86px; max-height:calc(100vh - 110px); overflow:auto}
+.lista-unid{list-style:none; margin:.3rem 0 .7rem; padding:0; display:flex; flex-direction:column; gap:.2rem; font-size:.84rem}
+.lista-unid li{display:flex; align-items:baseline; gap:.45rem}
+.lista-unid button,.lk{border:none; background:transparent; padding:0; text-align:left; color:var(--verde-esmeralda); font-weight:700; text-decoration:underline dotted; text-underline-offset:3px; font:inherit; font-weight:700; cursor:pointer}
+.lista-unid small{color:var(--texto-suave); white-space:nowrap}
+.niv-tit{display:flex; align-items:center; gap:.45rem; font-size:.8rem; font-weight:800; margin-top:.7rem}
+.niv-tit small{font-weight:700; color:var(--texto-suave)}
+
+/* ---------------- tabelas ---------------- */
+.tab-wrap{overflow:auto; border-radius:var(--radius); border:1px solid var(--borda); background:var(--branco)}
+table.tab{border-collapse:separate; border-spacing:0; width:100%; font-size:.83rem}
+table.tab th,table.tab td{padding:.4rem .6rem; border-bottom:1px solid var(--borda); text-align:left; vertical-align:middle}
+table.tab thead th{position:sticky; top:0; z-index:3; background:var(--verde-esmeralda); color:#FFF; font-size:.74rem; font-weight:700; line-height:1.25; white-space:nowrap}
+table.tab td.r,table.tab th.r{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+table.tab td.c,table.tab th.c{text-align:center}
+table.tab tbody tr:hover td{background:var(--mint)}
+table.tab tr.br td{font-weight:800; background:var(--mint)}
+table.tab tr.reg td{font-weight:800}
+table.tab tr.uf td:first-child{padding-left:1.5rem}
+table.tab tr.sel td{box-shadow:inset 0 2px 0 var(--verde-fiocruz), inset 0 -2px 0 var(--verde-fiocruz)}
+table.tab td .pilha{min-width:220px}
+table.tab td small{color:var(--texto-suave)}
+
+/* ---------------- matriz maternidades x indicadores ---------------- */
+.matriz-wrap{overflow:auto; max-height:76vh; border-radius:var(--radius); border:1px solid var(--borda); background:var(--branco)}
+table.matriz{border-collapse:separate; border-spacing:0; font-size:.74rem}
+table.matriz th,table.matriz td{border-bottom:1px solid var(--borda); padding:0}
+table.matriz thead th{position:sticky; z-index:3; background:var(--verde-esmeralda); color:#FFF; font-weight:700; text-align:center; line-height:1.2}
+table.matriz thead tr.l1 th{top:0; height:46px; font-size:.64rem; padding:.2rem .25rem; border-left:2px solid #FFF; vertical-align:middle}
+table.matriz thead tr.l1 th span{display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
+table.matriz thead tr.l2 th{top:46px; height:26px; font-size:.7rem; min-width:30px; font-variant-numeric:tabular-nums}
+table.matriz thead tr.l2 th.ini{border-left:2px solid #FFF}
+table.matriz thead th.col-unid{left:0; z-index:5; text-align:left; padding:.3rem .6rem; min-width:270px; top:0; height:72px}
+table.matriz td.col-unid{position:sticky; left:0; z-index:2; background:var(--branco); padding:.28rem .6rem; min-width:270px; max-width:320px; font-size:.8rem; font-weight:600; line-height:1.25; box-shadow:2px 0 0 var(--borda)}
+table.matriz td.col-unid small{display:block; font-size:.68rem; color:var(--texto-suave); font-weight:600}
+table.matriz td.col-unid button{border:none; background:transparent; padding:0; text-align:left; font:inherit; color:var(--texto); cursor:pointer}
+table.matriz td.col-unid button:hover{color:var(--verde-esmeralda); text-decoration:underline dotted; text-underline-offset:3px}
+table.matriz td.c{width:30px; min-width:30px; height:30px; text-align:center; font-weight:800; font-size:.66rem; color:#FFF; border-left:2px solid #FFF; border-bottom:2px solid #FFF; cursor:default}
+table.matriz td.c.n0{background:var(--n0); color:var(--texto)} table.matriz td.c.n1{background:var(--n1)} table.matriz td.c.n2{background:var(--n2); color:var(--texto)}
+table.matriz td.c.n3{background:var(--n3)} table.matriz td.c.n4{background:var(--n4)} table.matriz td.c.nsi{color:#9FB0A6}
+table.matriz td.c:hover{outline:2px solid var(--indigo); outline-offset:-2px}
+table.matriz td.tot{padding:0 .5rem; text-align:right; font-weight:800; font-size:.76rem; font-variant-numeric:tabular-nums; white-space:nowrap}
+table.matriz thead th.tot{padding:0 .45rem; font-size:.66rem; top:0; height:72px}
+
+/* ---------------- mapa (modelo dos demais painéis) ---------------- */
+.mapa-layout{display:grid; grid-template-columns:minmax(0, 1.55fr) minmax(290px, 1fr); gap:1.1rem; align-items:start}
+.mapa-layout > *{min-width:0}
+.col-dir{display:flex; flex-direction:column; gap:1rem}
+.rotulo-bloco{display:block; font-size:.66rem; font-weight:800; letter-spacing:.11em; text-transform:uppercase; color:var(--texto); margin-bottom:.55rem}
+.pills{display:flex; flex-wrap:wrap; gap:.4rem}
+.pills button{display:inline-flex; align-items:center; gap:.4rem; border:1px solid var(--borda); background:var(--mint-card); color:var(--texto); padding:.34rem .75rem; border-radius:999px; font-weight:700; font-size:.82rem; line-height:1.25; transition:background .15s, color .15s}
+.pills button small{font-weight:700; color:var(--texto-suave); font-size:.72rem}
+.pills button:hover{background:var(--mint)}
+.pills button.ativo{background:var(--verde-fiocruz); color:#FFF; border-color:var(--verde-fiocruz)}
+.pills button.ativo small{color:#E3F0E7}
+.pills button.ativo .q{box-shadow:0 0 0 1.5px #FFF}
+.mapa-svg-box{position:relative; padding:.6rem}
+.mapa-svg-box svg{width:100%; height:auto; max-height:660px; display:block}
+.mapa-svg-box .t{cursor:pointer; stroke:#FFF; stroke-width:1; vector-effect:non-scaling-stroke; transition:opacity .15s}
+.mapa-svg-box .t:hover{stroke:var(--indigo); stroke-width:1.6}
+.mapa-svg-box .t.sel{stroke:var(--indigo); stroke-width:2.4}
+.mapa-svg-box .t.fora{opacity:.5}
+.mapa-svg-box .sigla{pointer-events:none; font-weight:800}
+.mapa-svg-box .ponto{cursor:pointer; fill:var(--indigo); stroke:#FFF; stroke-width:1.6; vector-effect:non-scaling-stroke}
+.mapa-svg-box .ponto:hover{fill:var(--verde-lima); stroke:var(--indigo)}
+.mapa-svg-box .ponto.fora{opacity:.3}
+.mapa-rodape{display:flex; gap:.6rem 1.2rem; flex-wrap:wrap; align-items:center; padding:.3rem .5rem .2rem; font-size:.8rem; color:var(--texto-suave)}
+.toggle{display:inline-flex; align-items:center; gap:.45rem; font-weight:600; cursor:pointer}
+.toggle input{accent-color:var(--verde-fiocruz); width:17px; height:17px}
+.legenda-v{flex-direction:column; gap:.4rem; margin-top:.2rem; align-items:flex-start}
+.ponto-leg{width:12px; height:12px; border-radius:50%; background:var(--indigo); box-shadow:0 0 0 1.5px #FFF, 0 0 0 2.5px var(--borda); display:inline-block; flex:none}
+
+/* ---------------- mudanças ---------------- */
+.kpis-linha{display:flex; gap:.7rem; flex-wrap:wrap; margin-bottom:1rem}
+.kpis-linha .k{background:var(--branco); border-radius:12px; box-shadow:var(--sombra); padding:.6rem .9rem; min-width:150px; flex:1}
+section.alt .kpis-linha .k{background:var(--mint-card)}
+.kpis-linha .k .n{font-size:1.5rem; font-weight:800; letter-spacing:-.02em; color:var(--verde-esmeralda); line-height:1.15; font-variant-numeric:tabular-nums}
+.kpis-linha .k .t{font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--texto-suave); font-weight:700}
+.kpis-linha .k .s{font-size:.74rem; color:var(--texto-suave)}
+table.trans{border-collapse:separate; border-spacing:3px; font-size:.82rem; margin-top:.7rem; width:100%}
+table.trans th{font-size:.7rem; font-weight:700; color:var(--texto-suave); padding:.2rem .3rem; text-align:center; line-height:1.2}
+table.trans th.lin-rot{text-align:right; white-space:nowrap}
+table.trans td{text-align:center; padding:.5rem .3rem; border-radius:6px; font-weight:800; font-variant-numeric:tabular-nums; background:#F3F5F4; color:var(--texto)}
+table.trans td.zero{color:#B7C4BC; font-weight:600}
+.seta-av{color:var(--verde-esmeralda); font-weight:800} .seta-rec{color:var(--alerta); font-weight:800}
+
+/* ---------------- página da unidade (sobreposta) ---------------- */
+.pagina-perfil{position:fixed; inset:0; z-index:3000; overflow:auto; background:var(--mint); overscroll-behavior:contain}
+.pd-topo{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.95); border-bottom:1px solid var(--borda); padding:.65rem 0; backdrop-filter:blur(8px)}
+.pd-topo-linha{display:flex; gap:1rem; align-items:center; justify-content:space-between; flex-wrap:wrap}
+body.perfil-aberto{overflow:hidden}
+.perfil-topo{background:linear-gradient(135deg, var(--verde-profundo), var(--verde-esmeralda)); color:#F1F8F3; border-radius:var(--radius); padding:1.4rem 1.5rem; box-shadow:var(--sombra-alta); display:grid; grid-template-columns:1fr auto; gap:1rem; align-items:center}
+.perfil-topo .meta{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem}
+.perfil-topo .meta span{display:inline-flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.13); border-radius:999px; padding:.2rem .7rem; font-size:.78rem; font-weight:700}
+.kpis-topo{display:grid; grid-template-columns:repeat(2, auto); gap:.6rem}
+.kpis-topo .k{background:rgba(255,255,255,.12); border-radius:10px; padding:.45rem .8rem; min-width:130px; text-align:right}
+.kpis-topo .k .n{font-size:1.35rem; font-weight:800; letter-spacing:-.02em; color:#FFF; line-height:1.1}
+.kpis-topo .k .t{font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:#C5E3CC; font-weight:700}
+.perfil-cards{display:grid; grid-template-columns:1fr; gap:1.1rem; margin-top:1.1rem}
+table.perfil{border-collapse:collapse; width:100%; font-size:.84rem}
+table.perfil th,table.perfil td{padding:.36rem .5rem; text-align:left; vertical-align:middle; border-bottom:1px solid var(--borda)}
+table.perfil thead th{background:var(--verde-esmeralda); color:#FFF; font-size:.74rem; font-weight:700; line-height:1.25; text-align:center}
+table.perfil thead th small{display:block; font-weight:600; color:#C5E3CC}
+table.perfil thead th:nth-child(2){text-align:left}
+table.perfil tr.g td{background:var(--mint); font-weight:800; font-size:.76rem; color:var(--verde-esmeralda); letter-spacing:.02em}
+table.perfil td.num{color:var(--texto-suave); font-weight:800; font-variant-numeric:tabular-nums; width:2.2rem}
+table.perfil td.cn{text-align:center; white-space:nowrap}
+.nivel{display:inline-block; border-radius:6px; padding:.12rem .5rem; font-size:.74rem; font-weight:800; color:#FFF; min-width:92px; text-align:center}
+.nivel.n0{background:var(--n0); color:var(--texto)} .nivel.n1{background:var(--n1)} .nivel.n2{background:var(--n2); color:var(--texto)} .nivel.n3{background:var(--n3)} .nivel.n4{background:var(--n4)}
+.nivel.nsi{background:transparent; color:#9FB0A6; font-weight:600; box-shadow:inset 0 0 0 1px var(--borda)}
+
+/* ---------------- notas ---------------- */
+.notas-grid{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem}
+.notas-grid .card p{font-size:.9rem; color:var(--texto-suave); margin-top:.5rem}
+.notas-grid .card p b{color:var(--texto)}
+.notas-grid .card ul{margin:.5rem 0 0; padding-left:1.1rem; font-size:.9rem; color:var(--texto-suave)}
+.notas-grid .card li{margin:.2rem 0}
+.notas-grid .card li b{color:var(--texto)}
+details.tabela{margin-top:.8rem; font-size:.82rem}
+details.tabela summary{cursor:pointer; font-weight:700; color:var(--verde-esmeralda)}
+
+.tip{position:fixed; z-index:5000; background:var(--indigo); color:#FFF; padding:.5rem .75rem; border-radius:10px; font-size:.78rem; line-height:1.45; max-width:340px; box-shadow:var(--sombra-alta); pointer-events:none}
+.tip b{font-weight:800}
+footer{background:var(--indigo); color:#B9CDC0; font-size:.82rem; padding:1.6rem 0; margin-top:0}
+footer a{color:var(--verde-lima)}
+
+@media (min-width: 901px){ body{padding-left:76px} }
+@media (max-width: 1080px){ .grid-2,.grid-eq,.notas-grid,.mapa-layout{grid-template-columns:1fr} .lateral{position:static; max-height:none} }
+@media (max-width: 900px){
+  .trilho{left:50%; top:auto; bottom:10px; transform:translateX(-50%); flex-direction:row; border-radius:999px; gap:2px; padding:6px}
+  .trilho button{width:36px; height:36px}
+  .trilho button::after{display:none}
+  body{padding-bottom:76px}
+  .wrap{width:min(1320px, 100% - 1.6rem)}
+  .perfil-topo{grid-template-columns:1fr} .kpis-topo .k{text-align:left}
+  .lin{grid-template-columns:minmax(0,1fr) auto; row-gap:.12rem}
+  .controles .filtro{min-width:0 !important; max-width:none !important; flex:1 1 100% !important}
+  .controles .filtro select,.controles .filtro input{width:100%}
+  table.trans{font-size:.74rem} table.trans th{font-size:.62rem}
+  .kpis-linha .k{min-width:130px}
+  .lin .rot{grid-column:1 / -1}
+  .recorte{position:static}
+  .recorte-resumo{margin-left:0; text-align:left; width:100%}
+  .filtro{flex:1 1 100%}
+  .seg{display:flex; width:100%} .seg button{flex:1 1 auto; justify-content:center}
+  table.matriz thead th.col-unid, table.matriz td.col-unid{min-width:170px; max-width:200px}
+}
+@media print{
+  .trilho,.pd-topo,footer,.recorte{display:none !important}
+  body{padding-left:0 !important; background:#FFF}
+  body.perfil-aberto{overflow:visible}
+  body.perfil-aberto > *:not(#paginaPerfil){display:none !important}
+  .pagina-perfil{position:static !important; overflow:visible !important; background:#FFF}
+  .card{break-inside:auto; box-shadow:none}
+  table.perfil tr{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<!-- ========================= HERO ========================= -->
+<header class="hero" id="inicio">
+  <div class="wrap">
+    <div style="display:flex; align-items:center; justify-content:flex-start; gap:16px 40px; flex-wrap:wrap; margin-bottom:16px">
+      <div style="font-size:.82rem; font-weight:600; letter-spacing:.4px; color:rgba(255,255,255,.92); text-transform:uppercase; line-height:1.5; max-width:430px">Coordenação de Ações Nacionais e de Cooperação em Saúde da Mulher, da Criança e do Adolescente</div>
+      <img src="logos_institucionais.png" alt="IFF · Fiocruz · SUS · Ministério da Saúde" style="width:min(380px,100%); height:auto"/>
+    </div>
+    <p class="eyebrow">Painel de Qualificação · Classificação das práticas de atenção e gestão · <span id="heroFonte">planilha de acompanhamento</span></p>
+    <h1 style="margin-top:.6rem">Qualificação do Modelo de Gestão em Maternidades Estratégicas</h1>
+    <p class="sub" id="heroSub">Rede de Atenção à Saúde Materna e Neonatal · classificação, a cada avaliação trimestral, dos indicadores de atenção obstétrica, atenção neonatal e gestão em cada maternidade, com leitura por Brasil, região, estado e maternidade.</p>
+    <div class="hero-blocos" id="heroNiveis"></div>
+    <div class="hero-links" aria-label="Navegação">
+      <a href="https://anamazza.github.io/Indicadores_Brasil/">← Página principal dos painéis</a>
+    </div>
+  </div>
+</header>
+
+<!-- faixa de destaques -->
+<div class="wrap faixa-stats">
+  <div class="stat"><div class="num" id="statMat">—</div><div class="rot">Maternidades</div><div class="sub" id="statMatSub"></div></div>
+  <div class="stat"><div class="num" id="statInd">—</div><div class="rot">Indicadores</div><div class="sub" id="statIndSub"></div></div>
+  <div class="stat"><div class="num" id="statAv">—</div><div class="rot">Avaliações realizadas</div><div class="sub" id="statAvSub"></div></div>
+  <div class="stat"><div class="num" id="statCls">—</div><div class="rot">Itens classificados</div><div class="sub" id="statClsSub"></div></div>
+  <div class="stat"><div class="num" id="statQual">—</div><div class="rot">Qualificado</div><div class="sub" id="statQualSub"></div></div>
+  <button class="stat stat-btn" id="btnNotas" title="Fontes, regras de leitura e cobertura"><div class="num" style="font-size:1.5rem">ⓘ</div><div class="rot">Notas metodológicas</div></button>
+</div>
+
+<nav class="trilho" id="trilho" aria-label="Navegação do painel"></nav>
+
+<!-- ========================= RECORTE GERAL ========================= -->
+<div class="recorte" id="recorte">
+  <div class="wrap recorte-linha">
+    <div class="filtro"><span>Avaliação</span><div class="seg" id="segAv"></div></div>
+    <label class="filtro"><span>Região</span><select id="selRegiao"><option value="">Brasil</option></select></label>
+    <label class="filtro"><span>Estado</span><select id="selUF"><option value="">Todos os estados</option></select></label>
+    <button class="chip chip-botao" id="btnLimpar" hidden>✕ limpar recorte</button>
+    <div class="recorte-resumo" id="recorteResumo"></div>
+  </div>
+</div>
+
+<!-- ========================= MAPA ========================= -->
+<section id="secMapa">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Território</p>
+      <h2>Mapa das maternidades</h2>
+      <p>Escolha a região ou toque em um estado para que o painel inteiro mostre apenas as maternidades daquele local. Toque de novo no estado para desfazer. A cor de cada estado indica o percentual dos itens classificados que estão no nível escolhido ao lado, na avaliação selecionada. Cada ponto é uma maternidade; toque no ponto para abrir o perfil da unidade.</p>
+    </div>
+    <div class="mapa-layout">
+      <div class="card mapa-svg-box">
+        <div id="mapaSvg"></div>
+        <div class="mapa-rodape">
+          <label class="toggle"><input type="checkbox" id="chkPontos" checked/> mostrar as maternidades</label>
+          <span>Posição aproximada dos pontos sobre a malha dos estados.</span>
+        </div>
+      </div>
+      <div class="col-dir">
+        <div class="card"><span class="rotulo-bloco">Região</span><div class="pills" id="pillsRegiao"></div></div>
+        <div class="card"><span class="rotulo-bloco">Nível mostrado no mapa</span><div class="pills" id="pillsNivel"></div>
+          <p class="sub" id="tituloLegenda" style="margin-top:.8rem"></p><div class="legenda legenda-v" id="legendaMapa"></div></div>
+        <div class="card" id="mapaResumo"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= VISÃO GERAL ========================= -->
+<section id="secGeral" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Visão geral</p>
+      <h2 id="geralTitulo">Distribuição dos níveis de classificação</h2>
+      <p>Cada item é a classificação de um indicador em uma maternidade. Os percentuais consideram apenas os itens classificados; os itens sem informação aparecem à parte. A avaliação, a região e o estado escolhidos na barra acima valem para todas as seções.</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Evolução por avaliação</h3>
+        <p class="sub">Percentual dos itens classificados em cada nível. Toque em uma linha para escolher a avaliação.</p>
+        <div class="linhas" id="evolucao"></div>
+        <div class="legenda" id="legendaGeral"></div>
+        <details class="tabela"><summary>Ver os números em tabela</summary><div class="tab-wrap" style="margin-top:.6rem"><table class="tab" id="tabEvolucao"></table></div></details>
+      </div>
+      <div class="card" id="kpisGeral"></div>
+    </div>
+    <div class="card" style="margin-top:1.1rem">
+      <h3 id="dimTitulo">Por eixo e dimensão</h3>
+      <p class="sub">Percentual dos itens classificados em cada nível, na avaliação escolhida. À direita, quantos itens estão classificados e quantos estão sem informação.</p>
+      <div class="linhas" id="porDimensao"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= INDICADORES ========================= -->
+<section id="secInd">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Indicadores</p>
+      <h2>Classificação por indicador</h2>
+      <p>Cada barra representa as maternidades do recorte, na avaliação escolhida: o número dentro de cada cor é a quantidade de maternidades naquele nível, e o trecho hachurado, as que estão sem informação. Toque em um indicador para abrir, logo abaixo dele, a relação das maternidades em cada nível; toque de novo para fechar.</p>
+    </div>
+    <div class="card"><div id="listaInd"></div><div class="legenda" id="legendaInd"></div></div>
+  </div>
+</section>
+
+<!-- ========================= REGIÕES E ESTADOS ========================= -->
+<section id="secLocal" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Regiões e estados</p>
+      <h2>Classificação por região e por estado</h2>
+      <p>Escolha o que comparar (todos os indicadores, um eixo, uma dimensão ou um indicador) e a forma de agrupar. Toque em uma linha para aplicar aquele recorte ao painel inteiro.</p>
+    </div>
+    <div class="controles">
+      <label class="filtro" style="min-width:300px; flex:1; max-width:560px"><span>O que comparar</span><select id="selEscopo"></select></label>
+      <div class="filtro"><span>Agrupar por</span><div class="seg" id="segModo"><button data-modo="regioes" class="ativo">Regiões e estados</button><button data-modo="grupos">Grupos da planilha</button></div></div>
+      <button class="chip chip-botao" id="btnCsvLocal" style="align-self:end">⬇ Baixar tabela (CSV)</button>
+    </div>
+    <div class="tab-wrap"><table class="tab" id="tabLocal"></table></div>
+    <div class="legenda" id="legendaLocal"></div>
+  </div>
+</section>
+
+<!-- ========================= MATERNIDADES ========================= -->
+<section id="secMat">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Maternidades</p>
+      <h2>Quadro das maternidades por indicador</h2>
+      <p>Cada linha é uma maternidade do recorte e cada coluna, um indicador, na avaliação escolhida. A cor e a sigla indicam o nível. Toque no nome da maternidade para abrir o perfil da unidade, com as cinco avaliações.</p>
+    </div>
+    <div class="controles">
+      <label class="filtro" style="min-width:320px; flex:1; max-width:520px"><span>Perfil da unidade</span><select id="selPerfil"></select></label>
+      <label class="filtro" style="min-width:220px"><span>Buscar no quadro</span><input type="search" id="buscaMat" placeholder="nome, município, estado ou CNES"/></label>
+      <div class="filtro"><span>Ordenar por</span><div class="seg" id="segOrdem"><button data-ordem="uf" class="ativo">Estado</button><button data-ordem="nome">Nome</button><button data-ordem="q">Mais qualificados</button></div></div>
+      <button class="chip chip-botao" id="btnCsvMatriz" style="align-self:end">⬇ Quadro (CSV)</button>
+      <button class="chip chip-botao" id="btnCsvTudo" style="align-self:end" title="Uma linha por maternidade, indicador e avaliação">⬇ Todas as avaliações (CSV)</button>
+    </div>
+    <div class="matriz-wrap"><table class="matriz" id="matriz"></table></div>
+    <div class="legenda" id="legendaMat"></div>
+    <details class="tabela"><summary>Lista numerada dos indicadores</summary><div id="listaNumerada" style="columns:2 320px; column-gap:2rem; margin-top:.6rem; color:var(--texto-suave)"></div></details>
+  </div>
+</section>
+
+<!-- ========================= MUDANÇAS DE NÍVEL ========================= -->
+<section id="secMud" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Mudanças de nível</p>
+      <h2>Comparação entre duas avaliações</h2>
+      <p>Compara o nível de cada indicador, em cada maternidade do recorte, nas duas avaliações escolhidas. Só entram os itens classificados nas duas. Avanço é a passagem a um nível acima na ordem Não Iniciado, Intermediário, Avançado e Qualificado; recuo é a passagem a um nível abaixo. Mudanças que envolvem "Não se Aplica" são contadas à parte.</p>
+    </div>
+    <div class="controles">
+      <label class="filtro"><span>De</span><select id="selDe"></select></label>
+      <label class="filtro"><span>Para</span><select id="selPara"></select></label>
+    </div>
+    <div class="kpis-linha" id="kpisMud"></div>
+    <div class="grid-eq">
+      <div class="card"><h3>Transição entre níveis</h3><p class="sub">Linhas: nível na primeira avaliação escolhida. Colunas: nível na segunda. A diagonal reúne os itens que mantiveram o nível.</p><div id="transicao"></div></div>
+      <div class="card"><h3>Indicadores com mais avanços</h3><p class="sub">Maternidades que avançaram ou recuaram em cada indicador.</p><div class="tab-wrap" style="margin-top:.7rem; max-height:420px"><table class="tab" id="tabMudInd"></table></div></div>
+    </div>
+    <div class="card" style="margin-top:1.1rem"><h3>Maternidades</h3><p class="sub">Indicadores em que cada maternidade avançou ou recuou. O saldo soma os níveis ganhos e perdidos. Toque no nome para abrir o perfil da unidade.</p><div class="tab-wrap" style="margin-top:.7rem; max-height:520px"><table class="tab" id="tabMudMat"></table></div></div>
+  </div>
+</section>
+
+<!-- ========================= PREENCHIMENTO ========================= -->
+<section id="secPre">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Preenchimento</p>
+      <h2>Proporção de itens classificados</h2>
+      <p>Percentual de itens classificados em cada grupo de estados da planilha e em cada dimensão, na avaliação escolhida. O restante está sem informação. Este quadro mostra sempre o país inteiro.</p>
+    </div>
+    <div class="tab-wrap"><table class="tab" id="tabPre"></table></div>
+  </div>
+</section>
+
+<!-- ========================= NOTAS ========================= -->
+<section id="secNotas" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Notas metodológicas</p>
+      <h2>Fonte, regras de leitura e cobertura</h2>
+    </div>
+    <div class="notas-grid">
+      <div class="card"><h3>Fonte</h3><div id="notaFonte"></div></div>
+      <div class="card"><h3>Classificação e avaliações</h3><div id="notaNiveis"></div></div>
+      <div class="card"><h3>Regras de leitura da planilha</h3><div id="notaRegras"></div></div>
+      <div class="card"><h3>Cobertura e identificação das maternidades</h3><div id="notaCobertura"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= PERFIL DA UNIDADE (sobreposto) ========================= -->
+<div id="tip" class="tip" hidden></div>
+<div id="paginaPerfil" class="pagina-perfil" hidden>
+  <div class="pd-topo">
+    <div class="wrap pd-topo-linha">
+      <button class="chip chip-acao" id="btnVoltar">← Voltar ao painel</button>
+      <div style="display:flex; gap:.6rem; flex-wrap:wrap; align-items:center">
+        <select id="selPerfilPd" style="min-width:280px" aria-label="Trocar de unidade"></select>
+        <button class="chip chip-botao" id="btnCsvPerfil" title="Baixar a classificação desta unidade em CSV">⬇ CSV</button>
+        <button class="chip chip-botao" id="btnPdfPerfil" title="Imprimir ou salvar o perfil em PDF">⬇ Baixar PDF</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap" id="perfilConteudo" style="padding:1.3rem 0 3rem"></div>
+</div>
+
+<footer>
+  <div class="wrap">
+    Painel de Qualificação · Qualificação do Modelo de Gestão em Maternidades Estratégicas na Rede de Atenção à Saúde Materna e Neonatal ·
+    Coordenação de Ações Nacionais e de Cooperação em Saúde da Mulher, da Criança e do Adolescente · IFF/Fiocruz ·
+    <span id="rodapeFonte">planilha de acompanhamento da coordenação</span> · dados sujeitos a revisão.
+    <img src="logos_institucionais.png" alt="IFF · Fiocruz · SUS · Ministério da Saúde" style="display:block; max-width:420px; width:100%; height:auto; margin:16px auto 0"/>
+  </div>
+</footer>
+
+<script src="dados_qualificacao.js"></script>
+<script src="painel_app.js"></script>
+</body>
+</html>
