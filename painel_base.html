@@ -323,7 +323,7 @@ footer a{color:var(--verde-lima)}
       <div style="font-size:.82rem; font-weight:600; letter-spacing:.4px; color:rgba(255,255,255,.92); text-transform:uppercase; line-height:1.5; max-width:430px">Coordenação de Ações Nacionais e de Cooperação em Saúde da Mulher, da Criança e do Adolescente</div>
       <img src="logos_institucionais.png" alt="IFF · Fiocruz · SUS · Ministério da Saúde" style="width:min(380px,100%); height:auto"/>
     </div>
-    <p class="eyebrow">Painel de Qualificação · Classificação das práticas de atenção e gestão · <span id="heroFonte">planilha de acompanhamento</span></p>
+    <p class="eyebrow">Painel de Qualificação · Classificação das práticas de atenção e gestão · <span id="heroFonte">versão prévia</span></p>
     <h1 style="margin-top:.6rem">Qualificação do Modelo de Gestão em Maternidades Estratégicas</h1>
     <p class="sub" id="heroSub">Rede de Atenção à Saúde Materna e Neonatal · classificação, a cada avaliação trimestral, dos indicadores de atenção obstétrica, atenção neonatal e gestão em cada maternidade, com leitura por Brasil, região, estado e maternidade.</p>
     <div class="hero-blocos" id="heroNiveis"></div>
@@ -341,7 +341,7 @@ footer a{color:var(--verde-lima)}
   <div class="stat"><div class="num" id="statCls">—</div><div class="rot">Itens classificados</div><div class="sub" id="statClsSub"></div></div>
   <div class="stat" style="background:#EAF3FB"><div class="num" id="statEP">—</div><div class="rot">Em processo de qualificação</div><div class="sub" id="statEPSub"></div></div>
   <div class="stat"><div class="num" id="statQual">—</div><div class="rot">Qualificado</div><div class="sub" id="statQualSub"></div></div>
-  <button class="stat stat-btn" id="btnNotas" title="Fontes, regras de leitura e cobertura"><div class="num" style="font-size:1.5rem">ⓘ</div><div class="rot">Notas metodológicas</div></button>
+  <button class="stat stat-btn" id="btnNotas" title="Fonte, regras de cálculo e cobertura"><div class="num" style="font-size:1.5rem">ⓘ</div><div class="rot">Notas metodológicas</div></button>
 </div>
 
 <nav class="trilho" id="trilho" aria-label="Navegação do painel"></nav>
@@ -363,7 +363,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Território</p>
       <h2>Mapa das maternidades</h2>
-      <p>Escolha a região ou toque em um estado para que o painel inteiro mostre apenas as maternidades daquele local. Toque de novo no estado para desfazer. A cor de cada estado indica o percentual dos itens classificados que estão no nível escolhido ao lado, na avaliação selecionada. Cada ponto é uma maternidade; toque no ponto para abrir o perfil da unidade.</p>
+      <p>Escolha a região ou toque em um estado para que todas as seções mostrem apenas as maternidades daquele local. Toque novamente no estado para desfazer a seleção. A cor de cada estado indica o percentual dos itens classificados que estão no nível escolhido ao lado, na avaliação selecionada. Cada ponto é uma maternidade; toque no ponto para abrir o perfil da unidade.</p>
     </div>
     <div class="mapa-layout">
       <div class="card mapa-svg-box">
@@ -389,7 +389,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Visão geral</p>
       <h2 id="geralTitulo">Distribuição dos níveis de classificação</h2>
-      <p>Cada item é a classificação de um indicador em uma maternidade. Os percentuais consideram apenas os itens classificados; os itens sem informação aparecem à parte. A avaliação, a região e o estado escolhidos na barra acima valem para todas as seções.</p>
+      <p>Cada item é a classificação de um indicador em uma maternidade. Os percentuais consideram apenas os itens classificados; os itens sem informação aparecem separadamente. A avaliação, a região e o estado escolhidos na barra acima valem para todas as seções.</p>
     </div>
     <div class="grid-2">
       <div class="card">
@@ -415,7 +415,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Indicadores</p>
       <h2>Classificação por indicador</h2>
-      <p>Cada barra representa as maternidades do recorte, na avaliação escolhida: o número dentro de cada cor é a quantidade de maternidades naquele nível, e o trecho hachurado, as que estão sem informação. Toque em um indicador para abrir, logo abaixo dele, a relação das maternidades em cada nível; toque de novo para fechar.</p>
+      <p>Cada barra representa as maternidades do recorte, na avaliação escolhida: o número dentro de cada cor é a quantidade de maternidades naquele nível, e o trecho hachurado, as que estão sem informação. Toque em um indicador para abrir, logo abaixo dele, a relação das maternidades em cada nível; toque novamente para fechar.</p>
     </div>
     <div class="card"><div id="listaInd"></div><div class="legenda" id="legendaInd"></div></div>
   </div>
@@ -427,11 +427,11 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Regiões e estados</p>
       <h2>Classificação por região e por estado</h2>
-      <p>Escolha o que comparar (todos os indicadores, um eixo, uma dimensão ou um indicador) e a forma de agrupar. Toque em uma linha para aplicar aquele recorte ao painel inteiro.</p>
+      <p>Escolha o que comparar (todos os indicadores, um eixo, uma dimensão ou um indicador) e a forma de agrupar. Toque em uma linha para aplicar o recorte a todas as seções.</p>
     </div>
     <div class="controles">
       <label class="filtro" style="min-width:300px; flex:1; max-width:560px"><span>O que comparar</span><select id="selEscopo"></select></label>
-      <div class="filtro"><span>Agrupar por</span><div class="seg" id="segModo"><button data-modo="regioes" class="ativo">Regiões e estados</button><button data-modo="grupos">Grupos da planilha</button></div></div>
+      <div class="filtro"><span>Agrupar por</span><div class="seg" id="segModo"><button data-modo="regioes" class="ativo">Regiões e estados</button><button data-modo="grupos">Grupos de estados</button></div></div>
       <button class="chip chip-botao" id="btnCsvLocal" style="align-self:end">⬇ Baixar tabela (CSV)</button>
     </div>
     <div class="tab-wrap"><table class="tab" id="tabLocal"></table></div>
@@ -466,7 +466,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Mudanças de nível</p>
       <h2>Comparação entre duas avaliações</h2>
-      <p>Compara o nível de cada indicador, em cada maternidade do recorte, nas duas avaliações escolhidas. Só entram os itens classificados nas duas. Avanço é a passagem a um nível acima na ordem Não Iniciado, Intermediário, Avançado e Qualificado; recuo é a passagem a um nível abaixo. Mudanças que envolvem "Não se Aplica" são contadas à parte.</p>
+      <p>Compara o nível de cada indicador, em cada maternidade do recorte, nas duas avaliações escolhidas. São considerados apenas os itens classificados nas duas avaliações. Avanço é a passagem a um nível acima na ordem Não Iniciado, Intermediário, Avançado e Qualificado; recuo é a passagem a um nível abaixo. Mudanças que envolvem "Não se Aplica" são contadas separadamente.</p>
     </div>
     <div class="controles">
       <label class="filtro"><span>De</span><select id="selDe"></select></label>
@@ -494,7 +494,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Preenchimento</p>
       <h2>Proporção de itens classificados</h2>
-      <p>Percentual de itens classificados em cada grupo de estados da planilha e em cada dimensão, na avaliação escolhida. O restante está sem informação. Este quadro mostra sempre o país inteiro.</p>
+      <p>Percentual de itens classificados em cada grupo de estados e em cada dimensão, na avaliação escolhida. O restante está sem informação. Este quadro considera sempre todas as maternidades.</p>
     </div>
     <div class="tab-wrap"><table class="tab" id="tabPre"></table></div>
   </div>
@@ -505,12 +505,12 @@ footer a{color:var(--verde-lima)}
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">Notas metodológicas</p>
-      <h2>Fonte, regras de leitura e cobertura</h2>
+      <h2>Fonte, regras de cálculo e cobertura</h2>
     </div>
     <div class="notas-grid">
       <div class="card"><h3>Fonte</h3><div id="notaFonte"></div></div>
       <div class="card"><h3>Classificação e avaliações</h3><div id="notaNiveis"></div></div>
-      <div class="card"><h3>Regras de leitura da planilha</h3><div id="notaRegras"></div></div>
+      <div class="card"><h3>Regras de cálculo</h3><div id="notaRegras"></div></div>
       <div class="card"><h3>Cobertura e identificação das maternidades</h3><div id="notaCobertura"></div></div>
     </div>
   </div>
@@ -536,7 +536,7 @@ footer a{color:var(--verde-lima)}
   <div class="wrap">
     Painel de Qualificação · Qualificação do Modelo de Gestão em Maternidades Estratégicas na Rede de Atenção à Saúde Materna e Neonatal ·
     Coordenação de Ações Nacionais e de Cooperação em Saúde da Mulher, da Criança e do Adolescente · IFF/Fiocruz ·
-    <span id="rodapeFonte">planilha de acompanhamento da coordenação</span> · dados sujeitos a revisão.
+    <span id="rodapeFonte">acompanhamento trimestral da coordenação</span> · dados sujeitos a revisão.
     <img src="logos_institucionais.png" alt="IFF · Fiocruz · SUS · Ministério da Saúde" style="display:block; max-width:420px; width:100%; height:auto; margin:16px auto 0"/>
   </div>
 </footer>

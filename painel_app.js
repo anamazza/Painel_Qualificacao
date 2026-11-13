@@ -59,7 +59,7 @@ function baixarCSV(nome, linhas){
   a.href = URL.createObjectURL(new Blob([txt], {type: "text/csv;charset=utf-8"}));
   a.download = nome; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
-const cabecalhoCSV = txt => [`Painel de Qualificação · planilha de ${dataBR(DADOS.fonte.modificadoEm)} · ${txt}`];
+const cabecalhoCSV = txt => [`Painel de Qualificação · dados de ${dataBR(DADOS.fonte.modificadoEm)} · ${txt}`];
 function segmento(id, aoMudar){
   const el = $(id);
   el.addEventListener("click", e => {
@@ -123,8 +123,8 @@ document.addEventListener("scroll", () => { tipEl.hidden = true; tipEl._de = nul
 /* ---------------- cabeçalho, destaques e notas ---------------- */
 function montarCabecalho(){
   const versao = dataBR(DADOS.fonte.modificadoEm);
-  $("heroFonte").textContent = `versão prévia · planilha de ${versao}`;
-  $("rodapeFonte").textContent = `versão prévia · planilha de acompanhamento da coordenação, versão de ${versao}`;
+  $("heroFonte").textContent = `versão prévia · dados de ${versao}`;
+  $("rodapeFonte").textContent = `versão prévia · acompanhamento trimestral da coordenação, dados de ${versao}`;
   $("heroNiveis").innerHTML = NIV.map((n, k) => `<span><i class="q n${k}"></i>${esc(n.rot)}</span>`).join("") + `<span><i class="q nsi"></i>Sem informação</span>`;
   const ufs = new Set(MAT.map(m => m.uf));
   const d = dist(MAT, TODOS, ULT);
@@ -144,33 +144,31 @@ function montarCabecalho(){
 
   /* notas */
   $("notaFonte").innerHTML = `
-    <p><b>Planilha de acompanhamento.</b> Os dados vêm da planilha de classificação das práticas de atenção e gestão das maternidades, fornecida pela coordenação do projeto, na versão de ${versao}, lida em ${dataBR(DADOS.geradoEm)}. A planilha registra, para cada maternidade e cada indicador, o nível atribuído em cada avaliação trimestral.</p>
-    <p><b>Lista de indicadores.</b> Os eixos, as dimensões, os nomes dos indicadores, os níveis de classificação e as suas cores, o período de cada avaliação e os níveis de análise (Brasil, regiões, estados e maternidades) seguem o documento "LISTA DE INDICADORES", da coordenação.</p>
-    <p>Este painel não usa dados dos sistemas de informação do Ministério da Saúde. Os critérios que definem cada nível em cada indicador pertencem ao instrumento de avaliação da coordenação e não constam da planilha; o painel reproduz a classificação registrada.</p>`;
+    <p><b>Acompanhamento trimestral.</b> Os dados vêm do acompanhamento das práticas de atenção e gestão das maternidades, realizado pela coordenação do projeto. A cada avaliação trimestral, cada maternidade recebe um nível de classificação em cada indicador. Esta versão reúne os registros recebidos até ${versao}.</p>
+    <p><b>Indicadores e níveis.</b> Os eixos, as dimensões, os indicadores, os níveis de classificação e as suas cores, o período de cada avaliação e os níveis de análise (Brasil, regiões, estados e maternidades) foram definidos pela coordenação.</p>
+    <p>Este painel não usa dados dos sistemas de informação do Ministério da Saúde. Os critérios de cada nível em cada indicador pertencem ao instrumento de avaliação da coordenação; o painel reproduz a classificação registrada.</p>`;
   $("notaNiveis").innerHTML = `
-    <p><b>Níveis de classificação</b>, na ordem da planilha:</p>
+    <p><b>Níveis de classificação:</b></p>
     <ul>${NIV.map((n, k) => `<li><i class="q n${k}" style="vertical-align:-2px"></i> <b>${esc(n.rot)}</b> (sigla ${esc(n.cod)} no quadro das maternidades)</li>`).join("")}
-    <li><i class="q nsi" style="vertical-align:-2px"></i> <b>Sem informação</b>: item sem nível registrado na planilha</li></ul>
+    <li><i class="q nsi" style="vertical-align:-2px"></i> <b>Sem informação</b>: item ainda sem nível registrado</li></ul>
     <p><b>Avaliações:</b></p>
     <ul>${AVS.map(a => `<li><b>${esc(a.rot)}</b>: ${esc(a.periodo)} (${esc(a.meses)})${a.realizada ? "" : " · a realizar"}</li>`).join("")}</ul>`;
-  const corr = DADOS.correcoes || [], anom = DADOS.anomalias || [];
   $("notaRegras").innerHTML = `<ul>
-    <li><b>Unidade de leitura.</b> O painel lê apenas as abas regionais da planilha, uma linha por maternidade em cada indicador. As abas "Brasil" e "Por Região" e as linhas de total, percentual e média não são usadas: todas as contagens são refeitas pelo painel.</li>
-    <li><b>Sem informação.</b> A marcação "SI" e a célula em branco recebem o mesmo tratamento (orientação da coordenação em 11/11/2026).</li>
-    <li><b>Percentuais.</b> São calculados sobre os itens classificados, isto é, sem contar os itens sem informação. "Não se Aplica" é um nível registrado e conta como item classificado.</li>
-    <li><b>Em processo de qualificação.</b> Indicador definido pela coordenação: soma dos itens em Intermediário, Avançado e Qualificado, dividida pelo total de itens nos quatro níveis de progresso (Não Iniciado, Intermediário, Avançado e Qualificado). Resume a parcela em que alguma ação já foi realizada, isto é, que deixou o nível Não Iniciado. Os itens em "Não se Aplica" e os itens sem informação não entram nessa conta.</li>
-    <li><b>Mudanças de nível.</b> Avanço e recuo seguem a ordem Não Iniciado, Intermediário, Avançado e Qualificado, e só comparam itens classificados nas duas avaliações. Mudanças de ou para "Não se Aplica" são contadas à parte.</li>
-    ${corr.map(c => `<li><b>Marcação ajustada na leitura.</b> Aba ${esc(c.aba)}, linha ${c.linha}, ${c.avaliacao}ª avaliação, ${esc(MAT.find(m => m.nomePlanilha === c.servico)?.nome || c.servico)} (${esc(c.uf)}), indicador "${esc(c.indicador)}": a célula traz "${esc(c.lido)}" e foi lida como marcação em "${esc(c.usado)}".</li>`).join("")}
-    ${anom.map(c => `<li><b>Célula não aproveitada.</b> Aba ${esc(c.aba)}, linha ${c.linha}, ${c.avaliacao}ª avaliação, ${esc(c.servico)} (${esc(c.uf)}), indicador "${esc(c.indicador)}": ${esc(c.motivo)}; o item ficou sem informação.</li>`).join("")}
+    <li><b>Contagens.</b> Cada item é o nível de um indicador em uma maternidade, em uma avaliação. Todos os totais e percentuais são calculados pelo painel a partir desses itens.</li>
+    <li><b>Sem informação.</b> Item ainda sem nível registrado. Aparece em branco e não entra nos percentuais.</li>
+    <li><b>Percentuais dos níveis.</b> São calculados sobre os itens classificados. "Não se Aplica" é um nível registrado e conta como item classificado.</li>
+    <li><b>Em processo de qualificação.</b> Indicador definido pela coordenação: soma dos itens em Intermediário, Avançado e Qualificado, dividida pelo total de itens nos quatro níveis de progresso (Não Iniciado, Intermediário, Avançado e Qualificado). Resume a parcela em que alguma ação já foi realizada, isto é, que deixou o nível Não Iniciado. Os itens em "Não se Aplica" e os itens sem informação não entram nesse cálculo.</li>
+    <li><b>Mudanças de nível.</b> Avanço e recuo seguem a ordem Não Iniciado, Intermediário, Avançado e Qualificado, e só comparam itens classificados nas duas avaliações. Mudanças de ou para "Não se Aplica" são contadas separadamente.</li>
   </ul>`;
   const semNenhuma = TODOS.filter(i => MAT.every(m => m.c[i][ULT] == null)).map(i => IND[i]);
   const porGrupo = GRP.map(g => { const ms = MAT.filter(m => m.aba === g.aba); return {g, n: ms.length, com: TODOS.filter(i => ms.some(m => m.c[i][ULT] != null)).length}; });
   $("notaCobertura").innerHTML = `
-    <p><b>Cobertura na ${esc(AVS[ULT].rot)}.</b> ${fmtInt(d.cls)} dos ${fmtInt(d.total)} itens (${fmtInt(MAT.length)} maternidades × ${IND.length} indicadores) estão classificados. Indicadores com pelo menos uma maternidade classificada, por grupo de estados da planilha:</p>
+    <p><b>Versão prévia.</b> O painel mostra apenas o que já foi registrado. O que ainda não foi preenchido aparece em branco, como "sem informação", e o painel é atualizado a cada nova remessa de dados.</p>
+    <p><b>Cobertura na ${esc(AVS[ULT].rot)}.</b> ${fmtInt(d.cls)} dos ${fmtInt(d.total)} itens (${fmtInt(MAT.length)} maternidades × ${IND.length} indicadores) estão classificados. Indicadores com pelo menos uma maternidade classificada, por grupo de estados:</p>
     <ul>${porGrupo.map(x => `<li><b>${esc(x.g.rot)}</b> (${plural(x.n, "maternidade", "maternidades")}): ${x.com} de ${IND.length} indicadores</li>`).join("")}</ul>
     ${semNenhuma.length ? `<p><b>Indicadores sem classificação em nenhuma maternidade:</b> ${semNenhuma.map(i => `${esc(i.rot)} (${esc(DIM_POR[i.dim].rot)})`).join("; ")}.</p>` : ""}
-    <p><b>Avaliações a realizar:</b> ${AVS.filter(a => !a.realizada).map(a => `${esc(a.rot)} (${esc(a.periodo)})`).join("; ") || "nenhuma"}. Esta é uma versão prévia: o painel mostra apenas o que está registrado na planilha, e o que ainda não foi preenchido aparece em branco, como "sem informação". O painel é refeito a cada nova versão recebida.</p>
-    <p><b>Identificação das maternidades.</b> A planilha identifica cada maternidade pelo nome e pelo estado. Cada uma foi associada, pelo nome, ao código do Cadastro Nacional de Estabelecimentos de Saúde (CNES) usado nos painéis de Nascimentos, Internação, Mortalidade e Habilitações. O painel exibe o nome adotado nesses painéis; quando o nome registrado na planilha é diferente, ele aparece no perfil da unidade. As ${fmtInt(MAT.length)} maternidades pertencem ao grupo de maternidades apoiadas (estratégicas) dos demais painéis.</p>`;
+    <p><b>Avaliações a realizar:</b> ${AVS.filter(a => !a.realizada).map(a => `${esc(a.rot)} (${esc(a.periodo)})`).join("; ") || "nenhuma"}.</p>
+    <p><b>Identificação das maternidades.</b> Cada maternidade está identificada pelo código do Cadastro Nacional de Estabelecimentos de Saúde (CNES) e pelo nome usados nos painéis de Nascimentos, Internação, Mortalidade e Habilitações. As ${fmtInt(MAT.length)} maternidades pertencem ao grupo de maternidades apoiadas (estratégicas) desses painéis.</p>`;
 }
 
 /* ---------------- recorte geral ---------------- */
@@ -298,7 +296,7 @@ function renderMapa(){
     const el = document.createElementNS(NS, "path"); el.setAttribute("d", t.d); el.dataset.uf = t.id;
     el.setAttribute("class", "t" + (S.uf === t.id ? " sel" : "") + (noRecorte(t.id) ? "" : " fora"));
     el.setAttribute("fill", cls < 0 ? "#E4EBE5" : mistura(corMapa, PASSOS_MAPA[cls]));
-    el.dataset.tip = `<b>${esc(UF_NOME[t.id])}</b><br>${ms.length ? plural(ms.length, "maternidade", "maternidades") + ` · ${fmtInt(d.cls)} de ${fmtInt(d.total)} itens classificados` : "sem maternidade na planilha"}` +
+    el.dataset.tip = `<b>${esc(UF_NOME[t.id])}</b><br>${ms.length ? plural(ms.length, "maternidade", "maternidades") + ` · ${fmtInt(d.cls)} de ${fmtInt(d.total)} itens classificados` : "sem maternidade no painel"}` +
       (d.cls ? `<br><b>${EP_ROT}</b>: ${epTxt(d)}` + (ehEP ? "" : `<br><b>${esc(NIV[nv].rot)}</b>: ${fmtInt(d.n[nv])} · ${pct(d.n[nv], d.cls)} dos classificados`) : "") +
       (ms.length ? "<br>" + ms.slice().sort(porUFNome).slice(0, 6).map(m => "· " + esc(m.nome)).join("<br>") + (ms.length > 6 ? `<br>· mais ${ms.length - 6}` : "") : "");
     el.addEventListener("click", () => cliqueUF(t.id));
@@ -409,7 +407,7 @@ function detalheInd(mats){
   const grupos = [4, 3, 2, 1, 0, null].map(v => ({v, lista: mats.filter(m => m.c[E.ind][S.av] === v).sort(porUFNome)})).filter(g => g.lista.length);
   return `<div class="detalhe-ind">
     <p class="sub"><b>${esc(EIXO_ROT[ind.eixo])}</b> · ${esc(DIM_POR[ind.dim].rot)} · ${esc(rotRecorte())} · ${esc(rotAv(S.av))} · ${fmtInt(d.cls)} de ${plural(d.total, "maternidade classificada", "maternidades classificadas")}</p>
-    ${ind.texto !== ind.rot ? `<p class="sub"><b>Texto na planilha:</b> ${esc(ind.texto)}</p>` : ""}
+    ${ind.texto !== ind.rot ? `<p class="sub"><b>Descrição completa:</b> ${esc(ind.texto)}</p>` : ""}
     <div class="niveis-grid">${grupos.map(g => `<div><p class="niv-tit"><i class="q ${g.v == null ? "nsi" : "n" + g.v}"></i>${esc(nivelRot(g.v))} <small>${fmtInt(g.lista.length)}</small></p>
       <ul class="lista-unid">${g.lista.map(m => `<li><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}/${m.uf}</small></li>`).join("")}</ul></div>`).join("")}</div>
   </div>`;
@@ -428,7 +426,7 @@ function rotEscopo(escopo = E.escopo){
 }
 function linhasLocal(){
   const inds = indsEscopo(), rows = [{tipo: "br", rot: "Brasil", mats: MAT, regiao: "", uf: ""}];
-  if(E.modo === "grupos") GRP.forEach(g => rows.push({tipo: "grupo", rot: g.rot, sub: `aba ${g.aba}`, mats: MAT.filter(m => m.aba === g.aba)}));
+  if(E.modo === "grupos") GRP.forEach(g => rows.push({tipo: "grupo", rot: g.rot, sub: "", mats: MAT.filter(m => m.aba === g.aba)}));
   else REGIOES.forEach(r => {
     const mr = MAT.filter(m => m.regiao === r); if(!mr.length) return;
     rows.push({tipo: "reg", rot: r, mats: mr, regiao: r, uf: ""});
@@ -451,7 +449,7 @@ function csvLocal(){
   const rows = linhasLocal();
   baixarCSV(`qualificacao_local_${AVS[S.av].n}a_avaliacao.csv`, [cabecalhoCSV(`${rotEscopo()} · ${rotAv(S.av)}`),
     ["Local", "Tipo", "Maternidades", "Itens classificados", "Sem informação", ...NIV.map(n => n.rot), "Intermediário + Avançado + Qualificado", EP_ROT + " (%)"],
-    ...rows.map(r => [r.rot, {br: "país", reg: "região", uf: "estado", grupo: "grupo da planilha"}[r.tipo], r.mats.length, r.d.cls, r.d.si, ...r.d.n, emProc(r.d).num, emProc(r.d).pct == null ? "" : fmt1(emProc(r.d).pct)])]);
+    ...rows.map(r => [r.rot, {br: "país", reg: "região", uf: "estado", grupo: "grupo de estados"}[r.tipo], r.mats.length, r.d.cls, r.d.si, ...r.d.n, emProc(r.d).num, emProc(r.d).pct == null ? "" : fmt1(emProc(r.d).pct)])]);
 }
 function montarLocal(){
   const sel = $("selEscopo");
@@ -503,7 +501,7 @@ function csvMatriz(){
     ["CNES", "Maternidade", "Município", "UF", "Região", ...IND.map(i => `${i.id}. ${i.rot}`)],
     ...lista.map(m => [m.cnes, m.nome, m.municipio, m.uf, m.regiao, ...TODOS.map(i => nivelRot(m.c[i][S.av]))])]);
 }
-const CAB_LONGO = ["CNES", "Maternidade", "Nome na planilha", "Município", "UF", "Região", "Eixo", "Dimensão", "Nº", "Indicador", "Avaliação", "Período", "Nível"];
+const CAB_LONGO = ["CNES", "Maternidade", "Nome no registro de acompanhamento", "Município", "UF", "Região", "Eixo", "Dimensão", "Nº", "Indicador", "Avaliação", "Período", "Nível"];
 const linhasLongas = m => TODOS.flatMap(i => AVS.map((av, a) => [m.cnes, m.nome, m.nomePlanilha, m.municipio, m.uf, m.regiao, EIXO_ROT[IND[i].eixo], DIM_POR[IND[i].dim].rot, IND[i].id, IND[i].rot, av.rot, av.periodo, av.realizada ? nivelRot(m.c[i][a]) : "a realizar"]));
 function montarMatriz(){
   const sel = $("selPerfil"), selPd = $("selPerfilPd");
@@ -553,7 +551,7 @@ function renderResumo(mats){
     lin("soma", "Total", fmtInt(ea.den), fmtInt(eb.den), dif(ea.den, eb.den)) +
     lin("soma", "Intermediário + Avançado + Qualificado", fmtInt(ea.num), fmtInt(eb.num), dif(ea.num, eb.num)) +
     lin("ep-linha", EP_ROT, epTxt(a), epTxt(b), pp) + `</tbody>`;
-  $("notaResumo").innerHTML = `${esc(rotRecorte())}. O total reúne os itens nos quatro níveis listados. Ficam fora da conta, na ordem das duas avaliações, os itens em "Não se Aplica" (${fmtInt(a.n[0])} e ${fmtInt(b.n[0])}) e os itens sem informação (${fmtInt(a.si)} e ${fmtInt(b.si)}).`;
+  $("notaResumo").innerHTML = `${esc(rotRecorte())}. O total reúne os itens nos quatro níveis listados. Não entram no cálculo, na ordem das duas avaliações, os itens em "Não se Aplica" (${fmtInt(a.n[0])} e ${fmtInt(b.n[0])}) e os itens sem informação (${fmtInt(a.si)} e ${fmtInt(b.si)}).`;
 }
 function renderMud(){
   const mats = recorte();
@@ -607,8 +605,8 @@ function celPre(mats, inds, rot){
   return `<td class="c" style="${st}; font-variant-numeric:tabular-nums"${tip(`<b>${esc(rot)}</b><br>${fmtInt(d.cls)} de ${fmtInt(d.total)} itens classificados`)}><b>${Math.round(p)}%</b></td>`;
 }
 function renderPre(){
-  const linhas = [...GRP.map(g => ({rot: g.rot, sub: `aba ${g.aba}`, mats: MAT.filter(m => m.aba === g.aba), cls: ""})), {rot: "Brasil", sub: "", mats: MAT, cls: "br"}];
-  $("tabPre").innerHTML = `<thead><tr><th>Grupo de estados da planilha</th><th class="r">Maternidades</th>${DIM.map(d => `<th class="c" style="white-space:normal; overflow-wrap:anywhere; min-width:96px; max-width:128px"${tip(`<b>${esc(EIXO_ROT[d.eixo])}</b><br>${esc(d.rot)} · ${plural(INDS_DIM[d.id].length, "indicador", "indicadores")}`)}>${esc(d.rot)}</th>`).join("")}<th class="c">Todos</th></tr></thead><tbody>` +
+  const linhas = [...GRP.map(g => ({rot: g.rot, sub: "", mats: MAT.filter(m => m.aba === g.aba), cls: ""})), {rot: "Brasil", sub: "", mats: MAT, cls: "br"}];
+  $("tabPre").innerHTML = `<thead><tr><th>Grupo de estados</th><th class="r">Maternidades</th>${DIM.map(d => `<th class="c" style="white-space:normal; overflow-wrap:anywhere; min-width:96px; max-width:128px"${tip(`<b>${esc(EIXO_ROT[d.eixo])}</b><br>${esc(d.rot)} · ${plural(INDS_DIM[d.id].length, "indicador", "indicadores")}`)}>${esc(d.rot)}</th>`).join("")}<th class="c">Todos</th></tr></thead><tbody>` +
     linhas.map(l => `<tr class="${l.cls}"><td>${esc(l.rot)}${l.sub ? ` <small>${esc(l.sub)}</small>` : ""}</td><td class="r">${fmtInt(l.mats.length)}</td>${DIM.map(d => celPre(l.mats, INDS_DIM[d.id], `${l.rot} · ${d.rot}`)).join("")}${celPre(l.mats, TODOS, `${l.rot} · todos os indicadores`)}</tr>`).join("") + `</tbody>`;
 }
 
@@ -636,9 +634,9 @@ function abrirPerfil(cnes){
         <p class="eyebrow" style="color:#C5E3CC">Perfil da unidade · Painel de Qualificação</p>
         <h2 style="margin-top:.4rem; color:#FFF">${esc(m.nome)}</h2>
         <div class="meta">
-          <span>${esc(m.municipio)} · ${esc(UF_NOME[m.uf])}</span><span>Região ${esc(m.regiao)}</span><span class="mono">CNES ${m.cnes}</span><span>Planilha: aba ${esc(m.aba)}</span>
+          <span>${esc(m.municipio)} · ${esc(UF_NOME[m.uf])}</span><span>Região ${esc(m.regiao)}</span><span class="mono">CNES ${m.cnes}</span><span>Grupo ${esc(m.grupo)}</span>
         </div>
-        ${normTxt(m.nomePlanilha) !== normTxt(m.nome) ? `<p style="margin-top:.6rem; font-size:.82rem; color:#C5E3CC">Nome registrado na planilha: ${esc(m.nomePlanilha)}</p>` : ""}
+        ${normTxt(m.nomePlanilha) !== normTxt(m.nome) ? `<p style="margin-top:.6rem; font-size:.82rem; color:#C5E3CC">Nome no registro de acompanhamento: ${esc(m.nomePlanilha)}</p>` : ""}
       </div>
       <div class="kpis-topo">
         <div class="k"><div class="n">${d.cls} de ${IND.length}</div><div class="t">indicadores classificados</div></div>
@@ -662,7 +660,7 @@ function abrirPerfil(cnes){
         <div style="overflow-x:auto; margin-top:.7rem"><table class="perfil">
           <thead><tr><th>Nº</th><th>Indicador</th>${AVS.map(a => `<th>${esc(a.rot)}<small>${esc(a.periodo)}${a.realizada ? "" : " · a realizar"}</small></th>`).join("")}<th>Mudança<small>${AVS[PRIM].n}ª → ${AVS[ULT].n}ª</small></th></tr></thead>
           <tbody>${corpo}</tbody></table></div>
-        <p class="fonte">Fonte: planilha de acompanhamento da coordenação, versão de ${dataBR(DADOS.fonte.modificadoEm)}. Dados sujeitos a revisão.
+        <p class="fonte">Fonte: acompanhamento trimestral da coordenação, dados de ${dataBR(DADOS.fonte.modificadoEm)}. Dados sujeitos a revisão.
           <a href="${HAB_URL}#${m.cnes}" target="_blank" rel="noopener">Ver as habilitações desta unidade no CNES (Painel de Habilitações) →</a></p>
       </div>
     </div>`;
