@@ -32,7 +32,7 @@ const HAB_URL = "https://anamazza.github.io/Indicadores_Brasil/habilitacoes/";
 
 /* estado: recorte geral (vale para todas as seções) e escolhas de cada seção */
 const S = {av: ULT, regiao: "", uf: ""};
-const E = {ind: null, escopo: "todos", modo: "regioes", ordem: "uf", busca: "", de: PRIM, para: ULT, nivelMapa: "ep", pontos: true, escopoRes: "todos"};
+const E = {ind: null, escopo: "todos", modo: "regioes", ordem: "uf", busca: "", de: PRIM, para: ULT, nivelMapa: "ep", pontos: true, escopoRes: "todos", eixoMat: ""};
 
 /* ---------------- utilidades ---------------- */
 const $ = id => document.getElementById(id);
@@ -101,6 +101,10 @@ const epChip = d => { const e = emProc(d);
   return `<span class="ep"${tip(`<b>${EP_ROT}</b>: ${fmtInt(e.num)} de ${fmtInt(e.den)}<br>Intermediário + Avançado + Qualificado sobre o total dos quatro níveis`)}>${e.pct == null ? "—" : fmt1(e.pct) + "%"}</span>`; };
 const legendaHtml = comSI => NIV.map((n, k) => `<span><i class="q n${k}"></i>${esc(n.rot)}</span>`).join("") + (comSI ? `<span><i class="q nsi"></i>Sem informação</span>` : "") +
   `<span><span class="ep ep-leg">%</span>${EP_ROT}: Intermediário + Avançado + Qualificado sobre o total</span>`;
+
+/* uma linha de gráfico: rótulo, barra empilhada, percentual em processo de qualificação e nota à direita */
+const linBarra = (cls, rot, sub, dd, modo, nota) => `<div class="lin ${cls}"><span class="rot">${esc(rot)}${sub ? `<small>${esc(sub)}</small>` : ""}</span>${pilha(dd, modo)}${epChip(dd)}<span class="n">${nota}</span></div>`;
+const cabEixo = (e, extra, png) => `<div class="eixo-cab"><h3>${esc(extra || e.rot)}</h3><span class="chip">${plural(INDS_EIXO[e.id].length, "indicador", "indicadores")}</span><button class="chip chip-botao png" data-png="${png}" title="Baixar este gráfico em PNG">⬇ PNG</button></div>`;
 
 /* ---------------- dica flutuante ---------------- */
 const tipEl = $("tip");
@@ -386,9 +390,12 @@ function renderGeral(){
     <p class="fonte">Percentuais dos níveis sobre os itens classificados. Em processo de qualificação: sobre o total dos quatro níveis de progresso, sem "Não se Aplica". p.p. = pontos percentuais.</p>`;
 
   $("dimTitulo").textContent = `Por eixo e dimensão · ${rotAv(S.av)}`;
-  const linha = (cls, rot, sub, dd) => `<div class="lin ${cls}"><span class="rot">${esc(rot)}${sub ? `<small>${esc(sub)}</small>` : ""}</span>${pilha(dd, "pct")}${epChip(dd)}<span class="n"><b>${fmtInt(dd.cls)}</b> classificados<br>${fmtInt(dd.si)} sem informação</span></div>`;
-  $("porDimensao").innerHTML = EIX.map(e => linha("eixo", e.rot, plural(INDS_EIXO[e.id].length, "indicador", "indicadores"), dist(mats, INDS_EIXO[e.id], S.av)) +
-    DIM.filter(dm => dm.eixo === e.id).map(dm => linha("dim", dm.rot, plural(INDS_DIM[dm.id].length, "indicador", "indicadores"), dist(mats, INDS_DIM[dm.id], S.av))).join("")).join("");
+  const nItens = dd => `<b>${fmtInt(dd.cls)}</b> classificados<br>${fmtInt(dd.si)} sem informação`;
+  $("porEixo").innerHTML = EIX.map(e => { const de = dist(mats, INDS_EIXO[e.id], S.av);
+    return `<div class="card bloco-eixo eixo-${e.id}">${cabEixo(e, "", "eixo:" + e.id)}
+      <div class="linhas">${linBarra("eixo", "Todas as dimensões do eixo", "", de, "pct", nItens(de))}${DIM.filter(dm => dm.eixo === e.id).map(dm => { const dd = dist(mats, INDS_DIM[dm.id], S.av);
+        return linBarra("dim", dm.rot, plural(INDS_DIM[dm.id].length, "indicador", "indicadores"), dd, "pct", nItens(dd)); }).join("")}</div>
+    </div>`; }).join("");
 }
 
 /* ============================================================
@@ -396,9 +403,10 @@ function renderGeral(){
    ============================================================ */
 function renderInd(){
   const mats = recorte();
-  $("listaInd").innerHTML = DIM.map(dm => `<p class="grupo-tit">${esc(EIXO_ROT[dm.eixo])} <small>${esc(dm.rot)}</small></p><div class="linhas" style="margin-top:.3rem">` +
-    INDS_DIM[dm.id].map(i => { const d = dist(mats, [i], S.av), aberto = i === E.ind;
-      return `<button class="lin${aberto ? " ativa" : ""}" data-i="${i}" aria-expanded="${aberto}"${!aberto && IND[i].texto !== IND[i].rot ? tip(esc(IND[i].texto)) : ""}><span class="rot"><span class="seta">▸</span><b class="num">${IND[i].id}</b>${esc(IND[i].rot)}</span>${pilha(d, "n")}${epChip(d)}<span class="n"><b>${fmtInt(d.cls)}</b> de ${fmtInt(d.total)}<br>classificadas</span></button>` + (aberto ? detalheInd(mats) : ""); }).join("") + `</div>`).join("");
+  $("listaInd").innerHTML = EIX.map(e => `<div class="card bloco-eixo eixo-${e.id}">${cabEixo(e, "", "ind:" + e.id)}` +
+    DIM.filter(dm => dm.eixo === e.id).map(dm => `<p class="grupo-tit">${esc(dm.rot)}</p><div class="linhas" style="margin-top:.3rem">` +
+      INDS_DIM[dm.id].map(i => { const d = dist(mats, [i], S.av), aberto = i === E.ind;
+        return `<button class="lin${aberto ? " ativa" : ""}" data-i="${i}" aria-expanded="${aberto}"${!aberto && IND[i].texto !== IND[i].rot ? tip(esc(IND[i].texto)) : ""}><span class="rot"><span class="seta">▸</span><b class="num">${IND[i].id}</b>${esc(IND[i].rot)}</span>${pilha(d, "n")}${epChip(d)}<span class="n"><b>${fmtInt(d.cls)}</b> de ${fmtInt(d.total)}<br>classificadas</span></button>` + (aberto ? detalheInd(mats) : ""); }).join("") + `</div>`).join("") + `</div>`).join("");
   $("legendaInd").innerHTML = legendaHtml(true);
 }
 /* relação das maternidades por nível, aberta logo abaixo do indicador escolhido */
@@ -476,7 +484,8 @@ function montarLocal(){
 function matsQuadro(){
   const q = normTxt(E.busca.trim());
   const lista = recorte().filter(m => !q || m._busca.includes(q));
-  const nQ = m => TODOS.reduce((s, i) => s + (m.c[i][S.av] === 4 ? 1 : 0), 0);
+  const indsQ = E.eixoMat ? INDS_EIXO[E.eixoMat] : TODOS;       /* a ordenação segue o eixo mostrado no quadro */
+  const nQ = m => indsQ.reduce((s, i) => s + (m.c[i][S.av] === 4 ? 1 : 0), 0);
   if(E.ordem === "nome") lista.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
   else if(E.ordem === "q") lista.sort((a, b) => nQ(b) - nQ(a) || porUFNome(a, b));
   else lista.sort(porUFNome);
@@ -484,15 +493,17 @@ function matsQuadro(){
 }
 function renderMatriz(){
   const lista = matsQuadro();
-  const cab1 = DIM.map(d => `<th colspan="${INDS_DIM[d.id].length}"${tip(`<b>${esc(EIXO_ROT[d.eixo])}</b><br>${esc(d.rot)}`)}><span>${esc(d.rot)}</span></th>`).join("");
-  const cab2 = DIM.map(d => INDS_DIM[d.id].map((i, k) => `<th class="${k ? "" : "ini"}"${tip(`<b>${IND[i].id}. ${esc(IND[i].rot)}</b><br>${esc(DIM_POR[IND[i].dim].rot)}`)}>${IND[i].id}</th>`).join("")).join("");
+  const dims = DIM.filter(d => !E.eixoMat || d.eixo === E.eixoMat), inds = dims.flatMap(d => INDS_DIM[d.id]);
+  const cab1 = dims.map(d => `<th colspan="${INDS_DIM[d.id].length}"${tip(`<b>${esc(EIXO_ROT[d.eixo])}</b><br>${esc(d.rot)}`)}><span>${esc(d.rot)}</span></th>`).join("");
+  const cab2 = dims.map(d => INDS_DIM[d.id].map((i, k) => `<th class="${k ? "" : "ini"}"${tip(`<b>${IND[i].id}. ${esc(IND[i].rot)}</b><br>${esc(DIM_POR[IND[i].dim].rot)}`)}>${IND[i].id}</th>`).join("")).join("");
+  const noEixo = E.eixoMat ? ` do eixo ${esc(EIXO_ROT[E.eixoMat])}` : "";
   const linhas = lista.map(m => {
     let cls = 0, q = 0, ep = 0;
-    const tds = TODOS.map(i => { const v = m.c[i][S.av]; if(v != null){ cls++; if(v === 4) q++; if(v >= 2) ep++; }
+    const tds = inds.map(i => { const v = m.c[i][S.av]; if(v != null){ cls++; if(v === 4) q++; if(v >= 2) ep++; }
       return `<td class="c ${v == null ? "nsi" : "n" + v}" data-i="${i}">${v == null ? "·" : NIV[v].cod}</td>`; }).join("");
     return `<tr data-cnes="${m.cnes}"><td class="col-unid"><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}/${m.uf} · CNES ${m.cnes}</small></td>${tds}<td class="tot">${cls}</td><td class="tot ep-col">${ep}</td><td class="tot">${q}</td></tr>`;
   }).join("");
-  $("matriz").innerHTML = `<thead><tr class="l1"><th class="col-unid" rowspan="2">Maternidade<br><small style="font-weight:600; color:#C5E3CC">${fmtInt(lista.length)} no quadro · ${esc(rotAv(S.av))}</small></th>${cab1}<th class="tot" rowspan="2"${tip("Indicadores classificados na avaliação escolhida")}>Classi-<br>ficados</th><th class="tot" rowspan="2"${tip("Indicadores em processo de qualificação: Intermediário, Avançado ou Qualificado")}>Em pro-<br>cesso</th><th class="tot" rowspan="2"${tip("Indicadores no nível Qualificado")}>Quali-<br>ficados</th></tr><tr class="l2">${cab2}</tr></thead><tbody>${linhas || `<tr><td class="col-unid" colspan="${IND.length + 4}">Nenhuma maternidade encontrada.</td></tr>`}</tbody>`;
+  $("matriz").innerHTML = `<thead><tr class="l1"><th class="col-unid" rowspan="2">Maternidade<br><small style="font-weight:600; color:#C5E3CC">${fmtInt(lista.length)} no quadro · ${esc(rotAv(S.av))}</small></th>${cab1}<th class="tot" rowspan="2"${tip(`Indicadores${noEixo} classificados na avaliação escolhida`)}>Classi-<br>ficados</th><th class="tot" rowspan="2"${tip(`Indicadores${noEixo} em processo de qualificação: Intermediário, Avançado ou Qualificado`)}>Em pro-<br>cesso</th><th class="tot" rowspan="2"${tip(`Indicadores${noEixo} no nível Qualificado`)}>Quali-<br>ficados</th></tr><tr class="l2">${cab2}</tr></thead><tbody>${linhas || `<tr><td class="col-unid" colspan="${inds.length + 4}">Nenhuma maternidade encontrada.</td></tr>`}</tbody>`;
   $("legendaMat").innerHTML = NIV.map((n, k) => `<span><i class="q n${k}"></i>${esc(n.cod)} = ${esc(n.rot)}</span>`).join("") + `<span><i class="q nsi"></i>· = Sem informação</span>`;
 }
 function csvMatriz(){
@@ -514,6 +525,8 @@ function montarMatriz(){
   sel.addEventListener("change", () => { if(sel.value) abrirPerfil(sel.value); sel.value = ""; });
   $("buscaMat").addEventListener("input", e => { E.busca = e.target.value; renderMatriz(); });
   segmento("segOrdem", d => { E.ordem = d.ordem; renderMatriz(); });
+  $("segEixoMat").innerHTML = `<button data-eixo="" class="ativo">Todos</button>` + EIX.map(e => `<button data-eixo="${e.id}">${esc(e.rot)}</button>`).join("");
+  segmento("segEixoMat", d => { E.eixoMat = d.eixo; renderMatriz(); });
   $("btnCsvMatriz").addEventListener("click", csvMatriz);
   $("btnCsvTudo").addEventListener("click", () => baixarCSV("qualificacao_todas_as_avaliacoes.csv", [cabecalhoCSV(rotRecorte()), CAB_LONGO, ...recorte().sort(porUFNome).flatMap(linhasLongas)]));
   $("listaNumerada").innerHTML = DIM.map(d => `<p style="break-inside:avoid; margin-bottom:.6rem"><b style="color:var(--texto)">${esc(EIXO_ROT[d.eixo])} · ${esc(d.rot)}</b><br>${INDS_DIM[d.id].map(i => `${IND[i].id}. ${esc(IND[i].rot)}`).join("<br>")}</p>`).join("");
@@ -626,8 +639,24 @@ function abrirPerfil(cnes){
   perfilAtual = m;
   const d = dist([m], TODOS, ULT), mu = mudancas([m], PRIM, ULT);
   const chip = v => `<span class="nivel ${v == null ? "nsi" : "n" + v}">${v == null ? "sem informação" : esc(NIV[v].rot)}</span>`;
-  const corpo = DIM.map(dm => `<tr class="g"><td colspan="${AVS.length + 3}">${esc(EIXO_ROT[dm.eixo])} · ${esc(dm.rot)}</td></tr>` +
-    INDS_DIM[dm.id].map(i => `<tr><td class="num">${IND[i].id}</td><td${IND[i].texto !== IND[i].rot ? tip(esc(IND[i].texto)) : ""}>${esc(IND[i].rot)}</td>${AVS.map((av, a) => `<td class="cn">${av.realizada ? chip(m.c[i][a]) : `<span class="suave">—</span>`}</td>`).join("")}<td class="cn">${mudancaItem(m.c[i][PRIM], m.c[i][ULT])}</td></tr>`).join("")).join("");
+  const nInd = dd => `<b>${dd.cls}</b> de ${dd.total}<br>classificados`;
+  /* evolução: uma barra por avaliação realizada, para um conjunto de indicadores */
+  const evol = inds => REALIZADAS.map(a => { const dd = dist([m], inds, a); return linBarra(a === ULT ? "atual" : "", AVS[a].rot, AVS[a].periodo, dd, "n", nInd(dd)); }).join("");
+  const tabela = e => `<div style="overflow-x:auto; margin-top:.7rem"><table class="perfil">
+      <thead><tr><th>Nº</th><th>Indicador</th>${AVS.map(a => `<th>${esc(a.rot)}<small>${esc(a.periodo)}${a.realizada ? "" : " · a realizar"}</small></th>`).join("")}<th>Mudança<small>${AVS[PRIM].n}ª → ${AVS[ULT].n}ª</small></th></tr></thead>
+      <tbody>${DIM.filter(dm => dm.eixo === e.id).map(dm => `<tr class="g"><td colspan="${AVS.length + 3}">${esc(dm.rot)}</td></tr>` +
+        INDS_DIM[dm.id].map(i => `<tr><td class="num">${IND[i].id}</td><td${IND[i].texto !== IND[i].rot ? tip(esc(IND[i].texto)) : ""}>${esc(IND[i].rot)}</td>${AVS.map((av, a) => `<td class="cn">${av.realizada ? chip(m.c[i][a]) : `<span class="suave">—</span>`}</td>`).join("")}<td class="cn">${mudancaItem(m.c[i][PRIM], m.c[i][ULT])}</td></tr>`).join("")).join("")}</tbody></table></div>`;
+  const blocoEixo = e => { const dimsE = DIM.filter(dm => dm.eixo === e.id);
+    return `<div class="eixo-faixa eixo-${e.id}"><span>${esc(e.rot)}</span><small>${plural(INDS_EIXO[e.id].length, "indicador", "indicadores")} em ${plural(dimsE.length, "dimensão", "dimensões")}</small></div>
+      <div class="card bloco-eixo eixo-${e.id}">${cabEixo(e, "Evolução em " + e.rot, "perfil:" + e.id)}
+        <p class="sub">Cada barra reúne os indicadores do eixo em uma avaliação. O número em cada cor é a quantidade de indicadores naquele nível.</p>
+        <div class="linhas">${evol(INDS_EIXO[e.id])}</div>
+        <p class="grupo-tit" style="margin-top:1.3rem">Evolução em cada dimensão</p>
+        <div class="mini-grid">${dimsE.map(dm => `<div class="mini"><p class="mini-tit">${esc(dm.rot)}</p>${REALIZADAS.map(a => { const dd = dist([m], INDS_DIM[dm.id], a);
+          return `<div class="mini-lin"><span${tip(esc(rotAv(a)))}>${AVS[a].n}ª</span>${pilha(dd, "n")}${epChip(dd)}</div>`; }).join("")}</div>`).join("")}</div>
+      </div>
+      <div class="card bloco-eixo eixo-${e.id}"><h3>${esc(e.rot)}: nível de cada indicador nas avaliações</h3>
+        <p class="sub">A última coluna compara a ${AVS[PRIM].n}ª com a ${AVS[ULT].n}ª avaliação.</p>${tabela(e)}</div>`; };
   $("perfilConteudo").innerHTML = `
     <div class="perfil-topo">
       <div>
@@ -649,20 +678,14 @@ function abrirPerfil(cnes){
     <p class="suave" style="font-size:.8rem; margin-top:.6rem">Números do quadro acima: ${esc(rotAv(ULT))}, última avaliação realizada. Avanços e recuos comparam a ${AVS[PRIM].n}ª e a ${AVS[ULT].n}ª avaliação.</p>
     <div class="perfil-cards">
       <div class="card">
-        <h3>Resumo por dimensão · ${esc(rotAv(ULT))}</h3>
-        <p class="sub">Cada barra representa os indicadores da dimensão; o número em cada cor é a quantidade de indicadores naquele nível.</p>
-        <div class="linhas">${DIM.map(dm => { const dd = dist([m], INDS_DIM[dm.id], ULT); return `<div class="lin"><span class="rot">${esc(dm.rot)}<small>${esc(EIXO_ROT[dm.eixo])}</small></span>${pilha(dd, "n")}${epChip(dd)}<span class="n"><b>${dd.cls}</b> de ${dd.total}<br>classificados</span></div>`; }).join("")}</div>
+        <div class="eixo-cab"><h3>Evolução da unidade nas avaliações</h3><span class="chip">${IND.length} indicadores</span><button class="chip chip-botao png" data-png="perfil:geral" title="Baixar este gráfico em PNG">⬇ PNG</button></div>
+        <p class="sub">Uma barra para cada avaliação realizada. O número em cada cor é a quantidade de indicadores naquele nível; o valor em azul-claro é o percentual em processo de qualificação.</p>
+        <div class="linhas">${evol(TODOS)}</div>
         <div class="legenda">${legendaHtml(true)}</div>
       </div>
-      <div class="card">
-        <h3>Classificação em cada avaliação</h3>
-        <p class="sub">Nível registrado para cada indicador, da ${AVS[0].n}ª à ${AVS[AVS.length - 1].n}ª avaliação. A última coluna compara a ${AVS[PRIM].n}ª com a ${AVS[ULT].n}ª.</p>
-        <div style="overflow-x:auto; margin-top:.7rem"><table class="perfil">
-          <thead><tr><th>Nº</th><th>Indicador</th>${AVS.map(a => `<th>${esc(a.rot)}<small>${esc(a.periodo)}${a.realizada ? "" : " · a realizar"}</small></th>`).join("")}<th>Mudança<small>${AVS[PRIM].n}ª → ${AVS[ULT].n}ª</small></th></tr></thead>
-          <tbody>${corpo}</tbody></table></div>
-        <p class="fonte">Fonte: acompanhamento trimestral da coordenação, dados de ${dataBR(DADOS.fonte.modificadoEm)}. Dados sujeitos a revisão.
-          <a href="${HAB_URL}#${m.cnes}" target="_blank" rel="noopener">Ver as habilitações desta unidade no CNES (Painel de Habilitações) →</a></p>
-      </div>
+      ${EIX.map(blocoEixo).join("")}
+      <p class="fonte">Fonte: acompanhamento trimestral da coordenação, dados de ${dataBR(DADOS.fonte.modificadoEm)}. Dados sujeitos a revisão.
+        <a href="${HAB_URL}#${m.cnes}" target="_blank" rel="noopener">Ver as habilitações desta unidade no CNES (Painel de Habilitações) →</a></p>
     </div>`;
   $("selPerfilPd").value = cnes;
   $("paginaPerfil").hidden = false; $("paginaPerfil").scrollTop = 0;
@@ -684,6 +707,87 @@ function montarPerfil(){
   const abrirDoHash = () => { const h = location.hash.replace("#", ""); if(/^\d{7}$/.test(h) && MAT_POR[h]) abrirPerfil(h); };
   window.addEventListener("hashchange", abrirDoHash); abrirDoHash();
 }
+
+/* ============================================================
+   8. GRÁFICOS EM PNG - cada gráfico é redesenhado em SVG (título, barras, legenda e fonte) e convertido em imagem,
+   como nos painéis do Indicadores_Brasil
+   ============================================================ */
+function quebraTexto(txt, max){
+  if(txt.length <= max) return [txt];
+  const i = txt.lastIndexOf(" ", max), a = txt.slice(0, i > 0 ? i : max), b = txt.slice(i > 0 ? i + 1 : max);
+  return [a, b.length > max ? b.slice(0, max - 1) + "…" : b];
+}
+function svgGrafico({titulo, subtitulo, linhas, modo}){
+  const W = 1280, mL = 440, mR = 250, bw = W - mL - mR, lh = 52, bh = 32, topo = 108;
+  const H = topo + linhas.reduce((s, l) => s + (l.grupo ? 42 : lh), 0) + 132;
+  const claro = k => k === 0 || k === 2;
+  let y = topo;
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">` +
+    `<defs><pattern id="hach" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#F4F7F5"/><rect width="4" height="8" fill="#E3EAE6"/></pattern></defs>` +
+    `<rect width="${W}" height="${H}" fill="#FFFFFF"/><rect width="${W}" height="8" fill="#279261"/>` +
+    `<text x="36" y="54" font-size="${titulo.length > 72 ? 21 : 26}" font-weight="800" fill="#0A213D">${esc(titulo)}</text><text x="36" y="82" font-size="16" fill="#4E6A5C">${esc(subtitulo)}</text>`;
+  linhas.forEach(l => {
+    if(l.grupo){ s += `<text x="36" y="${y + 28}" font-size="15" font-weight="800" fill="#1B5F51">${esc(l.grupo.toUpperCase())}</text>`; y += 42; return; }
+    const d = l.d, base = modo === "n" ? d.total : d.cls, rot = quebraTexto(l.rot, 52), duas = rot.length > 1 || !!l.sub;
+    s += `<text x="${mL - 16}" y="${y + (duas ? 14 : 21)}" text-anchor="end" font-size="15" font-weight="${l.forte ? 800 : 600}" fill="#1D3229">${esc(rot[0])}</text>`;
+    if(rot.length > 1) s += `<text x="${mL - 16}" y="${y + 31}" text-anchor="end" font-size="15" font-weight="${l.forte ? 800 : 600}" fill="#1D3229">${esc(rot[1])}</text>`;
+    else if(l.sub) s += `<text x="${mL - 16}" y="${y + 31}" text-anchor="end" font-size="12" fill="#4E6A5C">${esc(l.sub)}</text>`;
+    if(!base) s += `<rect x="${mL}" y="${y}" width="${bw}" height="${bh}" rx="5" fill="url(#hach)" stroke="#D8E8DC"/><text x="${mL + bw / 2}" y="${y + 21}" text-anchor="middle" font-size="13" fill="#4E6A5C">${esc(l.vazio || "sem informação")}</text>`;
+    else {
+      let x = mL;
+      const segs = NIV.map((nv, k) => ({q: d.n[k], cor: nv.cor, k})).filter(g => g.q);
+      if(modo === "n" && d.si) segs.push({q: d.si, cor: "url(#hach)", k: -1});
+      segs.forEach(g => { const w = g.q / base * bw;
+        s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(1, w - 2).toFixed(1)}" height="${bh}" rx="3" fill="${g.cor}"${g.k < 0 ? ' stroke="#D8E8DC"' : ""}/>`;
+        if(w >= 36) s += `<text x="${(x + (w - 2) / 2).toFixed(1)}" y="${y + 21}" text-anchor="middle" font-size="13" font-weight="800" fill="${g.k < 0 ? "#4E6A5C" : claro(g.k) ? "#1D3229" : "#FFFFFF"}">${modo === "n" ? fmtInt(g.q) : Math.round(g.q / d.cls * 100) + "%"}</text>`;
+        x += w; });
+    }
+    const e = emProc(d);
+    if(base) s += `<rect x="${mL + bw + 14}" y="${y + 3}" width="80" height="26" rx="13" fill="#DCEBF7" stroke="#A9CBE8"/><text x="${mL + bw + 54}" y="${y + 21}" text-anchor="middle" font-size="13" font-weight="800" fill="#0A213D">${e.pct == null ? "—" : fmt1(e.pct) + "%"}</text>`;
+    if(l.nota) s += `<text x="${mL + bw + 104}" y="${y + 21}" font-size="12" fill="#4E6A5C">${esc(l.nota)}</text>`;
+    y += lh;
+  });
+  let lx = 36; const ly = y + 24;
+  NIV.forEach(nv => { s += `<rect x="${lx}" y="${ly - 12}" width="14" height="14" rx="3" fill="${nv.cor}"/><text x="${lx + 20}" y="${ly}" font-size="13" fill="#4E6A5C">${esc(nv.rot)}</text>`; lx += 36 + nv.rot.length * 7.4; });
+  if(modo === "n") s += `<rect x="${lx}" y="${ly - 12}" width="14" height="14" rx="3" fill="url(#hach)" stroke="#D8E8DC"/><text x="${lx + 20}" y="${ly}" font-size="13" fill="#4E6A5C">Sem informação</text>`;
+  s += `<rect x="36" y="${ly + 12}" width="34" height="18" rx="9" fill="#DCEBF7" stroke="#A9CBE8"/><text x="53" y="${ly + 26}" text-anchor="middle" font-size="12" font-weight="800" fill="#0A213D">%</text><text x="78" y="${ly + 26}" font-size="13" fill="#4E6A5C">${EP_ROT}: Intermediário + Avançado + Qualificado sobre o total dos quatro níveis</text>`;
+  s += `<text x="36" y="${ly + 58}" font-size="12" fill="#4E6A5C">Painel de Qualificação · versão prévia · acompanhamento trimestral da coordenação, dados de ${dataBR(DADOS.fonte.modificadoEm)} · IFF/Fiocruz · dados sujeitos a revisão</text>`;
+  return s + "</svg>";
+}
+function baixarPNG(svg, nome){
+  const img = new Image();
+  img.onload = () => {
+    const k = 2, cv = document.createElement("canvas"); cv.width = img.width * k; cv.height = img.height * k;
+    const g = cv.getContext("2d"); g.scale(k, k); g.drawImage(img, 0, 0);
+    cv.toBlob(b => { const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = nome; document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }, "image/png");
+  };
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);   /* data: em vez de blob: para não bloquear o canvas no Safari */
+}
+const nomeArq = s => normTxt(s).replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 60);
+/* dados de cada gráfico exportável, no estado atual do painel (recorte, avaliação, unidade aberta) */
+function graficoParaPng(chave){
+  const mats = recorte(), rec = rotRecorte(), av = rotAv(S.av), [tipo, arg] = chave.split(":");
+  const itens = d => `${fmtInt(d.cls)} classificados`;
+  if(tipo === "evolucao") return {nome: `qualificacao_evolucao_${nomeArq(rec)}`, titulo: "Evolução por avaliação", subtitulo: `${rec} · percentual dos itens classificados em cada nível`, modo: "pct",
+    linhas: AVS.map((a, i) => { const d = dist(mats, TODOS, i); return {rot: a.rot, sub: a.periodo, d, nota: a.realizada ? itens(d) : "", vazio: a.realizada ? null : "a realizar"}; })};
+  if(tipo === "eixo"){ const e = EIX.find(x => x.id === arg), de = dist(mats, INDS_EIXO[arg], S.av);
+    return {nome: `qualificacao_${nomeArq(e.rot)}_${nomeArq(rec)}_${AVS[S.av].n}a`, titulo: `${e.rot}, por dimensão`, subtitulo: `${rec} · ${av} · percentual dos itens classificados em cada nível`, modo: "pct",
+      linhas: [{rot: "Todas as dimensões do eixo", forte: true, d: de, nota: itens(de)}, ...DIM.filter(dm => dm.eixo === arg).map(dm => { const d = dist(mats, INDS_DIM[dm.id], S.av); return {rot: dm.rot, d, nota: itens(d)}; })]}; }
+  if(tipo === "ind"){ const e = EIX.find(x => x.id === arg), linhas = [];
+    DIM.filter(dm => dm.eixo === arg).forEach(dm => { linhas.push({grupo: dm.rot}); INDS_DIM[dm.id].forEach(i => { const d = dist(mats, [i], S.av); linhas.push({rot: `${IND[i].id}. ${IND[i].rot}`, d, nota: `${d.cls} de ${d.total} classificadas`}); }); });
+    return {nome: `qualificacao_indicadores_${nomeArq(e.rot)}_${nomeArq(rec)}_${AVS[S.av].n}a`, titulo: `${e.rot}: maternidades em cada nível, por indicador`, subtitulo: `${rec} · ${av} · número de maternidades`, modo: "n", linhas}; }
+  if(tipo === "local") return {nome: `qualificacao_local_${AVS[S.av].n}a`, titulo: E.modo === "grupos" ? "Classificação por grupo de estados" : "Classificação por região e por estado", subtitulo: `${rotEscopo()} · ${av} · percentual dos itens classificados em cada nível`, modo: "pct",
+    linhas: linhasLocal().map(r => ({rot: (r.tipo === "uf" ? "· " : "") + r.rot, forte: r.tipo !== "uf", d: r.d, nota: plural(r.mats.length, "maternidade", "maternidades")}))};
+  if(tipo === "perfil" && perfilAtual){ const m = perfilAtual;
+    const ev = inds => REALIZADAS.map(a => { const d = dist([m], inds, a); return {rot: AVS[a].rot, sub: AVS[a].periodo, d, nota: `${d.cls} de ${d.total} classificados`}; });
+    if(arg === "geral") return {nome: `qualificacao_${m.cnes}_evolucao`, titulo: m.nome, subtitulo: `${m.municipio}/${m.uf} · evolução dos ${IND.length} indicadores nas avaliações · número de indicadores em cada nível`, modo: "n", linhas: ev(TODOS)};
+    const e = EIX.find(x => x.id === arg), linhas = [{grupo: "Todas as dimensões do eixo"}, ...ev(INDS_EIXO[arg])];
+    DIM.filter(dm => dm.eixo === arg).forEach(dm => { linhas.push({grupo: dm.rot}); linhas.push(...ev(INDS_DIM[dm.id])); });
+    return {nome: `qualificacao_${m.cnes}_${nomeArq(e.rot)}`, titulo: `${m.nome} · ${e.rot}`, subtitulo: `${m.municipio}/${m.uf} · evolução nas avaliações · número de indicadores em cada nível`, modo: "n", linhas}; }
+  return null;
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-png]"); if(!b) return; const g = graficoParaPng(b.dataset.png); if(g) baixarPNG(svgGrafico(g), g.nome + ".png"); });
 
 /* ---------------- trilho lateral ---------------- */
 const TRILHO = [

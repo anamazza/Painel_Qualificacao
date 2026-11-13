@@ -13,6 +13,10 @@ cliques, sem internet e sem servidor.
 - **Em processo de qualificação**: indicador definido pela coordenação, presente em todas as seções. É a soma dos
   itens em Intermediário, Avançado e Qualificado sobre o total dos quatro níveis de progresso; "Não se Aplica" e sem
   informação não entram. A seção de comparação traz o resumo por nível nas duas avaliações, no formato da coordenação.
+- **Blocos por eixo e PNG** (sugestões da coordenação, 13/11/2026): a visão geral, a classificação por indicador e o
+  perfil da unidade têm um bloco para cada eixo; o perfil mostra a evolução da maternidade em todas as avaliações,
+  no total, por eixo e por dimensão; os gráficos têm botão para baixar em PNG (redesenhados em SVG com título,
+  legenda e fonte); o quadro das maternidades pode ser filtrado por eixo.
 - **Recorte geral** (barra fixa no topo): avaliação, região e estado. Vale para todas as seções.
 - **Mapa das maternidades**: estados coloridos pelo percentual dos itens classificados no nível escolhido e um
   ponto por maternidade. Tocar em um estado ou em uma região filtra o painel inteiro; tocar no ponto abre o perfil

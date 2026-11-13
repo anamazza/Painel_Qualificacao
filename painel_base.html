@@ -117,17 +117,17 @@ section.alt .card{background:var(--mint-card)}
 .hero .q{box-shadow:0 0 0 1.5px rgba(255,255,255,.75)}
 
 /* ---------------- barras empilhadas ---------------- */
-.pilha{display:flex; gap:2px; height:22px; border-radius:5px; overflow:hidden; min-width:0}
-.pilha i{display:block; height:100%; min-width:3px; font-style:normal; font-size:.7rem; font-weight:800; line-height:22px; text-align:center; color:#FFF; overflow:hidden; white-space:nowrap; font-variant-numeric:tabular-nums}
+.pilha{display:flex; gap:2px; height:28px; border-radius:6px; overflow:hidden; min-width:0}
+.pilha i{display:block; height:100%; min-width:3px; font-style:normal; font-size:.8rem; font-weight:800; line-height:28px; text-align:center; color:#FFF; overflow:hidden; white-space:nowrap; font-variant-numeric:tabular-nums}
 .pilha i.n0{background:var(--n0); color:var(--texto)} .pilha i.n1{background:var(--n1)} .pilha i.n2{background:var(--n2); color:var(--texto)}
 .pilha i.n3{background:var(--n3)} .pilha i.n4{background:var(--n4)} .pilha i.nsi{color:var(--texto-suave)}
 .pilha i:hover{filter:brightness(1.12)}
 .pilha.vazia{background:repeating-linear-gradient(135deg, #E6ECE8 0 4px, #F8FAF9 4px 8px); box-shadow:inset 0 0 0 1px var(--borda); font-size:.7rem; color:var(--texto-suave); align-items:center; justify-content:center; font-weight:700}
 .linhas{display:grid; gap:.35rem; margin-top:.9rem}
-.lin{display:grid; grid-template-columns:minmax(170px, 1.5fr) minmax(0, 3fr) 70px 150px; gap:.7rem; align-items:center; padding:.2rem .35rem; border-radius:8px; border:none; background:transparent; text-align:left; color:var(--texto); width:100%}
+.lin{display:grid; grid-template-columns:minmax(190px, 1.5fr) minmax(0, 3fr) 78px 160px; gap:.7rem; align-items:center; padding:.2rem .35rem; border-radius:8px; border:none; background:transparent; text-align:left; color:var(--texto); width:100%}
 button.lin:hover,button.lin.ativa{background:var(--mint)}
 button.lin.ativa{box-shadow:inset 3px 0 0 var(--verde-fiocruz)}
-.lin .rot{font-size:.84rem; font-weight:600; line-height:1.25; min-width:0; overflow-wrap:anywhere}
+.lin .rot{font-size:.9rem; font-weight:600; line-height:1.25; min-width:0; overflow-wrap:anywhere}
 .lin .rot small{display:block; font-size:.7rem; color:var(--texto-suave); font-weight:600}
 .lin .rot b.num{display:inline-block; min-width:1.7rem; color:var(--texto-suave); font-weight:800; font-variant-numeric:tabular-nums}
 .lin .n{font-size:.78rem; font-weight:700; text-align:right; color:var(--texto-suave); line-height:1.25; font-variant-numeric:tabular-nums; white-space:nowrap}
@@ -140,7 +140,7 @@ button.lin.ativa{box-shadow:inset 3px 0 0 var(--verde-fiocruz)}
 .detalhe-ind .sub{font-size:.82rem; color:var(--texto-suave); margin:0 0 .3rem}
 .detalhe-ind .sub b{color:var(--texto)}
 .niveis-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:.2rem 1.6rem; align-items:start}
-.ep{display:inline-block; min-width:62px; text-align:center; background:#DCEBF7; color:#0A213D; border:1px solid #A9CBE8; border-radius:999px; padding:.12rem .45rem; font-size:.78rem; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap}
+.ep{display:inline-block; min-width:68px; text-align:center; background:#DCEBF7; color:#0A213D; border:1px solid #A9CBE8; border-radius:999px; padding:.14rem .5rem; font-size:.84rem; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap}
 .ep.ep-leg{min-width:0; padding:0 .4rem; font-size:.7rem}
 table.tab tr.soma td{font-weight:700}
 table.tab tr.ep-linha td{background:#DCEBF7 !important; font-weight:800; color:#0A213D}
@@ -148,6 +148,26 @@ table.tab td.ep-col{background:#EAF3FB}
 table.matriz td.tot.ep-col{background:#EAF3FB}
 .grupo-tit{margin:1rem 0 .1rem; font-size:.7rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--verde-esmeralda); display:flex; gap:.5rem; align-items:baseline; flex-wrap:wrap}
 .grupo-tit small{font-weight:700; letter-spacing:0; text-transform:none; color:var(--texto-suave); font-size:.78rem}
+
+/* ---------------- blocos por eixo (separação pedida pela coordenação) ---------------- */
+.sub-sec{margin:1.6rem 0 .2rem; font-size:1.12rem; font-weight:800}
+.sub-sec-txt{font-size:.86rem; margin:0 0 .9rem}
+.blocos-eixo{display:grid; gap:1.1rem}
+.bloco-eixo{border-top:5px solid var(--verde-fiocruz)}
+.bloco-eixo.eixo-obst{border-top-color:#0A213D} .bloco-eixo.eixo-neo{border-top-color:#279261} .bloco-eixo.eixo-gestao{border-top-color:#7CB342}
+.eixo-cab{display:flex; align-items:center; gap:.6rem; flex-wrap:wrap}
+.eixo-cab h3{font-size:1.1rem}
+.eixo-cab .png{margin-left:auto}
+.lin.atual{background:var(--mint); box-shadow:inset 3px 0 0 var(--verde-fiocruz)}
+.eixo-faixa{margin:1.3rem 0 0; padding:.55rem 1rem; border-radius:10px; color:#FFF; font-weight:800; font-size:1.05rem; display:flex; gap:.9rem; align-items:baseline; flex-wrap:wrap; background:var(--verde-esmeralda)}
+.eixo-faixa small{font-weight:600; font-size:.8rem; opacity:.9}
+.eixo-faixa.eixo-obst{background:#0A213D} .eixo-faixa.eixo-neo{background:#1B5F51} .eixo-faixa.eixo-gestao{background:#5E8F2A}
+.mini-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(310px, 100%), 1fr)); gap:.9rem; margin-top:.5rem}
+.mini{border:1px solid var(--borda); border-radius:12px; padding:.65rem .8rem .55rem; background:var(--branco)}
+.mini-tit{font-size:.84rem; font-weight:700; line-height:1.25; margin:0 0 .45rem; min-height:2.1rem}
+.mini-lin{display:grid; grid-template-columns:1.9rem minmax(0, 1fr) auto; gap:.5rem; align-items:center; margin:.26rem 0; font-size:.78rem; font-weight:800; color:var(--texto-suave)}
+.mini .pilha{height:24px} .mini .pilha i{line-height:24px; font-size:.74rem}
+.mini .ep{min-width:60px; font-size:.76rem}
 
 /* ---------------- KPIs e listas laterais ---------------- */
 .kpi-lista{display:flex; flex-direction:column; gap:.3rem; margin-top:.6rem; font-size:.86rem}
@@ -253,7 +273,7 @@ body.perfil-aberto{overflow:hidden}
 .kpis-topo .k{background:rgba(255,255,255,.12); border-radius:10px; padding:.45rem .8rem; min-width:130px; text-align:right}
 .kpis-topo .k .n{font-size:1.35rem; font-weight:800; letter-spacing:-.02em; color:#FFF; line-height:1.1}
 .kpis-topo .k .t{font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:#C5E3CC; font-weight:700}
-.perfil-cards{display:grid; grid-template-columns:1fr; gap:1.1rem; margin-top:1.1rem}
+.perfil-cards{display:grid; grid-template-columns:minmax(0, 1fr); gap:1.1rem; margin-top:1.1rem}
 table.perfil{border-collapse:collapse; width:100%; font-size:.84rem}
 table.perfil th,table.perfil td{padding:.36rem .5rem; text-align:left; vertical-align:middle; border-bottom:1px solid var(--borda)}
 table.perfil thead th{background:var(--verde-esmeralda); color:#FFF; font-size:.74rem; font-weight:700; line-height:1.25; text-align:center}
@@ -291,6 +311,7 @@ footer a{color:var(--verde-lima)}
   .wrap{width:min(1320px, 100% - 1.6rem)}
   .perfil-topo{grid-template-columns:1fr} .kpis-topo{grid-template-columns:repeat(2, auto)} .kpis-topo .k{text-align:left}
   .lin{grid-template-columns:minmax(0,1fr) auto auto; row-gap:.12rem}
+  .eixo-cab .png{margin-left:0}
   .controles .filtro{min-width:0 !important; max-width:none !important; flex:1 1 100% !important}
   .controles .filtro select,.controles .filtro input{width:100%}
   table.trans{font-size:.74rem} table.trans th{font-size:.62rem}
@@ -302,8 +323,13 @@ footer a{color:var(--verde-lima)}
   .seg{display:flex; width:100%} .seg button{flex:1 1 auto; justify-content:center}
   table.matriz thead th.col-unid, table.matriz td.col-unid{min-width:170px; max-width:200px}
 }
+@media (max-width: 560px){   /* celular: a barra ocupa a largura toda; percentual e contagem ficam na linha de baixo */
+  .lin{grid-template-columns:auto minmax(0,1fr)}
+  .lin .pilha{grid-column:1 / -1}
+  .lin .n{text-align:left}
+}
 @media print{
-  .trilho,.pd-topo,footer,.recorte{display:none !important}
+  .trilho,.pd-topo,footer,.recorte,.png{display:none !important}
   body{padding-left:0 !important; background:#FFF}
   body.perfil-aberto{overflow:visible}
   body.perfil-aberto > *:not(#paginaPerfil){display:none !important}
@@ -393,7 +419,7 @@ footer a{color:var(--verde-lima)}
     </div>
     <div class="grid-2">
       <div class="card">
-        <h3>Evolução por avaliação</h3>
+        <div class="eixo-cab"><h3>Evolução por avaliação</h3><button class="chip chip-botao png" data-png="evolucao" title="Baixar este gráfico em PNG">⬇ PNG</button></div>
         <p class="sub">Percentual dos itens classificados em cada nível. Toque em uma linha para escolher a avaliação.</p>
         <div class="linhas" id="evolucao"></div>
         <div class="legenda" id="legendaGeral"></div>
@@ -401,11 +427,9 @@ footer a{color:var(--verde-lima)}
       </div>
       <div class="card" id="kpisGeral"></div>
     </div>
-    <div class="card" style="margin-top:1.1rem">
-      <h3 id="dimTitulo">Por eixo e dimensão</h3>
-      <p class="sub">Percentual dos itens classificados em cada nível, na avaliação escolhida. À direita, quantos itens estão classificados e quantos estão sem informação.</p>
-      <div class="linhas" id="porDimensao"></div>
-    </div>
+    <h3 class="sub-sec" id="dimTitulo">Por eixo e dimensão</h3>
+    <p class="suave sub-sec-txt">Um bloco para cada eixo. As barras mostram o percentual dos itens classificados em cada nível, na avaliação escolhida; em azul-claro, o percentual em processo de qualificação.</p>
+    <div class="blocos-eixo" id="porEixo"></div>
   </div>
 </section>
 
@@ -415,9 +439,10 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Indicadores</p>
       <h2>Classificação por indicador</h2>
-      <p>Cada barra representa as maternidades do recorte, na avaliação escolhida: o número dentro de cada cor é a quantidade de maternidades naquele nível, e o trecho hachurado, as que estão sem informação. Toque em um indicador para abrir, logo abaixo dele, a relação das maternidades em cada nível; toque novamente para fechar.</p>
+      <p>Um bloco para cada eixo. Cada barra representa as maternidades do recorte, na avaliação escolhida: o número dentro de cada cor é a quantidade de maternidades naquele nível, e o trecho hachurado, as que estão sem informação. Toque em um indicador para abrir, logo abaixo dele, a relação das maternidades em cada nível; toque novamente para fechar.</p>
     </div>
-    <div class="card"><div id="listaInd"></div><div class="legenda" id="legendaInd"></div></div>
+    <div class="blocos-eixo" id="listaInd"></div>
+    <div class="legenda" id="legendaInd"></div>
   </div>
 </section>
 
@@ -433,6 +458,7 @@ footer a{color:var(--verde-lima)}
       <label class="filtro" style="min-width:300px; flex:1; max-width:560px"><span>O que comparar</span><select id="selEscopo"></select></label>
       <div class="filtro"><span>Agrupar por</span><div class="seg" id="segModo"><button data-modo="regioes" class="ativo">Regiões e estados</button><button data-modo="grupos">Grupos de estados</button></div></div>
       <button class="chip chip-botao" id="btnCsvLocal" style="align-self:end">⬇ Baixar tabela (CSV)</button>
+      <button class="chip chip-botao" data-png="local" style="align-self:end" title="Baixar o gráfico desta tabela em PNG">⬇ Gráfico (PNG)</button>
     </div>
     <div class="tab-wrap"><table class="tab" id="tabLocal"></table></div>
     <div class="legenda" id="legendaLocal"></div>
@@ -450,6 +476,7 @@ footer a{color:var(--verde-lima)}
     <div class="controles">
       <label class="filtro" style="min-width:320px; flex:1; max-width:520px"><span>Perfil da unidade</span><select id="selPerfil"></select></label>
       <label class="filtro" style="min-width:220px"><span>Buscar no quadro</span><input type="search" id="buscaMat" placeholder="nome, município, estado ou CNES"/></label>
+      <div class="filtro"><span>Eixo</span><div class="seg" id="segEixoMat"></div></div>
       <div class="filtro"><span>Ordenar por</span><div class="seg" id="segOrdem"><button data-ordem="uf" class="ativo">Estado</button><button data-ordem="nome">Nome</button><button data-ordem="q">Mais qualificados</button></div></div>
       <button class="chip chip-botao" id="btnCsvMatriz" style="align-self:end">⬇ Quadro (CSV)</button>
       <button class="chip chip-botao" id="btnCsvTudo" style="align-self:end" title="Uma linha por maternidade, indicador e avaliação">⬇ Todas as avaliações (CSV)</button>
@@ -522,8 +549,8 @@ footer a{color:var(--verde-lima)}
   <div class="pd-topo">
     <div class="wrap pd-topo-linha">
       <button class="chip chip-acao" id="btnVoltar">← Voltar ao painel</button>
-      <div style="display:flex; gap:.6rem; flex-wrap:wrap; align-items:center">
-        <select id="selPerfilPd" style="min-width:280px" aria-label="Trocar de unidade"></select>
+      <div style="display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; min-width:0; max-width:100%">
+        <select id="selPerfilPd" style="min-width:min(280px, 100%); max-width:100%" aria-label="Trocar de unidade"></select>
         <button class="chip chip-botao" id="btnCsvPerfil" title="Baixar a classificação desta unidade em CSV">⬇ CSV</button>
         <button class="chip chip-botao" id="btnPdfPerfil" title="Imprimir ou salvar o perfil em PDF">⬇ Baixar PDF</button>
       </div>
