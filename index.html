@@ -659,14 +659,21 @@ function pilha(d, modo){
   const base = comSI ? d.total : d.cls;
   if(!d.cls && !comSI) return `<span class="pilha vazia"${tip(`Sem informação nos ${fmtInt(d.total)} itens`)}>sem informação</span>`;
   if(!base) return `<span class="pilha vazia">—</span>`;
+  /* toda faixa leva o seu rótulo: a largura mínima de cada uma é a do próprio rótulo, e as demais cedem espaço */
+  const faixa = (cls, q, rot, dica) => `<i class="${cls}" style="flex:${q} 1 0; min-width:calc(${rot.length}ch + .5rem)"${dica}>${esc(rot)}</i>`;
   let h = "";
   NIV.forEach((nv, k) => {
     const q = d.n[k]; if(!q) return;
-    const rot = q / base >= .08 ? (comSI ? fmtInt(q) : Math.round(q / d.cls * 100) + "%") : "";
-    h += `<i class="n${k}" style="flex:${q} 1 0"${tip(`<b>${esc(nv.rot)}</b>: ${fmtInt(q)} · ${pct(q, d.cls)} dos classificados`)}>${rot}</i>`;
+    h += faixa("n" + k, q, rotFaixa(q, d.cls, modo), tip(`<b>${esc(nv.rot)}</b>: ${fmtInt(q)} · ${pct(q, d.cls)} dos classificados`));
   });
-  if(comSI && d.si) h += `<i class="nsi" style="flex:${d.si} 1 0"${tip(`<b>Sem informação</b>: ${fmtInt(d.si)} de ${fmtInt(d.total)}`)}>${d.si / base >= .08 ? fmtInt(d.si) : ""}</i>`;
+  if(comSI && d.si) h += faixa("nsi", d.si, fmtInt(d.si), tip(`<b>Sem informação</b>: ${fmtInt(d.si)} de ${fmtInt(d.total)}`));
   return `<span class="pilha">${h}</span>`;
+}
+/* rótulo de uma faixa: contagem (modo "n") ou percentual dos classificados (modo "pct"; abaixo de 0,5% aparece "<1%") */
+function rotFaixa(q, cls, modo){
+  if(modo === "n") return fmtInt(q);
+  const p = Math.round(q / cls * 100);
+  return p < 1 ? "<1%" : p + "%";
 }
 /* Em processo de qualificação (definição da coordenação, 11/11/2026): Intermediário + Avançado + Qualificado sobre o
    total dos quatro níveis de progresso (Não Iniciado, Intermediário, Avançado e Qualificado). Resume a parcela em que
@@ -1314,9 +1321,14 @@ function svgGrafico({titulo, subtitulo, linhas, modo}){
       let x = mL;
       const segs = NIV.map((nv, k) => ({q: d.n[k], cor: nv.cor, k})).filter(g => g.q);
       if(modo === "n" && d.si) segs.push({q: d.si, cor: "url(#hach)", k: -1});
-      segs.forEach(g => { const w = g.q / base * bw;
+      /* toda faixa leva o seu rótulo: as estreitas ganham a largura mínima do rótulo e as demais cedem espaço */
+      segs.forEach(g => { g.rot = g.k < 0 ? fmtInt(g.q) : rotFaixa(g.q, d.cls, modo); g.min = g.rot.length * 9 + 12; g.w = g.q / base * bw; g.fixa = false; });
+      for(let mudou = true; mudou;){ mudou = false;
+        const livre = bw - segs.filter(g => g.fixa).reduce((t, g) => t + g.min, 0), qLivre = segs.filter(g => !g.fixa).reduce((t, g) => t + g.q, 0);
+        segs.forEach(g => { if(g.fixa) g.w = g.min; else { g.w = g.q / qLivre * livre; if(g.w < g.min){ g.fixa = true; mudou = true; } } }); }
+      segs.forEach(g => { const w = g.w;
         s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(1, w - 2).toFixed(1)}" height="${bh}" rx="3" fill="${g.cor}"${g.k < 0 ? ' stroke="#D8E8DC"' : ""}/>`;
-        if(w >= 36) s += `<text x="${(x + (w - 2) / 2).toFixed(1)}" y="${y + 21}" text-anchor="middle" font-size="13" font-weight="800" fill="${g.k < 0 ? "#4E6A5C" : claro(g.k) ? "#1D3229" : "#FFFFFF"}">${modo === "n" ? fmtInt(g.q) : Math.round(g.q / d.cls * 100) + "%"}</text>`;
+        s += `<text x="${(x + (w - 2) / 2).toFixed(1)}" y="${y + 21}" text-anchor="middle" font-size="13" font-weight="800" fill="${g.k < 0 ? "#4E6A5C" : claro(g.k) ? "#1D3229" : "#FFFFFF"}">${esc(g.rot)}</text>`;
         x += w; });
     }
     const e = emProc(d);
