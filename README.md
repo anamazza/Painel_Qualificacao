@@ -10,6 +10,9 @@ cliques, sem internet e sem servidor.
 
 ## O que o painel contém
 
+- **Em processo de qualificação**: indicador definido pela coordenação, presente em todas as seções. É a soma dos
+  itens em Intermediário, Avançado e Qualificado sobre o total dos quatro níveis de progresso; "Não se Aplica" e sem
+  informação não entram. A seção de comparação traz o resumo por nível nas duas avaliações, no formato da coordenação.
 - **Recorte geral** (barra fixa no topo): avaliação, região e estado. Vale para todas as seções.
 - **Mapa das maternidades**: estados coloridos pelo percentual dos itens classificados no nível escolhido e um
   ponto por maternidade. Tocar em um estado ou em uma região filtra o painel inteiro; tocar no ponto abre o perfil

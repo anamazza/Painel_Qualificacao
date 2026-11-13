@@ -124,7 +124,7 @@ section.alt .card{background:var(--mint-card)}
 .pilha i:hover{filter:brightness(1.12)}
 .pilha.vazia{background:repeating-linear-gradient(135deg, #E6ECE8 0 4px, #F8FAF9 4px 8px); box-shadow:inset 0 0 0 1px var(--borda); font-size:.7rem; color:var(--texto-suave); align-items:center; justify-content:center; font-weight:700}
 .linhas{display:grid; gap:.35rem; margin-top:.9rem}
-.lin{display:grid; grid-template-columns:minmax(170px, 1.5fr) minmax(0, 3fr) 150px; gap:.7rem; align-items:center; padding:.2rem .35rem; border-radius:8px; border:none; background:transparent; text-align:left; color:var(--texto); width:100%}
+.lin{display:grid; grid-template-columns:minmax(170px, 1.5fr) minmax(0, 3fr) 70px 150px; gap:.7rem; align-items:center; padding:.2rem .35rem; border-radius:8px; border:none; background:transparent; text-align:left; color:var(--texto); width:100%}
 button.lin:hover,button.lin.ativa{background:var(--mint)}
 button.lin.ativa{box-shadow:inset 3px 0 0 var(--verde-fiocruz)}
 .lin .rot{font-size:.84rem; font-weight:600; line-height:1.25; min-width:0; overflow-wrap:anywhere}
@@ -140,6 +140,12 @@ button.lin.ativa{box-shadow:inset 3px 0 0 var(--verde-fiocruz)}
 .detalhe-ind .sub{font-size:.82rem; color:var(--texto-suave); margin:0 0 .3rem}
 .detalhe-ind .sub b{color:var(--texto)}
 .niveis-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:.2rem 1.6rem; align-items:start}
+.ep{display:inline-block; min-width:62px; text-align:center; background:#DCEBF7; color:#0A213D; border:1px solid #A9CBE8; border-radius:999px; padding:.12rem .45rem; font-size:.78rem; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap}
+.ep.ep-leg{min-width:0; padding:0 .4rem; font-size:.7rem}
+table.tab tr.soma td{font-weight:700}
+table.tab tr.ep-linha td{background:#DCEBF7 !important; font-weight:800; color:#0A213D}
+table.tab td.ep-col{background:#EAF3FB}
+table.matriz td.tot.ep-col{background:#EAF3FB}
 .grupo-tit{margin:1rem 0 .1rem; font-size:.7rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--verde-esmeralda); display:flex; gap:.5rem; align-items:baseline; flex-wrap:wrap}
 .grupo-tit small{font-weight:700; letter-spacing:0; text-transform:none; color:var(--texto-suave); font-size:.78rem}
 
@@ -243,7 +249,7 @@ body.perfil-aberto{overflow:hidden}
 .perfil-topo{background:linear-gradient(135deg, var(--verde-profundo), var(--verde-esmeralda)); color:#F1F8F3; border-radius:var(--radius); padding:1.4rem 1.5rem; box-shadow:var(--sombra-alta); display:grid; grid-template-columns:1fr auto; gap:1rem; align-items:center}
 .perfil-topo .meta{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem}
 .perfil-topo .meta span{display:inline-flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.13); border-radius:999px; padding:.2rem .7rem; font-size:.78rem; font-weight:700}
-.kpis-topo{display:grid; grid-template-columns:repeat(2, auto); gap:.6rem}
+.kpis-topo{display:grid; grid-template-columns:repeat(3, auto); gap:.6rem}
 .kpis-topo .k{background:rgba(255,255,255,.12); border-radius:10px; padding:.45rem .8rem; min-width:130px; text-align:right}
 .kpis-topo .k .n{font-size:1.35rem; font-weight:800; letter-spacing:-.02em; color:#FFF; line-height:1.1}
 .kpis-topo .k .t{font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:#C5E3CC; font-weight:700}
@@ -283,8 +289,8 @@ footer a{color:var(--verde-lima)}
   .trilho button::after{display:none}
   body{padding-bottom:76px}
   .wrap{width:min(1320px, 100% - 1.6rem)}
-  .perfil-topo{grid-template-columns:1fr} .kpis-topo .k{text-align:left}
-  .lin{grid-template-columns:minmax(0,1fr) auto; row-gap:.12rem}
+  .perfil-topo{grid-template-columns:1fr} .kpis-topo{grid-template-columns:repeat(2, auto)} .kpis-topo .k{text-align:left}
+  .lin{grid-template-columns:minmax(0,1fr) auto auto; row-gap:.12rem}
   .controles .filtro{min-width:0 !important; max-width:none !important; flex:1 1 100% !important}
   .controles .filtro select,.controles .filtro input{width:100%}
   table.trans{font-size:.74rem} table.trans th{font-size:.62rem}
@@ -333,6 +339,7 @@ footer a{color:var(--verde-lima)}
   <div class="stat"><div class="num" id="statInd">—</div><div class="rot">Indicadores</div><div class="sub" id="statIndSub"></div></div>
   <div class="stat"><div class="num" id="statAv">—</div><div class="rot">Avaliações realizadas</div><div class="sub" id="statAvSub"></div></div>
   <div class="stat"><div class="num" id="statCls">—</div><div class="rot">Itens classificados</div><div class="sub" id="statClsSub"></div></div>
+  <div class="stat" style="background:#EAF3FB"><div class="num" id="statEP">—</div><div class="rot">Em processo de qualificação</div><div class="sub" id="statEPSub"></div></div>
   <div class="stat"><div class="num" id="statQual">—</div><div class="rot">Qualificado</div><div class="sub" id="statQualSub"></div></div>
   <button class="stat stat-btn" id="btnNotas" title="Fontes, regras de leitura e cobertura"><div class="num" style="font-size:1.5rem">ⓘ</div><div class="rot">Notas metodológicas</div></button>
 </div>
@@ -465,6 +472,13 @@ footer a{color:var(--verde-lima)}
       <label class="filtro"><span>De</span><select id="selDe"></select></label>
       <label class="filtro"><span>Para</span><select id="selPara"></select></label>
     </div>
+    <div class="card" style="margin-bottom:1.1rem">
+      <h3>Resumo por nível e percentual em processo de qualificação</h3>
+      <p class="sub">Número de itens em cada nível nas duas avaliações escolhidas, a soma de Intermediário, Avançado e Qualificado e o percentual em processo de qualificação. Quando se escolhe um único indicador, cada item é uma maternidade.</p>
+      <div class="controles" style="margin:.7rem 0 .6rem"><label class="filtro" style="min-width:300px; flex:1; max-width:560px"><span>O que resumir</span><select id="selEscopoRes"></select></label></div>
+      <div class="tab-wrap"><table class="tab" id="tabResumo"></table></div>
+      <p class="fonte" id="notaResumo"></p>
+    </div>
     <div class="kpis-linha" id="kpisMud"></div>
     <div class="grid-eq">
       <div class="card"><h3>Transição entre níveis</h3><p class="sub">Linhas: nível na primeira avaliação escolhida. Colunas: nível na segunda. A diagonal reúne os itens que mantiveram o nível.</p><div id="transicao"></div></div>
@@ -568,7 +582,7 @@ const HAB_URL = "https://anamazza.github.io/Indicadores_Brasil/habilitacoes/";
 
 /* estado: recorte geral (vale para todas as seções) e escolhas de cada seção */
 const S = {av: ULT, regiao: "", uf: ""};
-const E = {ind: null, escopo: "todos", modo: "regioes", ordem: "uf", busca: "", de: PRIM, para: ULT, nivelMapa: NIV.length - 1, pontos: true};
+const E = {ind: null, escopo: "todos", modo: "regioes", ordem: "uf", busca: "", de: PRIM, para: ULT, nivelMapa: "ep", pontos: true, escopoRes: "todos"};
 
 /* ---------------- utilidades ---------------- */
 const $ = id => document.getElementById(id);
@@ -627,7 +641,16 @@ function pilha(d, modo){
   if(comSI && d.si) h += `<i class="nsi" style="flex:${d.si} 1 0"${tip(`<b>Sem informação</b>: ${fmtInt(d.si)} de ${fmtInt(d.total)}`)}>${d.si / base >= .08 ? fmtInt(d.si) : ""}</i>`;
   return `<span class="pilha">${h}</span>`;
 }
-const legendaHtml = comSI => NIV.map((n, k) => `<span><i class="q n${k}"></i>${esc(n.rot)}</span>`).join("") + (comSI ? `<span><i class="q nsi"></i>Sem informação</span>` : "");
+/* Em processo de qualificação (definição da coordenação, 11/11/2026): Intermediário + Avançado + Qualificado sobre o
+   total dos quatro níveis de progresso (Não Iniciado, Intermediário, Avançado e Qualificado). Resume a parcela em que
+   alguma ação já foi feita. "Não se Aplica" e os itens sem informação não entram na conta. */
+const EP_ROT = "Em processo de qualificação", EP_COR = "#4A9BD1";
+function emProc(d){ const num = d.n[2] + d.n[3] + d.n[4], den = d.n[1] + num; return {num, den, pct: den ? num / den * 100 : null}; }
+const epTxt = d => { const e = emProc(d); return e.pct == null ? "—" : fmt1(e.pct) + "%"; };
+const epChip = d => { const e = emProc(d);
+  return `<span class="ep"${tip(`<b>${EP_ROT}</b>: ${fmtInt(e.num)} de ${fmtInt(e.den)}<br>Intermediário + Avançado + Qualificado sobre o total dos quatro níveis`)}>${e.pct == null ? "—" : fmt1(e.pct) + "%"}</span>`; };
+const legendaHtml = comSI => NIV.map((n, k) => `<span><i class="q n${k}"></i>${esc(n.rot)}</span>`).join("") + (comSI ? `<span><i class="q nsi"></i>Sem informação</span>` : "") +
+  `<span><span class="ep ep-leg">%</span>${EP_ROT}: Intermediário + Avançado + Qualificado sobre o total</span>`;
 
 /* ---------------- dica flutuante ---------------- */
 const tipEl = $("tip");
@@ -650,8 +673,8 @@ document.addEventListener("scroll", () => { tipEl.hidden = true; tipEl._de = nul
 /* ---------------- cabeçalho, destaques e notas ---------------- */
 function montarCabecalho(){
   const versao = dataBR(DADOS.fonte.modificadoEm);
-  $("heroFonte").textContent = `planilha de ${versao}`;
-  $("rodapeFonte").textContent = `planilha de acompanhamento da coordenação, versão de ${versao}`;
+  $("heroFonte").textContent = `versão prévia · planilha de ${versao}`;
+  $("rodapeFonte").textContent = `versão prévia · planilha de acompanhamento da coordenação, versão de ${versao}`;
   $("heroNiveis").innerHTML = NIV.map((n, k) => `<span><i class="q n${k}"></i>${esc(n.rot)}</span>`).join("") + `<span><i class="q nsi"></i>Sem informação</span>`;
   const ufs = new Set(MAT.map(m => m.uf));
   const d = dist(MAT, TODOS, ULT);
@@ -663,6 +686,8 @@ function montarCabecalho(){
   $("statAvSub").textContent = `última: ${AVS[ULT].periodo}`;
   $("statCls").textContent = fmtInt(d.cls);
   $("statClsSub").textContent = `de ${fmtInt(d.total)} na ${AVS[ULT].rot}`;
+  $("statEP").textContent = epTxt(d);
+  $("statEPSub").textContent = `dos itens avaliados na ${AVS[ULT].rot}`;
   $("statQual").textContent = pct(d.n[4], d.cls);
   $("statQualSub").textContent = `dos classificados na ${AVS[ULT].rot}`;
   $("btnNotas").addEventListener("click", () => $("secNotas").scrollIntoView({behavior: "smooth"}));
@@ -683,6 +708,7 @@ function montarCabecalho(){
     <li><b>Unidade de leitura.</b> O painel lê apenas as abas regionais da planilha, uma linha por maternidade em cada indicador. As abas "Brasil" e "Por Região" e as linhas de total, percentual e média não são usadas: todas as contagens são refeitas pelo painel.</li>
     <li><b>Sem informação.</b> A marcação "SI" e a célula em branco recebem o mesmo tratamento (orientação da coordenação em 11/11/2026).</li>
     <li><b>Percentuais.</b> São calculados sobre os itens classificados, isto é, sem contar os itens sem informação. "Não se Aplica" é um nível registrado e conta como item classificado.</li>
+    <li><b>Em processo de qualificação.</b> Indicador definido pela coordenação: soma dos itens em Intermediário, Avançado e Qualificado, dividida pelo total de itens nos quatro níveis de progresso (Não Iniciado, Intermediário, Avançado e Qualificado). Resume a parcela em que alguma ação já foi realizada, isto é, que deixou o nível Não Iniciado. Os itens em "Não se Aplica" e os itens sem informação não entram nessa conta.</li>
     <li><b>Mudanças de nível.</b> Avanço e recuo seguem a ordem Não Iniciado, Intermediário, Avançado e Qualificado, e só comparam itens classificados nas duas avaliações. Mudanças de ou para "Não se Aplica" são contadas à parte.</li>
     ${corr.map(c => `<li><b>Marcação ajustada na leitura.</b> Aba ${esc(c.aba)}, linha ${c.linha}, ${c.avaliacao}ª avaliação, ${esc(MAT.find(m => m.nomePlanilha === c.servico)?.nome || c.servico)} (${esc(c.uf)}), indicador "${esc(c.indicador)}": a célula traz "${esc(c.lido)}" e foi lida como marcação em "${esc(c.usado)}".</li>`).join("")}
     ${anom.map(c => `<li><b>Célula não aproveitada.</b> Aba ${esc(c.aba)}, linha ${c.linha}, ${c.avaliacao}ª avaliação, ${esc(c.servico)} (${esc(c.uf)}), indicador "${esc(c.indicador)}": ${esc(c.motivo)}; o item ficou sem informação.</li>`).join("")}
@@ -693,7 +719,7 @@ function montarCabecalho(){
     <p><b>Cobertura na ${esc(AVS[ULT].rot)}.</b> ${fmtInt(d.cls)} dos ${fmtInt(d.total)} itens (${fmtInt(MAT.length)} maternidades × ${IND.length} indicadores) estão classificados. Indicadores com pelo menos uma maternidade classificada, por grupo de estados da planilha:</p>
     <ul>${porGrupo.map(x => `<li><b>${esc(x.g.rot)}</b> (${plural(x.n, "maternidade", "maternidades")}): ${x.com} de ${IND.length} indicadores</li>`).join("")}</ul>
     ${semNenhuma.length ? `<p><b>Indicadores sem classificação em nenhuma maternidade:</b> ${semNenhuma.map(i => `${esc(i.rot)} (${esc(DIM_POR[i.dim].rot)})`).join("; ")}.</p>` : ""}
-    <p><b>Avaliações a realizar:</b> ${AVS.filter(a => !a.realizada).map(a => `${esc(a.rot)} (${esc(a.periodo)})`).join("; ") || "nenhuma"}. A planilha está em preenchimento e o painel é refeito a cada nova versão recebida.</p>
+    <p><b>Avaliações a realizar:</b> ${AVS.filter(a => !a.realizada).map(a => `${esc(a.rot)} (${esc(a.periodo)})`).join("; ") || "nenhuma"}. Esta é uma versão prévia: o painel mostra apenas o que está registrado na planilha, e o que ainda não foi preenchido aparece em branco, como "sem informação". O painel é refeito a cada nova versão recebida.</p>
     <p><b>Identificação das maternidades.</b> A planilha identifica cada maternidade pelo nome e pelo estado. Cada uma foi associada, pelo nome, ao código do Cadastro Nacional de Estabelecimentos de Saúde (CNES) usado nos painéis de Nascimentos, Internação, Mortalidade e Habilitações. O painel exibe o nome adotado nesses painéis; quando o nome registrado na planilha é diferente, ele aparece no perfil da unidade. As ${fmtInt(MAT.length)} maternidades pertencem ao grupo de maternidades apoiadas (estratégicas) dos demais painéis.</p>`;
 }
 
@@ -766,7 +792,7 @@ const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
 const mistura = (hex, t) => `rgb(${hexRgb(hex).map(v => Math.round(255 + (v - 255) * t)).join(",")})`;   // do branco (0) à cor cheia (1)
 const PASSOS_MAPA = [.16, .34, .54, .76, 1];
 const CLASSES_MAPA = [{ate: 10, rot: "até 10%"}, {ate: 25, rot: "mais de 10% a 25%"}, {ate: 40, rot: "mais de 25% a 40%"}, {ate: 60, rot: "mais de 40% a 60%"}, {ate: 100, rot: "mais de 60%"}];
-const classeMapa = p => CLASSES_MAPA.findIndex(c => p <= c.ate);
+const CLASSES_EP = [{ate: 40, rot: "até 40%"}, {ate: 60, rot: "mais de 40% a 60%"}, {ate: 75, rot: "mais de 60% a 75%"}, {ate: 90, rot: "mais de 75% a 90%"}, {ate: 100, rot: "mais de 90%"}];
 let svgMapa = null, animMapa = null, vbMapa = null;
 function ajustaEscalaMapa(){
   if(!svgMapa) return;
@@ -792,8 +818,9 @@ function cliqueUF(uf){
 }
 function renderMapa(){
   const nv = E.nivelMapa, mats = recorte(), dRec = dist(mats, TODOS, S.av);
+  const ehEP = nv === "ep", corMapa = ehEP ? EP_COR : NIV[nv].cor, classes = ehEP ? CLASSES_EP : CLASSES_MAPA;
   $("pillsRegiao").querySelectorAll("button").forEach(b => b.classList.toggle("ativo", b.dataset.regiao === S.regiao));
-  $("pillsNivel").querySelectorAll("button").forEach(b => b.classList.toggle("ativo", +b.dataset.nivel === nv));
+  $("pillsNivel").querySelectorAll("button").forEach(b => b.classList.toggle("ativo", b.dataset.nivel === String(nv)));
   /* resumo do recorte */
   $("mapaResumo").innerHTML = `
     <p class="eyebrow">Recorte em uso no painel</p>
@@ -802,6 +829,7 @@ function renderMapa(){
     <div class="kpi-lista">
       <div class="kpi"><span>Maternidades</span><span class="v">${fmtInt(mats.length)}</span></div>
       <div class="kpi"><span>Itens classificados</span><span class="v">${fmtInt(dRec.cls)}<small>de ${fmtInt(dRec.total)}</small></span></div>
+      <div class="kpi"><span>${EP_ROT}</span><span class="v">${epTxt(dRec)}</span></div>
     </div>
     <div style="margin-top:.8rem">${pilha(dRec, "pct")}</div>
     ${S.uf ? `<ul class="lista-unid" style="margin-top:.8rem">${mats.slice().sort(porUFNome).map(m => `<li><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}</small></li>`).join("")}</ul>` : ""}
@@ -815,19 +843,19 @@ function renderMapa(){
   svgMapa.setAttribute("role", "img"); svgMapa.setAttribute("aria-label", "Mapa do Brasil com os estados e as maternidades");
   const g = document.createElementNS(NS, "g"), presentes = new Set(), classeUF = {};
   GEO.uf.forEach(t => {
-    const ms = porUF[t.id] || [], d = dist(ms, TODOS, S.av), p = d.cls ? d.n[nv] / d.cls * 100 : null, cls = p == null ? -1 : classeMapa(p);
+    const ms = porUF[t.id] || [], d = dist(ms, TODOS, S.av), p = ehEP ? emProc(d).pct : (d.cls ? d.n[nv] / d.cls * 100 : null), cls = p == null ? -1 : classes.findIndex(c => p <= c.ate);
     presentes.add(cls); classeUF[t.id] = cls;
     const el = document.createElementNS(NS, "path"); el.setAttribute("d", t.d); el.dataset.uf = t.id;
     el.setAttribute("class", "t" + (S.uf === t.id ? " sel" : "") + (noRecorte(t.id) ? "" : " fora"));
-    el.setAttribute("fill", cls < 0 ? "#E4EBE5" : mistura(NIV[nv].cor, PASSOS_MAPA[cls]));
+    el.setAttribute("fill", cls < 0 ? "#E4EBE5" : mistura(corMapa, PASSOS_MAPA[cls]));
     el.dataset.tip = `<b>${esc(UF_NOME[t.id])}</b><br>${ms.length ? plural(ms.length, "maternidade", "maternidades") + ` · ${fmtInt(d.cls)} de ${fmtInt(d.total)} itens classificados` : "sem maternidade na planilha"}` +
-      (d.cls ? `<br><b>${esc(NIV[nv].rot)}</b>: ${fmtInt(d.n[nv])} · ${pct(d.n[nv], d.cls)} dos classificados` : "") +
+      (d.cls ? `<br><b>${EP_ROT}</b>: ${epTxt(d)}` + (ehEP ? "" : `<br><b>${esc(NIV[nv].rot)}</b>: ${fmtInt(d.n[nv])} · ${pct(d.n[nv], d.cls)} dos classificados`) : "") +
       (ms.length ? "<br>" + ms.slice().sort(porUFNome).slice(0, 6).map(m => "· " + esc(m.nome)).join("<br>") + (ms.length > 6 ? `<br>· mais ${ms.length - 6}` : "") : "");
     el.addEventListener("click", () => cliqueUF(t.id));
     g.appendChild(el);
   });
   svgMapa.appendChild(g); box.appendChild(svgMapa);
-  const escuro = cls => cls >= 3 && nv !== 0 && nv !== 2;             // sigla branca só sobre cor escura
+  const escuro = cls => cls >= 3 && !ehEP && nv !== 0 && nv !== 2;             // sigla branca só sobre cor escura
   svgMapa.querySelectorAll("path.t").forEach(el => {
     const bb = el.getBBox(), tx = document.createElementNS(NS, "text");
     tx.setAttribute("x", (bb.x + bb.width / 2).toFixed(1)); tx.dataset.cy = (bb.y + bb.height / 2).toFixed(1);
@@ -842,7 +870,7 @@ function renderMapa(){
       const c = document.createElementNS(NS, "circle"), d = dist([m], TODOS, S.av);
       c.setAttribute("cx", m._xy[0].toFixed(1)); c.setAttribute("cy", m._xy[1].toFixed(1)); c.setAttribute("class", "ponto" + (noRecorte(m.uf) ? "" : " fora"));
       c.dataset.tip = `<b>${esc(m.nome)}</b><br>${esc(m.municipio)} · ${m.uf} · CNES ${m.cnes}<br>${d.cls} de ${d.total} indicadores classificados` +
-        (d.cls ? "<br>" + NIV.map((n, k) => d.n[k] ? `${esc(n.rot)}: ${d.n[k]}` : "").filter(Boolean).join(" · ") : "") + `<br><i>toque para abrir o perfil da unidade</i>`;
+        (d.cls ? "<br>" + NIV.map((n, k) => d.n[k] ? `${esc(n.rot)}: ${d.n[k]}` : "").filter(Boolean).join(" · ") : "") + (emProc(d).den ? `<br><b>${EP_ROT}</b>: ${epTxt(d)}` : "") + `<br><i>toque para abrir o perfil da unidade</i>`;
       c.addEventListener("click", () => abrirPerfil(m.cnes));
       gp.appendChild(c);
     });
@@ -857,8 +885,8 @@ function renderMapa(){
     const pad = Math.max(x1 - x0, y1 - y0) * .1; alvo = [x0 - pad, y0 - pad, (x1 - x0) + 2 * pad, (y1 - y0) + 2 * pad];
   }
   ajustaEscalaMapa(); animaMapa(alvo);
-  $("tituloLegenda").innerHTML = `Percentual dos itens classificados de cada estado no nível <b>${esc(NIV[nv].rot)}</b> · ${esc(rotAv(S.av))}`;
-  $("legendaMapa").innerHTML = CLASSES_MAPA.map((c, i) => presentes.has(i) ? `<span><i class="q" style="background:${mistura(NIV[nv].cor, PASSOS_MAPA[i])}; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></i>${c.rot}</span>` : "").join("") +
+  $("tituloLegenda").innerHTML = (ehEP ? `Percentual dos itens de cada estado <b>em processo de qualificação</b>` : `Percentual dos itens classificados de cada estado no nível <b>${esc(NIV[nv].rot)}</b>`) + ` · ${esc(rotAv(S.av))}`;
+  $("legendaMapa").innerHTML = classes.map((c, i) => presentes.has(i) ? `<span><i class="q" style="background:${mistura(corMapa, PASSOS_MAPA[i])}; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></i>${c.rot}</span>` : "").join("") +
     (presentes.has(-1) ? `<span><i class="q" style="background:#E4EBE5"></i>sem item classificado</span>` : "") + `<span><i class="ponto-leg"></i>maternidade</span>`;
 }
 function montarMapa(){
@@ -866,8 +894,8 @@ function montarMapa(){
   $("pillsRegiao").innerHTML = `<button data-regiao="">Brasil <small>${MAT.length}</small></button>` +
     REGIOES.filter(r => MAT.some(m => m.regiao === r)).map(r => `<button data-regiao="${r}">${r} <small>${MAT.filter(m => m.regiao === r).length}</small></button>`).join("");
   $("pillsRegiao").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; S.regiao = b.dataset.regiao; S.uf = ""; renderTudo(); });
-  $("pillsNivel").innerHTML = NIV.map((n, k) => `<button data-nivel="${k}"><i class="q n${k}"></i>${esc(n.rot)}</button>`).join("");
-  $("pillsNivel").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; E.nivelMapa = +b.dataset.nivel; renderMapa(); });
+  $("pillsNivel").innerHTML = `<button data-nivel="ep"><i class="q" style="background:${EP_COR}"></i>${EP_ROT}</button>` + NIV.map((n, k) => `<button data-nivel="${k}"><i class="q n${k}"></i>${esc(n.rot)}</button>`).join("");
+  $("pillsNivel").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; E.nivelMapa = b.dataset.nivel === "ep" ? "ep" : +b.dataset.nivel; renderMapa(); });
   $("chkPontos").addEventListener("change", e => { E.pontos = e.target.checked; renderMapa(); });
   $("mapaResumo").addEventListener("click", e => { if(e.target.closest("[data-limpar]")){ S.regiao = ""; S.uf = ""; renderTudo(); } });
 }
@@ -880,13 +908,13 @@ function renderGeral(){
   $("geralTitulo").textContent = `Distribuição dos níveis de classificação · ${rotRecorte()}`;
   const ds = AVS.map((_, i) => dist(mats, TODOS, i));
   $("evolucao").innerHTML = AVS.map((av, i) => av.realizada
-    ? `<button class="lin${i === S.av ? " ativa" : ""}" data-av="${i}"><span class="rot">${esc(av.rot)}<small>${esc(av.periodo)}</small></span>${pilha(ds[i], "pct")}<span class="n"><b>${fmtInt(ds[i].cls)}</b> classificados<br>${fmtInt(ds[i].si)} sem informação</span></button>`
-    : `<div class="lin"><span class="rot">${esc(av.rot)}<small>${esc(av.periodo)}</small></span><span class="pilha vazia">a realizar</span><span class="n"></span></div>`).join("");
+    ? `<button class="lin${i === S.av ? " ativa" : ""}" data-av="${i}"><span class="rot">${esc(av.rot)}<small>${esc(av.periodo)}</small></span>${pilha(ds[i], "pct")}${epChip(ds[i])}<span class="n"><b>${fmtInt(ds[i].cls)}</b> classificados<br>${fmtInt(ds[i].si)} sem informação</span></button>`
+    : `<div class="lin"><span class="rot">${esc(av.rot)}<small>${esc(av.periodo)}</small></span><span class="pilha vazia">a realizar</span><span></span><span class="n"></span></div>`).join("");
   $("legendaGeral").innerHTML = legendaHtml(false);
-  $("tabEvolucao").innerHTML = `<thead><tr><th>Avaliação</th><th>Período</th><th class="r">Classificados</th>${NIV.map(n => `<th class="r">${esc(n.rot)}</th>`).join("")}<th class="r">Sem informação</th></tr></thead><tbody>` +
+  $("tabEvolucao").innerHTML = `<thead><tr><th>Avaliação</th><th>Período</th><th class="r">Classificados</th>${NIV.map(n => `<th class="r">${esc(n.rot)}</th>`).join("")}<th class="r">${EP_ROT}</th><th class="r">Sem informação</th></tr></thead><tbody>` +
     AVS.map((av, i) => `<tr><td>${esc(av.rot)}</td><td>${esc(av.periodo)}</td>` + (av.realizada
-      ? `<td class="r">${fmtInt(ds[i].cls)}</td>${ds[i].n.map(q => `<td class="r">${fmtInt(q)} <small>(${pct(q, ds[i].cls)})</small></td>`).join("")}<td class="r">${fmtInt(ds[i].si)}</td>`
-      : `<td class="r" colspan="${NIV.length + 2}"><small>a realizar</small></td>`) + `</tr>`).join("") + `</tbody>`;
+      ? `<td class="r">${fmtInt(ds[i].cls)}</td>${ds[i].n.map(q => `<td class="r">${fmtInt(q)} <small>(${pct(q, ds[i].cls)})</small></td>`).join("")}<td class="r"><b>${epTxt(ds[i])}</b></td><td class="r">${fmtInt(ds[i].si)}</td>`
+      : `<td class="r" colspan="${NIV.length + 3}"><small>a realizar</small></td>`) + `</tr>`).join("") + `</tbody>`;
 
   /* indicadores-chave da avaliação escolhida, com a variação desde a primeira */
   const d = ds[S.av], d0 = ds[PRIM];
@@ -895,20 +923,22 @@ function renderGeral(){
     const pp = Math.round((d.n[k] / d.cls * 100 - d0.n[k] / d0.cls * 100) * 10) / 10;
     return `<small>${pp > 0 ? "+" : pp < 0 ? "−" : ""}${fmt1(Math.abs(pp))} p.p. desde a ${AVS[PRIM].n}ª avaliação</small>`;
   };
+  const ppEP = (S.av === PRIM || emProc(d).pct == null || emProc(d0).pct == null) ? null : Math.round((emProc(d).pct - emProc(d0).pct) * 10) / 10;
+  const variaEP = ppEP == null ? "" : `. Variação desde a ${AVS[PRIM].n}ª avaliação: ${ppEP > 0 ? "+" : ppEP < 0 ? "−" : ""}${fmt1(Math.abs(ppEP))} p.p.`;
   $("kpisGeral").innerHTML = `
     <p class="eyebrow">${esc(rotRecorte())} · ${esc(rotAv(S.av))}</p>
-    <div class="num-grande" style="margin-top:.5rem">${pct(d.n[4], d.cls)}</div>
-    <p class="suave" style="font-size:.86rem">dos itens classificados estão no nível Qualificado</p>
+    <div class="num-grande" style="margin-top:.5rem">${epTxt(d)}</div>
+    <p class="suave" style="font-size:.86rem">dos itens avaliados estão em processo de qualificação: Intermediário, Avançado ou Qualificado${variaEP}</p>
     <div class="kpi-lista">
       <div class="kpi"><span>Maternidades</span><span class="v">${fmtInt(mats.length)}</span></div>
       <div class="kpi"><span>Itens classificados</span><span class="v">${fmtInt(d.cls)}<small>de ${fmtInt(d.total)} (${pct(d.cls, d.total)})</small></span></div>
       <div class="kpi"><span>Sem informação</span><span class="v">${fmtInt(d.si)}</span></div>
       ${NIV.map((n, k) => `<div class="kpi"><span><i class="q n${k}" style="vertical-align:-2px"></i> ${esc(n.rot)}</span><span class="v">${fmtInt(d.n[k])} · ${pct(d.n[k], d.cls)}${varia(k)}</span></div>`).join("")}
     </div>
-    <p class="fonte">Percentuais sobre os itens classificados. p.p. = pontos percentuais.</p>`;
+    <p class="fonte">Percentuais dos níveis sobre os itens classificados. Em processo de qualificação: sobre o total dos quatro níveis de progresso, sem "Não se Aplica". p.p. = pontos percentuais.</p>`;
 
   $("dimTitulo").textContent = `Por eixo e dimensão · ${rotAv(S.av)}`;
-  const linha = (cls, rot, sub, dd) => `<div class="lin ${cls}"><span class="rot">${esc(rot)}${sub ? `<small>${esc(sub)}</small>` : ""}</span>${pilha(dd, "pct")}<span class="n"><b>${fmtInt(dd.cls)}</b> classificados<br>${fmtInt(dd.si)} sem informação</span></div>`;
+  const linha = (cls, rot, sub, dd) => `<div class="lin ${cls}"><span class="rot">${esc(rot)}${sub ? `<small>${esc(sub)}</small>` : ""}</span>${pilha(dd, "pct")}${epChip(dd)}<span class="n"><b>${fmtInt(dd.cls)}</b> classificados<br>${fmtInt(dd.si)} sem informação</span></div>`;
   $("porDimensao").innerHTML = EIX.map(e => linha("eixo", e.rot, plural(INDS_EIXO[e.id].length, "indicador", "indicadores"), dist(mats, INDS_EIXO[e.id], S.av)) +
     DIM.filter(dm => dm.eixo === e.id).map(dm => linha("dim", dm.rot, plural(INDS_DIM[dm.id].length, "indicador", "indicadores"), dist(mats, INDS_DIM[dm.id], S.av))).join("")).join("");
 }
@@ -920,7 +950,7 @@ function renderInd(){
   const mats = recorte();
   $("listaInd").innerHTML = DIM.map(dm => `<p class="grupo-tit">${esc(EIXO_ROT[dm.eixo])} <small>${esc(dm.rot)}</small></p><div class="linhas" style="margin-top:.3rem">` +
     INDS_DIM[dm.id].map(i => { const d = dist(mats, [i], S.av), aberto = i === E.ind;
-      return `<button class="lin${aberto ? " ativa" : ""}" data-i="${i}" aria-expanded="${aberto}"${!aberto && IND[i].texto !== IND[i].rot ? tip(esc(IND[i].texto)) : ""}><span class="rot"><span class="seta">▸</span><b class="num">${IND[i].id}</b>${esc(IND[i].rot)}</span>${pilha(d, "n")}<span class="n"><b>${fmtInt(d.cls)}</b> de ${fmtInt(d.total)}<br>classificadas</span></button>` + (aberto ? detalheInd(mats) : ""); }).join("") + `</div>`).join("");
+      return `<button class="lin${aberto ? " ativa" : ""}" data-i="${i}" aria-expanded="${aberto}"${!aberto && IND[i].texto !== IND[i].rot ? tip(esc(IND[i].texto)) : ""}><span class="rot"><span class="seta">▸</span><b class="num">${IND[i].id}</b>${esc(IND[i].rot)}</span>${pilha(d, "n")}${epChip(d)}<span class="n"><b>${fmtInt(d.cls)}</b> de ${fmtInt(d.total)}<br>classificadas</span></button>` + (aberto ? detalheInd(mats) : ""); }).join("") + `</div>`).join("");
   $("legendaInd").innerHTML = legendaHtml(true);
 }
 /* relação das maternidades por nível, aberta logo abaixo do indicador escolhido */
@@ -938,12 +968,12 @@ function detalheInd(mats){
 /* ============================================================
    3. REGIÕES E ESTADOS
    ============================================================ */
-function indsEscopo(){
-  const [t, v] = E.escopo.split(":");
+function indsEscopo(escopo = E.escopo){
+  const [t, v] = escopo.split(":");
   return t === "e" ? INDS_EIXO[v] : t === "d" ? INDS_DIM[v] : t === "i" ? [+v] : TODOS;
 }
-function rotEscopo(){
-  const [t, v] = E.escopo.split(":");
+function rotEscopo(escopo = E.escopo){
+  const [t, v] = escopo.split(":");
   return t === "e" ? `Eixo ${EIXO_ROT[v]}` : t === "d" ? `Dimensão ${DIM_POR[v].rot}` : t === "i" ? `Indicador ${IND[+v].id}. ${IND[+v].rot}` : "Todos os indicadores";
 }
 function linhasLocal(){
@@ -960,18 +990,18 @@ function linhasLocal(){
 function renderLocal(){
   const rows = linhasLocal();
   const sel = r => r.tipo !== "grupo" && r.regiao === S.regiao && r.uf === S.uf && (r.tipo === "br" ? !S.regiao && !S.uf : r.tipo === "reg" ? !S.uf : true);
-  $("tabLocal").innerHTML = `<thead><tr><th>Local</th><th class="r">Maternidades</th><th class="r">Itens classificados</th><th class="r">Sem informação</th><th>Distribuição dos itens classificados</th><th class="r">Não Iniciado</th><th class="r">Qualificado</th></tr></thead><tbody>` +
+  $("tabLocal").innerHTML = `<thead><tr><th>Local</th><th class="r">Maternidades</th><th class="r">Itens classificados</th><th class="r">Sem informação</th><th>Distribuição dos itens classificados</th><th class="r">${EP_ROT}</th><th class="r">Não Iniciado</th><th class="r">Qualificado</th></tr></thead><tbody>` +
     rows.map((r, k) => `<tr class="${r.tipo === "grupo" ? "reg" : r.tipo}${sel(r) ? " sel" : ""}"><td>${r.tipo === "grupo" ? `${esc(r.rot)} <small>${esc(r.sub)}</small>` : `<button class="lk" data-k="${k}">${esc(r.rot)}</button>`}</td>
       <td class="r">${fmtInt(r.mats.length)}</td><td class="r">${fmtInt(r.d.cls)}</td><td class="r">${fmtInt(r.d.si)}</td><td>${pilha(r.d, "pct")}</td>
-      <td class="r">${pct(r.d.n[1], r.d.cls)}</td><td class="r">${pct(r.d.n[4], r.d.cls)}</td></tr>`).join("") + `</tbody>`;
+      <td class="r ep-col"><b>${epTxt(r.d)}</b></td><td class="r">${pct(r.d.n[1], r.d.cls)}</td><td class="r">${pct(r.d.n[4], r.d.cls)}</td></tr>`).join("") + `</tbody>`;
   $("tabLocal")._rows = rows;
   $("legendaLocal").innerHTML = legendaHtml(false) + `<span>${esc(rotEscopo())} · ${esc(rotAv(S.av))}</span>`;
 }
 function csvLocal(){
   const rows = linhasLocal();
   baixarCSV(`qualificacao_local_${AVS[S.av].n}a_avaliacao.csv`, [cabecalhoCSV(`${rotEscopo()} · ${rotAv(S.av)}`),
-    ["Local", "Tipo", "Maternidades", "Itens classificados", "Sem informação", ...NIV.map(n => n.rot)],
-    ...rows.map(r => [r.rot, {br: "país", reg: "região", uf: "estado", grupo: "grupo da planilha"}[r.tipo], r.mats.length, r.d.cls, r.d.si, ...r.d.n])]);
+    ["Local", "Tipo", "Maternidades", "Itens classificados", "Sem informação", ...NIV.map(n => n.rot), "Intermediário + Avançado + Qualificado", EP_ROT + " (%)"],
+    ...rows.map(r => [r.rot, {br: "país", reg: "região", uf: "estado", grupo: "grupo da planilha"}[r.tipo], r.mats.length, r.d.cls, r.d.si, ...r.d.n, emProc(r.d).num, emProc(r.d).pct == null ? "" : fmt1(emProc(r.d).pct)])]);
 }
 function montarLocal(){
   const sel = $("selEscopo");
@@ -1009,12 +1039,12 @@ function renderMatriz(){
   const cab1 = DIM.map(d => `<th colspan="${INDS_DIM[d.id].length}"${tip(`<b>${esc(EIXO_ROT[d.eixo])}</b><br>${esc(d.rot)}`)}><span>${esc(d.rot)}</span></th>`).join("");
   const cab2 = DIM.map(d => INDS_DIM[d.id].map((i, k) => `<th class="${k ? "" : "ini"}"${tip(`<b>${IND[i].id}. ${esc(IND[i].rot)}</b><br>${esc(DIM_POR[IND[i].dim].rot)}`)}>${IND[i].id}</th>`).join("")).join("");
   const linhas = lista.map(m => {
-    let cls = 0, q = 0;
-    const tds = TODOS.map(i => { const v = m.c[i][S.av]; if(v != null){ cls++; if(v === 4) q++; }
+    let cls = 0, q = 0, ep = 0;
+    const tds = TODOS.map(i => { const v = m.c[i][S.av]; if(v != null){ cls++; if(v === 4) q++; if(v >= 2) ep++; }
       return `<td class="c ${v == null ? "nsi" : "n" + v}" data-i="${i}">${v == null ? "·" : NIV[v].cod}</td>`; }).join("");
-    return `<tr data-cnes="${m.cnes}"><td class="col-unid"><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}/${m.uf} · CNES ${m.cnes}</small></td>${tds}<td class="tot">${cls}</td><td class="tot">${q}</td></tr>`;
+    return `<tr data-cnes="${m.cnes}"><td class="col-unid"><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}/${m.uf} · CNES ${m.cnes}</small></td>${tds}<td class="tot">${cls}</td><td class="tot ep-col">${ep}</td><td class="tot">${q}</td></tr>`;
   }).join("");
-  $("matriz").innerHTML = `<thead><tr class="l1"><th class="col-unid" rowspan="2">Maternidade<br><small style="font-weight:600; color:#C5E3CC">${fmtInt(lista.length)} no quadro · ${esc(rotAv(S.av))}</small></th>${cab1}<th class="tot" rowspan="2"${tip("Indicadores classificados na avaliação escolhida")}>Classi-<br>ficados</th><th class="tot" rowspan="2"${tip("Indicadores no nível Qualificado")}>Quali-<br>ficados</th></tr><tr class="l2">${cab2}</tr></thead><tbody>${linhas || `<tr><td class="col-unid" colspan="${IND.length + 3}">Nenhuma maternidade encontrada.</td></tr>`}</tbody>`;
+  $("matriz").innerHTML = `<thead><tr class="l1"><th class="col-unid" rowspan="2">Maternidade<br><small style="font-weight:600; color:#C5E3CC">${fmtInt(lista.length)} no quadro · ${esc(rotAv(S.av))}</small></th>${cab1}<th class="tot" rowspan="2"${tip("Indicadores classificados na avaliação escolhida")}>Classi-<br>ficados</th><th class="tot" rowspan="2"${tip("Indicadores em processo de qualificação: Intermediário, Avançado ou Qualificado")}>Em pro-<br>cesso</th><th class="tot" rowspan="2"${tip("Indicadores no nível Qualificado")}>Quali-<br>ficados</th></tr><tr class="l2">${cab2}</tr></thead><tbody>${linhas || `<tr><td class="col-unid" colspan="${IND.length + 4}">Nenhuma maternidade encontrada.</td></tr>`}</tbody>`;
   $("legendaMat").innerHTML = NIV.map((n, k) => `<span><i class="q n${k}"></i>${esc(n.cod)} = ${esc(n.rot)}</span>`).join("") + `<span><i class="q nsi"></i>· = Sem informação</span>`;
 }
 function csvMatriz(){
@@ -1061,8 +1091,23 @@ function mudancas(mats, a, b){
   }
   return r;
 }
+/* resumo no formato da coordenação: níveis nas duas avaliações, soma e percentual em processo de qualificação */
+function renderResumo(mats){
+  const inds = indsEscopo(E.escopoRes), a = dist(mats, inds, E.de), b = dist(mats, inds, E.para), ea = emProc(a), eb = emProc(b);
+  const dif = (x, y) => { const v = y - x; return v === 0 ? "0" : (v > 0 ? "+" : "−") + fmtInt(Math.abs(v)); };
+  const lin = (cls, rot, x, y, v) => `<tr class="${cls}"><td>${rot}</td><td class="r">${x}</td><td class="r">${y}</td><td class="r">${v}</td></tr>`;
+  const pp = ea.pct == null || eb.pct == null ? "—" : (() => { const v = Math.round((eb.pct - ea.pct) * 10) / 10; return (v > 0 ? "+" : v < 0 ? "−" : "") + fmt1(Math.abs(v)) + " p.p."; })();
+  const cab = i => `<th class="r">${esc(AVS[i].rot)}<br><small style="font-weight:600; color:#C5E3CC">${esc(AVS[i].periodo)}</small></th>`;
+  $("tabResumo").innerHTML = `<thead><tr><th>${esc(rotEscopo(E.escopoRes))}</th>${cab(E.de)}${cab(E.para)}<th class="r">Variação</th></tr></thead><tbody>` +
+    [1, 2, 3, 4].map(k => lin("", `<i class="q n${k}" style="vertical-align:-2px"></i> ${esc(NIV[k].rot)}`, fmtInt(a.n[k]), fmtInt(b.n[k]), dif(a.n[k], b.n[k]))).join("") +
+    lin("soma", "Total", fmtInt(ea.den), fmtInt(eb.den), dif(ea.den, eb.den)) +
+    lin("soma", "Intermediário + Avançado + Qualificado", fmtInt(ea.num), fmtInt(eb.num), dif(ea.num, eb.num)) +
+    lin("ep-linha", EP_ROT, epTxt(a), epTxt(b), pp) + `</tbody>`;
+  $("notaResumo").innerHTML = `${esc(rotRecorte())}. O total reúne os itens nos quatro níveis listados. Ficam fora da conta, na ordem das duas avaliações, os itens em "Não se Aplica" (${fmtInt(a.n[0])} e ${fmtInt(b.n[0])}) e os itens sem informação (${fmtInt(a.si)} e ${fmtInt(b.si)}).`;
+}
 function renderMud(){
   const mats = recorte();
+  renderResumo(mats);
   if(E.de === E.para){
     $("kpisMud").innerHTML = `<div class="k"><div class="s">Escolha duas avaliações diferentes para comparar.</div></div>`;
     $("transicao").innerHTML = ""; $("tabMudInd").innerHTML = ""; $("tabMudMat").innerHTML = ""; return;
@@ -1093,6 +1138,8 @@ function renderMud(){
     pm.map(x => `<tr><td><button class="lk" data-cnes="${x.m.cnes}">${esc(x.m.nome)}</button><br><small>${esc(x.m.municipio)}</small></td><td>${x.m.uf}</td><td class="r">${fmtInt(x.comp)}</td><td class="r">${x.av ? `<span class="seta-av">▲ ${fmtInt(x.av)}</span>` : "0"}</td><td class="r">${x.rec ? `<span class="seta-rec">▼ ${fmtInt(x.rec)}</span>` : "0"}</td><td class="r">${x.saldo > 0 ? "+" : x.saldo < 0 ? "−" : ""}${fmtInt(Math.abs(x.saldo))}</td></tr>`).join("") + `</tbody>`;
 }
 function montarMud(){
+  const sr = $("selEscopoRes"); sr.innerHTML = $("selEscopo").innerHTML; sr.value = E.escopoRes;
+  sr.addEventListener("change", () => { E.escopoRes = sr.value; renderResumo(recorte()); });
   [["selDe", "de"], ["selPara", "para"]].forEach(([id, chave]) => {
     const s = $(id); REALIZADAS.forEach(i => s.appendChild(new Option(rotAv(i), i))); s.value = E[chave];
     s.addEventListener("change", () => { E[chave] = +s.value; renderMud(); });
@@ -1145,6 +1192,7 @@ function abrirPerfil(cnes){
       </div>
       <div class="kpis-topo">
         <div class="k"><div class="n">${d.cls} de ${IND.length}</div><div class="t">indicadores classificados</div></div>
+        <div class="k"><div class="n">${epTxt(d)}</div><div class="t">em processo de qualificação</div></div>
         <div class="k"><div class="n">${d.n[4]}</div><div class="t">em Qualificado</div></div>
         <div class="k"><div class="n">${d.n[1]}</div><div class="t">em Não Iniciado</div></div>
         <div class="k"><div class="n">▲ ${mu.av} · ▼ ${mu.rec}</div><div class="t">avanços e recuos desde a ${AVS[PRIM].n}ª</div></div>
@@ -1155,7 +1203,7 @@ function abrirPerfil(cnes){
       <div class="card">
         <h3>Resumo por dimensão · ${esc(rotAv(ULT))}</h3>
         <p class="sub">Cada barra representa os indicadores da dimensão; o número em cada cor é a quantidade de indicadores naquele nível.</p>
-        <div class="linhas">${DIM.map(dm => { const dd = dist([m], INDS_DIM[dm.id], ULT); return `<div class="lin"><span class="rot">${esc(dm.rot)}<small>${esc(EIXO_ROT[dm.eixo])}</small></span>${pilha(dd, "n")}<span class="n"><b>${dd.cls}</b> de ${dd.total}<br>classificados</span></div>`; }).join("")}</div>
+        <div class="linhas">${DIM.map(dm => { const dd = dist([m], INDS_DIM[dm.id], ULT); return `<div class="lin"><span class="rot">${esc(dm.rot)}<small>${esc(EIXO_ROT[dm.eixo])}</small></span>${pilha(dd, "n")}${epChip(dd)}<span class="n"><b>${dd.cls}</b> de ${dd.total}<br>classificados</span></div>`; }).join("")}</div>
         <div class="legenda">${legendaHtml(true)}</div>
       </div>
       <div class="card">

@@ -124,7 +124,7 @@ section.alt .card{background:var(--mint-card)}
 .pilha i:hover{filter:brightness(1.12)}
 .pilha.vazia{background:repeating-linear-gradient(135deg, #E6ECE8 0 4px, #F8FAF9 4px 8px); box-shadow:inset 0 0 0 1px var(--borda); font-size:.7rem; color:var(--texto-suave); align-items:center; justify-content:center; font-weight:700}
 .linhas{display:grid; gap:.35rem; margin-top:.9rem}
-.lin{display:grid; grid-template-columns:minmax(170px, 1.5fr) minmax(0, 3fr) 150px; gap:.7rem; align-items:center; padding:.2rem .35rem; border-radius:8px; border:none; background:transparent; text-align:left; color:var(--texto); width:100%}
+.lin{display:grid; grid-template-columns:minmax(170px, 1.5fr) minmax(0, 3fr) 70px 150px; gap:.7rem; align-items:center; padding:.2rem .35rem; border-radius:8px; border:none; background:transparent; text-align:left; color:var(--texto); width:100%}
 button.lin:hover,button.lin.ativa{background:var(--mint)}
 button.lin.ativa{box-shadow:inset 3px 0 0 var(--verde-fiocruz)}
 .lin .rot{font-size:.84rem; font-weight:600; line-height:1.25; min-width:0; overflow-wrap:anywhere}
@@ -140,6 +140,12 @@ button.lin.ativa{box-shadow:inset 3px 0 0 var(--verde-fiocruz)}
 .detalhe-ind .sub{font-size:.82rem; color:var(--texto-suave); margin:0 0 .3rem}
 .detalhe-ind .sub b{color:var(--texto)}
 .niveis-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:.2rem 1.6rem; align-items:start}
+.ep{display:inline-block; min-width:62px; text-align:center; background:#DCEBF7; color:#0A213D; border:1px solid #A9CBE8; border-radius:999px; padding:.12rem .45rem; font-size:.78rem; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap}
+.ep.ep-leg{min-width:0; padding:0 .4rem; font-size:.7rem}
+table.tab tr.soma td{font-weight:700}
+table.tab tr.ep-linha td{background:#DCEBF7 !important; font-weight:800; color:#0A213D}
+table.tab td.ep-col{background:#EAF3FB}
+table.matriz td.tot.ep-col{background:#EAF3FB}
 .grupo-tit{margin:1rem 0 .1rem; font-size:.7rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--verde-esmeralda); display:flex; gap:.5rem; align-items:baseline; flex-wrap:wrap}
 .grupo-tit small{font-weight:700; letter-spacing:0; text-transform:none; color:var(--texto-suave); font-size:.78rem}
 
@@ -243,7 +249,7 @@ body.perfil-aberto{overflow:hidden}
 .perfil-topo{background:linear-gradient(135deg, var(--verde-profundo), var(--verde-esmeralda)); color:#F1F8F3; border-radius:var(--radius); padding:1.4rem 1.5rem; box-shadow:var(--sombra-alta); display:grid; grid-template-columns:1fr auto; gap:1rem; align-items:center}
 .perfil-topo .meta{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem}
 .perfil-topo .meta span{display:inline-flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.13); border-radius:999px; padding:.2rem .7rem; font-size:.78rem; font-weight:700}
-.kpis-topo{display:grid; grid-template-columns:repeat(2, auto); gap:.6rem}
+.kpis-topo{display:grid; grid-template-columns:repeat(3, auto); gap:.6rem}
 .kpis-topo .k{background:rgba(255,255,255,.12); border-radius:10px; padding:.45rem .8rem; min-width:130px; text-align:right}
 .kpis-topo .k .n{font-size:1.35rem; font-weight:800; letter-spacing:-.02em; color:#FFF; line-height:1.1}
 .kpis-topo .k .t{font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:#C5E3CC; font-weight:700}
@@ -283,8 +289,8 @@ footer a{color:var(--verde-lima)}
   .trilho button::after{display:none}
   body{padding-bottom:76px}
   .wrap{width:min(1320px, 100% - 1.6rem)}
-  .perfil-topo{grid-template-columns:1fr} .kpis-topo .k{text-align:left}
-  .lin{grid-template-columns:minmax(0,1fr) auto; row-gap:.12rem}
+  .perfil-topo{grid-template-columns:1fr} .kpis-topo{grid-template-columns:repeat(2, auto)} .kpis-topo .k{text-align:left}
+  .lin{grid-template-columns:minmax(0,1fr) auto auto; row-gap:.12rem}
   .controles .filtro{min-width:0 !important; max-width:none !important; flex:1 1 100% !important}
   .controles .filtro select,.controles .filtro input{width:100%}
   table.trans{font-size:.74rem} table.trans th{font-size:.62rem}
@@ -333,6 +339,7 @@ footer a{color:var(--verde-lima)}
   <div class="stat"><div class="num" id="statInd">—</div><div class="rot">Indicadores</div><div class="sub" id="statIndSub"></div></div>
   <div class="stat"><div class="num" id="statAv">—</div><div class="rot">Avaliações realizadas</div><div class="sub" id="statAvSub"></div></div>
   <div class="stat"><div class="num" id="statCls">—</div><div class="rot">Itens classificados</div><div class="sub" id="statClsSub"></div></div>
+  <div class="stat" style="background:#EAF3FB"><div class="num" id="statEP">—</div><div class="rot">Em processo de qualificação</div><div class="sub" id="statEPSub"></div></div>
   <div class="stat"><div class="num" id="statQual">—</div><div class="rot">Qualificado</div><div class="sub" id="statQualSub"></div></div>
   <button class="stat stat-btn" id="btnNotas" title="Fontes, regras de leitura e cobertura"><div class="num" style="font-size:1.5rem">ⓘ</div><div class="rot">Notas metodológicas</div></button>
 </div>
@@ -464,6 +471,13 @@ footer a{color:var(--verde-lima)}
     <div class="controles">
       <label class="filtro"><span>De</span><select id="selDe"></select></label>
       <label class="filtro"><span>Para</span><select id="selPara"></select></label>
+    </div>
+    <div class="card" style="margin-bottom:1.1rem">
+      <h3>Resumo por nível e percentual em processo de qualificação</h3>
+      <p class="sub">Número de itens em cada nível nas duas avaliações escolhidas, a soma de Intermediário, Avançado e Qualificado e o percentual em processo de qualificação. Quando se escolhe um único indicador, cada item é uma maternidade.</p>
+      <div class="controles" style="margin:.7rem 0 .6rem"><label class="filtro" style="min-width:300px; flex:1; max-width:560px"><span>O que resumir</span><select id="selEscopoRes"></select></label></div>
+      <div class="tab-wrap"><table class="tab" id="tabResumo"></table></div>
+      <p class="fonte" id="notaResumo"></p>
     </div>
     <div class="kpis-linha" id="kpisMud"></div>
     <div class="grid-eq">
