@@ -77,19 +77,21 @@ function dist(mats, inds, a){
   return {n, si, cls, total: cls + si};
 }
 /* barra empilhada. modo "pct": só os classificados, rótulo em %; modo "n": inclui sem informação, rótulo = contagem */
-function pilha(d, modo){
+function pilha(d, modo, nomeSeUnica){
   const comSI = modo === "n";
+  /* nomeSeUnica: quando todos os itens da barra estão em um só nível, o rótulo traz também o nome do nível */
+  const unica = nomeSeUnica && d.n.filter(q => q).length + (comSI && d.si ? 1 : 0) === 1;
   const base = comSI ? d.total : d.cls;
   if(!d.cls && !comSI) return `<span class="pilha vazia"${tip(`Sem informação nos ${fmtInt(d.total)} itens`)}>sem informação</span>`;
   if(!base) return `<span class="pilha vazia">—</span>`;
   /* toda faixa leva o seu rótulo: a largura mínima de cada uma é a do próprio rótulo, e as demais cedem espaço */
-  const faixa = (cls, q, rot, dica) => `<i class="${cls}" style="flex:${q} 1 0; min-width:calc(${rot.length}ch + .5rem)"${dica}>${esc(rot)}</i>`;
+  const faixa = (cls, q, rot, dica) => `<i class="${cls}" style="flex:${q} 1 0; min-width:${unica ? "0" : `calc(${rot.length}ch + .5rem)`}"${dica}>${esc(rot)}</i>`;   // faixa única ocupa a barra inteira
   let h = "";
   NIV.forEach((nv, k) => {
     const q = d.n[k]; if(!q) return;
-    h += faixa("n" + k, q, rotFaixa(q, d.cls, modo), tip(`<b>${esc(nv.rot)}</b>: ${fmtInt(q)} · ${pct(q, d.cls)} dos classificados`));
+    h += faixa("n" + k, q, rotFaixa(q, d.cls, modo) + (unica ? " · " + nv.rot : ""), tip(`<b>${esc(nv.rot)}</b>: ${fmtInt(q)} · ${pct(q, d.cls)} dos classificados`));
   });
-  if(comSI && d.si) h += faixa("nsi", d.si, fmtInt(d.si), tip(`<b>Sem informação</b>: ${fmtInt(d.si)} de ${fmtInt(d.total)}`));
+  if(comSI && d.si) h += faixa("nsi", d.si, fmtInt(d.si) + (unica ? " · sem informação" : ""), tip(`<b>Sem informação</b>: ${fmtInt(d.si)} de ${fmtInt(d.total)}`));
   return `<span class="pilha">${h}</span>`;
 }
 /* rótulo de uma faixa: contagem (modo "n") ou percentual dos classificados (modo "pct"; abaixo de 0,5% aparece "<1%") */
@@ -673,8 +675,11 @@ function abrirPerfil(cnes){
         <p class="sub">Cada barra reúne os indicadores do eixo em uma avaliação. O número em cada cor é a quantidade de indicadores naquele nível.</p>
         <div class="linhas">${evol(INDS_EIXO[e.id])}</div>
         <p class="grupo-tit" style="margin-top:1.3rem">Evolução em cada dimensão</p>
-        <div class="mini-grid">${dimsE.map(dm => `<div class="mini"><p class="mini-tit">${esc(dm.rot)}</p>${REALIZADAS.map(a => { const dd = dist([m], INDS_DIM[dm.id], a);
-          return `<div class="mini-lin"><span${tip(esc(rotAv(a)))}>${AVS[a].n}ª</span>${pilha(dd, "n")}${epChip(dd)}</div>`; }).join("")}</div>`).join("")}</div>
+        <p class="sub">Um quadro por dimensão e uma linha por avaliação. O número em cada cor é a quantidade de indicadores da dimensão naquele nível. À direita, o percentual em processo de qualificação: indicadores em Intermediário, Avançado ou Qualificado sobre os que têm nível de progresso. Ele fica em 100% sempre que nenhum indicador está em Não Iniciado, mesmo que os níveis mudem de uma avaliação para a outra.</p>
+        <div class="legenda" style="margin:.5rem 0 .2rem">${legendaHtml(true)}</div>
+        <div class="mini-grid">${dimsE.map(dm => `<div class="mini"><p class="mini-tit">${esc(dm.rot)}<small>${plural(INDS_DIM[dm.id].length, "indicador", "indicadores")}</small></p>
+          <div class="mini-lin mini-cab"><span>Avaliação</span><span>Indicadores em cada nível</span><span>Em processo de qualificação</span></div>${REALIZADAS.map(a => { const dd = dist([m], INDS_DIM[dm.id], a);
+          return `<div class="mini-lin"><span${tip(esc(rotAv(a)))}>${esc(AVS[a].rot)}</span>${pilha(dd, "n", true)}${epChip(dd)}</div>`; }).join("")}</div>`).join("")}</div>
       </div>
       <div class="card bloco-eixo eixo-${e.id}"><h3>${esc(e.rot)}: nível de cada indicador nas avaliações</h3>
         <p class="sub">A última coluna compara a ${AVS[PRIM].n}ª com a ${AVS[ULT].n}ª avaliação.</p>${tabela(e)}</div>`; };
