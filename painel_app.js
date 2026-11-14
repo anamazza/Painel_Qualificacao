@@ -266,7 +266,7 @@ function animaMapa(alvo){
   cancelAnimationFrame(animMapa);
   const de = svgMapa.getAttribute("viewBox").split(" ").map(Number), t0 = performance.now(), dur = 420;
   if(de.every((v, i) => Math.abs(v - alvo[i]) < .5)){ vbMapa = alvo; return; }
-  const passo = agora => { const k = Math.min(1, (agora - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+  const passo = agora => { const k = Math.max(0, Math.min(1, (agora - t0) / dur)), e = 1 - Math.pow(1 - k, 3);   // o relógio do quadro pode vir antes de t0
     svgMapa.setAttribute("viewBox", de.map((v, i) => v + (alvo[i] - v) * e).map(v => v.toFixed(1)).join(" ")); ajustaEscalaMapa();
     if(k < 1) animMapa = requestAnimationFrame(passo); };
   vbMapa = alvo; animMapa = requestAnimationFrame(passo);
@@ -300,12 +300,16 @@ function renderMapa(){
   cancelAnimationFrame(animMapa); box.innerHTML = "";
   svgMapa = document.createElementNS(NS, "svg"); svgMapa.setAttribute("viewBox", (vbMapa || [0, 0, GEO.W, GEO.H]).join(" "));
   svgMapa.setAttribute("role", "img"); svgMapa.setAttribute("aria-label", "Mapa do Brasil com os estados e as maternidades");
+  /* recorte, como no Painel de Nascimentos: com região ou estado escolhido, só o que foi escolhido fica visível */
   const g = document.createElementNS(NS, "g"), presentes = new Set(), classeUF = {};
   GEO.uf.forEach(t => {
     const ms = porUF[t.id] || [], d = dist(ms, TODOS, S.av), p = ehEP ? emProc(d).pct : (d.cls ? d.n[nv] / d.cls * 100 : null), cls = p == null ? -1 : classes.findIndex(c => p <= c.ate);
-    presentes.add(cls); classeUF[t.id] = cls;
+    const visivel = noRecorte(t.id);
+    if(visivel) presentes.add(cls);
+    classeUF[t.id] = cls;
     const el = document.createElementNS(NS, "path"); el.setAttribute("d", t.d); el.dataset.uf = t.id;
-    el.setAttribute("class", "t" + (S.uf === t.id ? " sel" : "") + (noRecorte(t.id) ? "" : " fora"));
+    el.setAttribute("class", "t" + (S.uf === t.id ? " sel" : ""));
+    if(!visivel) el.style.display = "none";
     el.setAttribute("fill", cls < 0 ? "#E4EBE5" : mistura(corMapa, PASSOS_MAPA[cls]));
     el.dataset.tip = `<b>${esc(UF_NOME[t.id])}</b><br>${ms.length ? plural(ms.length, "maternidade", "maternidades") + ` · ${fmtInt(d.cls)} de ${fmtInt(d.total)} itens classificados` : "sem maternidade no painel"}` +
       (d.cls ? `<br><b>${EP_ROT}</b>: ${epTxt(d)}` + (ehEP ? "" : `<br><b>${esc(NIV[nv].rot)}</b>: ${fmtInt(d.n[nv])} · ${pct(d.n[nv], d.cls)} dos classificados`) : "") +
@@ -316,18 +320,28 @@ function renderMapa(){
   svgMapa.appendChild(g); box.appendChild(svgMapa);
   const escuro = cls => cls >= 3 && !ehEP && nv !== 0 && nv !== 2;             // sigla branca só sobre cor escura
   svgMapa.querySelectorAll("path.t").forEach(el => {
+    if(!noRecorte(el.dataset.uf) || S.uf) return;      // com um só estado na tela, o nome já está no resumo ao lado
     const bb = el.getBBox(), tx = document.createElementNS(NS, "text");
-    tx.setAttribute("x", (bb.x + bb.width / 2).toFixed(1)); tx.dataset.cy = (bb.y + bb.height / 2).toFixed(1);
+    /* a sigla fica dentro do estado: se o centro da caixa cai fora do contorno (estado com ilha distante ou forma
+       recortada), usa o centro dos vértices */
+    let sx = bb.x + bb.width / 2, sy = bb.y + bb.height / 2;
+    const dentro = (x, y) => { const pt = svgMapa.createSVGPoint(); pt.x = x; pt.y = y; return el.isPointInFill(pt); };
+    if(!dentro(sx, sy)){
+      const pts = [...el.getAttribute("d").matchAll(/(-?\d+\.?\d*),(-?\d+\.?\d*)/g)].map(m => [+m[1], +m[2]]);
+      const mx = pts.reduce((s, q) => s + q[0], 0) / pts.length, my = pts.reduce((s, q) => s + q[1], 0) / pts.length;
+      if(dentro(mx, my)){ sx = mx; sy = my; }
+    }
+    tx.setAttribute("x", sx.toFixed(1)); tx.dataset.cy = sy.toFixed(1);
     tx.dataset.w = bb.width.toFixed(1); tx.dataset.h = bb.height.toFixed(1);
     tx.setAttribute("text-anchor", "middle"); tx.setAttribute("class", "sigla");
-    tx.setAttribute("fill", escuro(classeUF[el.dataset.uf]) ? "#FFFFFF" : "#0A213D"); tx.setAttribute("opacity", noRecorte(el.dataset.uf) ? ".85" : ".55");
+    tx.setAttribute("fill", escuro(classeUF[el.dataset.uf]) ? "#FFFFFF" : "#0A213D"); tx.setAttribute("opacity", ".85");
     tx.textContent = el.dataset.uf; g.appendChild(tx);
   });
   if(E.pontos){
     const gp = document.createElementNS(NS, "g");
-    MAT.filter(m => m._xy).sort((a, b) => a._xy[1] - b._xy[1]).forEach(m => {
+    MAT.filter(m => m._xy && noRecorte(m.uf)).sort((a, b) => a._xy[1] - b._xy[1]).forEach(m => {
       const c = document.createElementNS(NS, "circle"), d = dist([m], TODOS, S.av);
-      c.setAttribute("cx", m._xy[0].toFixed(1)); c.setAttribute("cy", m._xy[1].toFixed(1)); c.setAttribute("class", "ponto" + (noRecorte(m.uf) ? "" : " fora"));
+      c.setAttribute("cx", m._xy[0].toFixed(1)); c.setAttribute("cy", m._xy[1].toFixed(1)); c.setAttribute("class", "ponto");
       c.dataset.tip = `<b>${esc(m.nome)}</b><br>${esc(m.municipio)} · ${m.uf} · CNES ${m.cnes}<br>${d.cls} de ${d.total} indicadores classificados` +
         (d.cls ? "<br>" + NIV.map((n, k) => d.n[k] ? `${esc(n.rot)}: ${d.n[k]}` : "").filter(Boolean).join(" · ") : "") + (emProc(d).den ? `<br><b>${EP_ROT}</b>: ${epTxt(d)}` : "") + `<br><i>toque para abrir o perfil da unidade</i>`;
       c.addEventListener("click", () => abrirPerfil(m.cnes));
@@ -335,13 +349,13 @@ function renderMapa(){
     });
     svgMapa.appendChild(gp);
   }
-  /* enquadramento: Brasil ou a região escolhida */
+  /* enquadramento, como no Painel de Nascimentos: Brasil, a região escolhida ou o estado escolhido (margem de 12%) */
   let alvo = [0, 0, GEO.W, GEO.H];
-  if(S.regiao){
+  if(S.uf || S.regiao){
     let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-    svgMapa.querySelectorAll("path.t").forEach(el => { if(!REGIAO_UFS[S.regiao].includes(el.dataset.uf)) return; const bb = el.getBBox();
+    svgMapa.querySelectorAll("path.t").forEach(el => { if(!noRecorte(el.dataset.uf)) return; const bb = el.getBBox();
       x0 = Math.min(x0, bb.x); y0 = Math.min(y0, bb.y); x1 = Math.max(x1, bb.x + bb.width); y1 = Math.max(y1, bb.y + bb.height); });
-    const pad = Math.max(x1 - x0, y1 - y0) * .1; alvo = [x0 - pad, y0 - pad, (x1 - x0) + 2 * pad, (y1 - y0) + 2 * pad];
+    if(x1 > x0){ const pad = Math.max(x1 - x0, y1 - y0) * .12; alvo = [x0 - pad, y0 - pad, (x1 - x0) + 2 * pad, (y1 - y0) + 2 * pad]; }
   }
   ajustaEscalaMapa(); animaMapa(alvo);
   $("tituloLegenda").innerHTML = (ehEP ? `Percentual dos itens de cada estado <b>em processo de qualificação</b>` : `Percentual dos itens classificados de cada estado no nível <b>${esc(NIV[nv].rot)}</b>`) + ` · ${esc(rotAv(S.av))}`;

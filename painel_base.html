@@ -235,12 +235,10 @@ table.matriz thead th.tot{padding:0 .45rem; font-size:.66rem; top:0; height:72px
 .mapa-svg-box svg{width:100%; height:auto; max-height:660px; display:block}
 .mapa-svg-box .t{cursor:pointer; stroke:#FFF; stroke-width:1; vector-effect:non-scaling-stroke; transition:opacity .15s}
 .mapa-svg-box .t:hover{stroke:var(--indigo); stroke-width:1.6}
-.mapa-svg-box .t.sel{stroke:var(--indigo); stroke-width:2.4}
-.mapa-svg-box .t.fora{opacity:.5}
+.mapa-svg-box .t.sel{stroke:var(--indigo); stroke-width:1.4}
 .mapa-svg-box .sigla{pointer-events:none; font-weight:800}
 .mapa-svg-box .ponto{cursor:pointer; fill:var(--indigo); stroke:#FFF; stroke-width:1.6; vector-effect:non-scaling-stroke}
 .mapa-svg-box .ponto:hover{fill:var(--verde-lima); stroke:var(--indigo)}
-.mapa-svg-box .ponto.fora{opacity:.3}
 .mapa-rodape{display:flex; gap:.6rem 1.2rem; flex-wrap:wrap; align-items:center; padding:.3rem .5rem .2rem; font-size:.8rem; color:var(--texto-suave)}
 .toggle{display:inline-flex; align-items:center; gap:.45rem; font-weight:600; cursor:pointer}
 .toggle input{accent-color:var(--verde-fiocruz); width:17px; height:17px}
@@ -389,7 +387,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Território</p>
       <h2>Mapa das maternidades</h2>
-      <p>Escolha a região ou toque em um estado para que todas as seções mostrem apenas as maternidades daquele local. Toque novamente no estado para desfazer a seleção. A cor de cada estado indica o percentual dos itens classificados que estão no nível escolhido ao lado, na avaliação selecionada. Cada ponto é uma maternidade; toque no ponto para abrir o perfil da unidade.</p>
+      <p>Escolha a região ou toque em um estado para que todas as seções mostrem apenas as maternidades daquele local. O mapa aproxima e passa a mostrar somente a região ou o estado escolhido. Toque novamente no estado para voltar à região. A cor de cada estado indica o percentual dos itens classificados que estão no nível escolhido ao lado, na avaliação selecionada. Cada ponto é uma maternidade; toque no ponto para abrir o perfil da unidade.</p>
     </div>
     <div class="mapa-layout">
       <div class="card mapa-svg-box">
