@@ -510,7 +510,7 @@ footer a{color:var(--verde-lima)}
     </div>
     <div class="kpis-linha" id="kpisMud"></div>
     <div class="grid-eq">
-      <div class="card"><h3>Transição entre níveis</h3><p class="sub">Linhas: nível na primeira avaliação escolhida. Colunas: nível na segunda. A diagonal reúne os itens que mantiveram o nível.</p><div id="transicao"></div></div>
+      <div class="card"><h3>Transição entre níveis</h3><p class="sub">Cada item é um indicador em uma maternidade. As linhas mostram o nível do item na primeira avaliação escolhida e as colunas, o nível na segunda. Cada célula conta quantos itens fizeram aquele caminho; a diagonal reúne os que mantiveram o nível.</p><div id="transicao"></div></div>
       <div class="card"><h3>Indicadores com mais avanços</h3><p class="sub">Maternidades que avançaram ou recuaram em cada indicador.</p><div class="tab-wrap" style="margin-top:.7rem; max-height:420px"><table class="tab" id="tabMudInd"></table></div></div>
     </div>
     <div class="card" style="margin-top:1.1rem"><h3>Maternidades</h3><p class="sub">Indicadores em que cada maternidade avançou ou recuou. O saldo soma os níveis ganhos e perdidos. Toque no nome para abrir o perfil da unidade.</p><div class="tab-wrap" style="margin-top:.7rem; max-height:520px"><table class="tab" id="tabMudMat"></table></div></div>
@@ -1190,9 +1190,21 @@ function renderMud(){
     else if(q && x === y) st = "background:#DDE4E0";
     return `<td class="${q ? "" : "zero"}" style="${st}"${tip(`De <b>${esc(NIV[x].rot)}</b> para <b>${esc(NIV[y].rot)}</b>: ${plural(q, "item", "itens")}`)}>${fmtInt(q)}</td>`;
   };
-  $("transicao").innerHTML = `<div style="overflow-x:auto"><table class="trans"><thead><tr><th class="lin-rot">${AVS[E.de].n}ª ↓ · ${AVS[E.para].n}ª →</th>${NIV.map((n, y) => `<th><i class="q n${y}" style="vertical-align:-2px"></i><br>${esc(n.rot)}</th>`).join("")}</tr></thead><tbody>` +
+  /* exemplo de leitura com os números do recorte: a linha (nível de partida) com mais itens e alguma mudança */
+  const comoLer = (() => {
+    let x = -1, tot = 0;
+    for(let k = 1; k < NIV.length; k++){ const t = r.T[k].reduce((s, q) => s + q, 0); if(t - r.T[k][k] > 0 && t > tot){ tot = t; x = k; } }
+    if(x < 0) return "";
+    const partes = [];
+    if(r.T[x][x]) partes.push(`${fmtInt(r.T[x][x])} ${r.T[x][x] === 1 ? "continuou" : "continuaram"} em ${NIV[x].rot}`);
+    NIV.map((n, y) => ({y, q: r.T[x][y]})).filter(o => o.q && o.y !== x)
+      .forEach((o, i) => partes.push(`${fmtInt(o.q)} ${i === 0 ? (o.q === 1 ? "passou a " : "passaram a ") : "a "}${NIV[o.y].rot}`));
+    const lista = partes.length > 1 ? partes.slice(0, -1).join(", ") + " e " + partes[partes.length - 1] : partes[0];
+    return `<p class="sub" style="margin-top:.6rem"><b>Como ler:</b> ${tot === 1 ? "do único item que estava" : `dos ${fmtInt(tot)} itens que estavam`} em ${esc(NIV[x].rot)} na ${esc(AVS[E.de].rot)}, ${esc(lista)} na ${esc(AVS[E.para].rot)}. Verde indica avanço e vermelho indica recuo; quanto mais forte a cor, mais itens.</p>`;
+  })();
+  $("transicao").innerHTML = `<div style="overflow-x:auto"><table class="trans"><thead><tr><th class="lin-rot">${esc(AVS[E.de].rot)} ↓<br>${esc(AVS[E.para].rot)} →</th>${NIV.map((n, y) => `<th><i class="q n${y}" style="vertical-align:-2px"></i><br>${esc(n.rot)}</th>`).join("")}</tr></thead><tbody>` +
     NIV.map((n, x) => `<tr><th class="lin-rot"><i class="q n${x}" style="vertical-align:-2px"></i> ${esc(n.rot)}</th>${NIV.map((_, y) => cel(x, y)).join("")}</tr>`).join("") + `</tbody></table></div>
-    <div class="legenda"><span><i class="q" style="background:rgba(39,146,97,.6)"></i>avanço</span><span><i class="q" style="background:rgba(192,57,43,.6)"></i>recuo</span><span><i class="q" style="background:#DDE4E0"></i>manteve o nível</span></div>`;
+    <div class="legenda"><span><i class="q" style="background:rgba(39,146,97,.6)"></i>avanço</span><span><i class="q" style="background:rgba(192,57,43,.6)"></i>recuo</span><span><i class="q" style="background:#DDE4E0"></i>manteve o nível</span></div>${comoLer}`;
   const pi = TODOS.map(i => ({i, ...r.porInd[i]})).filter(x => x.comp).sort((a, b) => b.av - a.av || a.rec - b.rec || a.i - b.i);
   $("tabMudInd").innerHTML = `<thead><tr><th>Indicador</th><th class="r">Comparáveis</th><th class="r">Avançaram</th><th class="r">Recuaram</th></tr></thead><tbody>` +
     (pi.map(x => `<tr><td>${IND[x.i].id}. ${esc(IND[x.i].rot)}<br><small>${esc(DIM_POR[IND[x.i].dim].rot)}</small></td><td class="r">${fmtInt(x.comp)}</td><td class="r">${x.av ? `<span class="seta-av">▲ ${fmtInt(x.av)}</span>` : "0"}</td><td class="r">${x.rec ? `<span class="seta-rec">▼ ${fmtInt(x.rec)}</span>` : "0"}</td></tr>`).join("") || `<tr><td colspan="4">Sem itens comparáveis neste recorte.</td></tr>`) + `</tbody>`;
