@@ -267,6 +267,9 @@ section.alt .kpis-linha .k{background:var(--mint-card)}
 .kpis-linha .k .n{font-size:1.5rem; font-weight:800; letter-spacing:-.02em; color:var(--verde-esmeralda); line-height:1.15; font-variant-numeric:tabular-nums}
 .kpis-linha .k .t{font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--texto-suave); font-weight:700}
 .kpis-linha .k .s{font-size:.74rem; color:var(--texto-suave)}
+.lin.trans-lin{grid-template-columns:minmax(128px, .95fr) minmax(0, 3fr) minmax(112px, auto)}   /* comparação entre duas avaliações: uma barra por nível de partida */
+.lin.trans-lin .n{font-size:.78rem; text-align:left}
+@media (max-width: 720px){ .lin.trans-lin{grid-template-columns:1fr} }
 table.trans{border-collapse:separate; border-spacing:3px; font-size:.82rem; margin-top:.7rem; width:100%}
 table.trans th{font-size:.7rem; font-weight:700; color:var(--texto-suave); padding:.2rem .3rem; text-align:center; line-height:1.2}
 table.trans th.lin-rot{text-align:right; white-space:nowrap}
@@ -517,7 +520,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Mudanças de nível</p>
       <h2>Comparação entre duas avaliações</h2>
-      <p>Compara o nível de cada indicador, em cada maternidade do recorte, nas duas avaliações escolhidas. São considerados apenas os itens classificados nas duas avaliações. Avanço é a passagem a um nível acima na ordem Não Iniciado, Intermediário, Avançado e Qualificado; recuo é a passagem a um nível abaixo. Mudanças que envolvem "Não se Aplica" são contadas separadamente.</p>
+      <p>Compara o nível de cada indicador, em cada maternidade, nas duas avaliações escolhidas. Avanço é subir de nível; recuo é descer.</p>
     </div>
     <div class="controles">
       <label class="filtro"><span>De</span><select id="selDe"></select></label>
@@ -532,7 +535,7 @@ footer a{color:var(--verde-lima)}
     </div>
     <div class="kpis-linha" id="kpisMud"></div>
     <div class="grid-eq">
-      <div class="card"><h3>Transição entre níveis</h3><p class="sub">Cada item é um indicador em uma maternidade. As linhas mostram o nível do item na primeira avaliação escolhida e as colunas, o nível na segunda. Cada célula conta quantos itens fizeram aquele caminho; a diagonal reúne os que mantiveram o nível.</p><div id="transicao"></div></div>
+      <div class="card"><h3 id="tituloTransicao">Nível nas duas avaliações</h3><p class="sub">Cada barra reúne as classificações que estavam em um nível na primeira avaliação escolhida. As cores mostram o nível delas na segunda.</p><div id="transicao"></div></div>
       <div class="card"><h3>Indicadores com mais avanços</h3><p class="sub">Maternidades que avançaram ou recuaram em cada indicador.</p><div class="tab-wrap" style="margin-top:.7rem; max-height:420px"><table class="tab" id="tabMudInd"></table></div></div>
     </div>
     <div class="card" style="margin-top:1.1rem"><h3>Maternidades</h3><p class="sub">Indicadores em que cada maternidade avançou ou recuou. O saldo soma os níveis ganhos e perdidos. Toque no nome para abrir o perfil da unidade.</p><div class="tab-wrap" style="margin-top:.7rem; max-height:520px"><table class="tab" id="tabMudMat"></table></div></div>

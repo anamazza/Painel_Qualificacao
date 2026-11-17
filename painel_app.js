@@ -639,43 +639,28 @@ function renderMud(){
   renderResumo(mats);
   if(E.de === E.para){
     $("kpisMud").innerHTML = `<div class="k"><div class="s">Escolha duas avaliações diferentes para comparar.</div></div>`;
-    $("transicao").innerHTML = ""; $("tabMudInd").innerHTML = ""; $("tabMudMat").innerHTML = ""; return;
+    $("tituloTransicao").textContent = "Nível nas duas avaliações"; $("transicao").innerHTML = ""; $("tabMudInd").innerHTML = ""; $("tabMudMat").innerHTML = ""; return;
   }
   const r = mudancas(mats, E.de, E.para);
   const k = (n, t, s) => `<div class="k"><div class="n">${n}</div><div class="t">${t}</div><div class="s">${s}</div></div>`;
-  $("kpisMud").innerHTML = k(fmtInt(r.comp), "Itens comparáveis", `classificados na ${AVS[E.de].ref} e na ${AVS[E.para].ref} · ${esc(rotRecorte())}`) +
-    k(fmtInt(r.av), "Avançaram de nível", `${pct(r.av, r.comp)} dos comparáveis`) +
-    k(fmtInt(r.rec), "Recuaram de nível", `${pct(r.rec, r.comp)} dos comparáveis`) +
-    k(fmtInt(r.ig), "Mantiveram o nível", `${pct(r.ig, r.comp)} dos comparáveis`) +
+  $("kpisMud").innerHTML = k(fmtInt(r.comp), "Classificações comparadas", `com nível na ${AVS[E.de].ref} e na ${AVS[E.para].ref} · ${esc(rotRecorte())}`) +
+    k(fmtInt(r.av), "Avançaram de nível", `${pct(r.av, r.comp)} das comparadas`) +
+    k(fmtInt(r.rec), "Recuaram de nível", `${pct(r.rec, r.comp)} das comparadas`) +
+    k(fmtInt(r.ig), "Mantiveram o nível", `${pct(r.ig, r.comp)} das comparadas`) +
     (r.outra ? k(fmtInt(r.outra), "Outras mudanças", `de ou para "Não se Aplica"`) : "");
-  /* matriz de transição: verde = avanço, vermelho = recuo, cinza = manteve ou envolve "Não se Aplica" */
-  const maxFora = Math.max(1, ...r.T.flatMap((l, x) => l.filter((_, y) => y !== x)));
-  const cel = (x, y) => {
-    const q = r.T[x][y]; let st = "";
-    if(q && x !== y && x !== 0 && y !== 0){ const al = (.14 + .6 * q / maxFora).toFixed(2); st = y > x ? `background:rgba(39,146,97,${al})` : `background:rgba(192,57,43,${al})`; }
-    else if(q && x === y) st = "background:#DDE4E0";
-    return `<td class="${q ? "" : "zero"}" style="${st}"${tip(`De <b>${esc(NIV[x].rot)}</b> para <b>${esc(NIV[y].rot)}</b>: ${plural(q, "item", "itens")}`)}>${fmtInt(q)}</td>`;
-  };
-  /* exemplo de leitura com os números do recorte: a linha (nível de partida) com mais itens e alguma mudança */
-  const comoLer = (() => {
-    let x = -1, tot = 0;
-    for(let k = 1; k < NIV.length; k++){ const t = r.T[k].reduce((s, q) => s + q, 0); if(t - r.T[k][k] > 0 && t > tot){ tot = t; x = k; } }
-    if(x < 0) return "";
-    const partes = [];
-    if(r.T[x][x]) partes.push(`${fmtInt(r.T[x][x])} ${r.T[x][x] === 1 ? "continuou" : "continuaram"} em ${NIV[x].rot}`);
-    NIV.map((n, y) => ({y, q: r.T[x][y]})).filter(o => o.q && o.y !== x)
-      .forEach((o, i) => partes.push(`${fmtInt(o.q)} ${i === 0 ? (o.q === 1 ? "passou a " : "passaram a ") : "a "}${NIV[o.y].rot}`));
-    const lista = partes.length > 1 ? partes.slice(0, -1).join(", ") + " e " + partes[partes.length - 1] : partes[0];
-    return `<p class="sub" style="margin-top:.6rem"><b>Como ler:</b> ${tot === 1 ? "do único item que estava" : `dos ${fmtInt(tot)} itens que estavam`} em ${esc(NIV[x].rot)} na ${esc(AVS[E.de].ref)}, ${esc(lista)} na ${esc(AVS[E.para].ref)}. Verde indica avanço e vermelho indica recuo; quanto mais forte a cor, mais itens.</p>`;
-  })();
-  $("transicao").innerHTML = `<div style="overflow-x:auto"><table class="trans"><thead><tr><th class="lin-rot">${esc(AVS[E.de].rot)} ↓<br>${esc(AVS[E.para].rot)} →</th>${NIV.map((n, y) => `<th><i class="q n${y}" style="vertical-align:-2px"></i><br>${esc(n.rot)}</th>`).join("")}</tr></thead><tbody>` +
-    NIV.map((n, x) => `<tr><th class="lin-rot"><i class="q n${x}" style="vertical-align:-2px"></i> ${esc(n.rot)}</th>${NIV.map((_, y) => cel(x, y)).join("")}</tr>`).join("") + `</tbody></table></div>
-    <div class="legenda"><span><i class="q" style="background:rgba(39,146,97,.6)"></i>avanço</span><span><i class="q" style="background:rgba(192,57,43,.6)"></i>recuo</span><span><i class="q" style="background:#DDE4E0"></i>manteve o nível</span></div>${comoLer}`;
+  /* uma barra para cada nível de partida: as cores mostram o nível das mesmas classificações na segunda avaliação */
+  $("tituloTransicao").textContent = `Nível na ${AVS[E.de].ref} e nível na ${AVS[E.para].ref}`;
+  $("transicao").innerHTML = `<div class="linhas" style="margin-top:.6rem">` + NIV.map((n, x) => {
+      const linha = r.T[x], tot = linha.reduce((s, q) => s + q, 0); if(!tot) return "";
+      const sobe = x === 0 ? 0 : linha.reduce((s, q, y) => s + (y > x ? q : 0), 0), desce = x === 0 ? 0 : linha.reduce((s, q, y) => s + (y < x && y > 0 ? q : 0), 0);
+      const nota = [sobe ? `<span class="seta-av">▲ ${fmtInt(sobe)} ${sobe === 1 ? "avançou" : "avançaram"}</span>` : "", desce ? `<span class="seta-rec">▼ ${fmtInt(desce)} ${desce === 1 ? "recuou" : "recuaram"}</span>` : ""].filter(Boolean).join("<br>") || `<span class="suave">sem mudança</span>`;
+      return `<div class="lin trans-lin"><span class="rot"><i class="q n${x}" style="vertical-align:-2px"></i> ${esc(n.rot)}<small>${fmtInt(tot)} na ${esc(AVS[E.de].ref)}</small></span>${pilha({n: linha, si: 0, cls: tot, total: tot}, "n")}<span class="n">${nota}</span></div>`; }).join("") + `</div>
+    <div class="legenda"><span>Cor = nível na ${esc(AVS[E.para].ref)}:</span>${NIV.map((n, k) => `<span><i class="q n${k}"></i>${esc(n.rot)}</span>`).join("")}</div>`;
   const pi = TODOS.map(i => ({i, ...r.porInd[i]})).filter(x => x.comp).sort((a, b) => b.av - a.av || a.rec - b.rec || a.i - b.i);
-  $("tabMudInd").innerHTML = `<thead><tr><th>Indicador</th><th class="r">Comparáveis</th><th class="r">Avançaram</th><th class="r">Recuaram</th></tr></thead><tbody>` +
-    (pi.map(x => `<tr><td>${IND[x.i].id}. ${esc(IND[x.i].rot)}<br><small>${esc(DIM_POR[IND[x.i].dim].rot)}</small></td><td class="r">${fmtInt(x.comp)}</td><td class="r">${x.av ? `<span class="seta-av">▲ ${fmtInt(x.av)}</span>` : "0"}</td><td class="r">${x.rec ? `<span class="seta-rec">▼ ${fmtInt(x.rec)}</span>` : "0"}</td></tr>`).join("") || `<tr><td colspan="4">Sem itens comparáveis neste recorte.</td></tr>`) + `</tbody>`;
+  $("tabMudInd").innerHTML = `<thead><tr><th>Indicador</th><th class="r">Maternidades</th><th class="r">Avançaram</th><th class="r">Recuaram</th></tr></thead><tbody>` +
+    (pi.map(x => `<tr><td>${IND[x.i].id}. ${esc(IND[x.i].rot)}<br><small>${esc(DIM_POR[IND[x.i].dim].rot)}</small></td><td class="r">${fmtInt(x.comp)}</td><td class="r">${x.av ? `<span class="seta-av">▲ ${fmtInt(x.av)}</span>` : "0"}</td><td class="r">${x.rec ? `<span class="seta-rec">▼ ${fmtInt(x.rec)}</span>` : "0"}</td></tr>`).join("") || `<tr><td colspan="4">Sem classificações para comparar neste recorte.</td></tr>`) + `</tbody>`;
   const pm = r.porMat.slice().sort((a, b) => b.av - a.av || b.saldo - a.saldo || porUFNome(a.m, b.m));
-  $("tabMudMat").innerHTML = `<thead><tr><th>Maternidade</th><th>UF</th><th class="r">Itens comparáveis</th><th class="r">Avançaram</th><th class="r">Recuaram</th><th class="r">Saldo de níveis</th></tr></thead><tbody>` +
+  $("tabMudMat").innerHTML = `<thead><tr><th>Maternidade</th><th>UF</th><th class="r">Indicadores comparados</th><th class="r">Avançaram</th><th class="r">Recuaram</th><th class="r">Saldo de níveis</th></tr></thead><tbody>` +
     pm.map(x => `<tr><td><button class="lk" data-cnes="${x.m.cnes}">${esc(x.m.nome)}</button><br><small>${esc(x.m.municipio)}</small></td><td>${x.m.uf}</td><td class="r">${fmtInt(x.comp)}</td><td class="r">${x.av ? `<span class="seta-av">▲ ${fmtInt(x.av)}</span>` : "0"}</td><td class="r">${x.rec ? `<span class="seta-rec">▼ ${fmtInt(x.rec)}</span>` : "0"}</td><td class="r">${x.saldo > 0 ? "+" : x.saldo < 0 ? "−" : ""}${fmtInt(Math.abs(x.saldo))}</td></tr>`).join("") + `</tbody>`;
 }
 function montarMud(){
