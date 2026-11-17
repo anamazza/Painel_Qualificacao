@@ -43,9 +43,10 @@ carimbo = {
     "planilha": DADOS["fonte"]["arquivo"],
     "planilha_versao": DADOS["fonte"]["modificadoEm"],
     "unidades": len(DADOS["maternidades"]),
-    "avaliacoes_realizadas": len(realizadas),
+    "linha_de_base": DADOS["avaliacoes"][0]["periodo"],
+    "avaliacoes_realizadas": len([a for a in realizadas if a["n"] > 0]),
 }
 with open(os.path.join(BASE, "atualizacao.json"), "w", encoding="utf-8") as fh:
     json.dump(carimbo, fh, ensure_ascii=False, indent=1)
 print(f"gerado index.html e Painel_Qualificacao_2026.html ({os.path.getsize(os.path.join(BASE, 'index.html')) // 1024} KB)")
-print(f"carimbo: montado em {carimbo['montado_em']}, planilha de {carimbo['planilha_versao']}, {carimbo['unidades']} maternidades, {carimbo['avaliacoes_realizadas']} avaliações realizadas")
+print(f"carimbo: montado em {carimbo['montado_em']}, planilha de {carimbo['planilha_versao']}, {carimbo['unidades']} maternidades, linha de base e {carimbo['avaliacoes_realizadas']} avaliações realizadas")

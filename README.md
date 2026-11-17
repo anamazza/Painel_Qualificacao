@@ -23,15 +23,15 @@ cliques, sem internet e sem servidor.
   da unidade. A posição dos pontos é aproximada (latitude e longitude do CNES convertidas para a malha).
 - **Visão geral**: distribuição dos níveis em cada avaliação, indicadores-chave da avaliação escolhida com a variação
   desde a primeira, e distribuição por eixo e dimensão.
-- **Indicadores**: os 40 indicadores, com as maternidades em cada nível; ao tocar em um indicador, a lista das
+- **Indicadores**: os 39 indicadores (com a descrição de cada nível no instrumento de avaliação, quando registrada), com as maternidades em cada nível; ao tocar em um indicador, a lista das
   maternidades por nível.
-- **Regiões e estados**: tabela Brasil, regiões e estados (ou os oito grupos de estados da planilha), para todos os
+- **Regiões e estados**: tabela Brasil, regiões e estados, para todos os
   indicadores, um eixo, uma dimensão ou um indicador; download em CSV.
 - **Maternidades**: quadro maternidade × indicador, com cor e sigla do nível; busca, ordenação e download em CSV.
 - **Mudanças de nível**: comparação item a item entre duas avaliações (avanços, recuos, de qual nível para qual
   nível, por indicador e por maternidade).
-- **Preenchimento**: percentual de itens classificados por grupo de estados da planilha e por dimensão.
-- **Perfil da unidade**: página própria de cada maternidade, com os 40 indicadores nas cinco avaliações, resumo por
+- **Preenchimento**: percentual de itens classificados por região e por dimensão.
+- **Perfil da unidade**: página própria de cada maternidade, com os 39 indicadores na linha de base e nas avaliações (o botão "Relatório da maternidade (PDF)" gera o relatório da unidade, com os gráficos), resumo por
   dimensão, PDF pela impressão e CSV. O endereço `index.html#<CNES>` abre o perfil direto.
 - **Notas metodológicas**: fonte, regras de leitura e cobertura.
 
@@ -66,7 +66,7 @@ O painel não usa dados do DATASUS.
 4. Publicar: `git add -A`, `git commit`, `git push`.
 
 O `build_dados.py` interrompe a leitura, com mensagem, se a planilha mudar de estrutura: aba regional ausente,
-cabeçalho de níveis fora do lugar, número de indicadores diferente de 40, texto de indicador alterado ou serviço
+cabeçalho de níveis fora do lugar, número de indicadores diferente de 39, texto de indicador alterado ou serviço
 sem correspondência em `servicos_cnes.csv`. Um serviço novo precisa de uma linha nova em `servicos_cnes.csv`.
 
 ## Estrutura
@@ -75,16 +75,22 @@ sem correspondência em `servicos_cnes.csv`. Um serviço novo precisa de uma lin
 - `painel_app.js` — lógica do painel (fonte editável)
 - `build_dados.py` — leitura da planilha; gera `dados_qualificacao.js` e `relatorio_leitura.md`
 - `montar_painel.py` — monta `index.html`, `Painel_Qualificacao_2026.html`, `dados.json` e `atualizacao.json`
-- `indicadores.csv` — os 40 indicadores (ordem e nomes do documento, texto e posição na planilha)
+- `indicadores.csv` — os 39 indicadores (ordem e nomes do documento, texto e posição na planilha)
 - `servicos_cnes.csv` — os 50 serviços da planilha e o CNES de cada um
 - `geo_uf.json` — malha dos estados usada no mapa (a mesma dos demais painéis; embutida pelo `build_dados.py`)
+- `geo_saude.json` — malha e nomes das macrorregiões e das regiões de saúde (a mesma do Painel de Habilitações)
+- `territorio_saude.csv` — região e macrorregião de saúde do município de cada maternidade
 - `logos_institucionais.png` — imagem embutida na montagem
 - `fonte/` — planilha e documento originais (não vão para o repositório; ver `.gitignore`)
 
 ## Situação em 11/11/2026
 
-- Planilha lida: versão de 10/11/2026. 50 maternidades em 27 UFs, 40 indicadores, 4 de 5 avaliações realizadas.
-- Na 4ª avaliação, 1.162 de 2.000 itens estão classificados. As três abas do Nordeste (19 maternidades) têm 9 dos
-  40 indicadores preenchidos; nas demais, 8 indicadores estão sem classificação em todas as maternidades.
+- Planilha lida: versão de 16/11/2026. 50 maternidades em 27 UFs, 39 indicadores, linha de base (jan/2026) e 3 de 4
+  avaliações realizadas. Na 3ª avaliação, 1.547 de 1.950 itens estão classificados; 8 indicadores estão sem
+  classificação em todas as maternidades.
+- Ajustes de 16/11/2026 (grupo técnico da coordenação): a primeira coluna de classificação passou a se chamar linha de
+  base (jan/2026) e as demais, 1ª a 4ª avaliação (1º ao 4º trimestre de 2026); o painel deixou de separar grupos de
+  estados; o mapa mostra os limites e os nomes das macrorregiões e das regiões de saúde; o indicador "M&A" da
+  dimensão Vinculação saiu do instrumento.
 - A coordenação informou que os dados restantes serão enviados; o painel será refeito com a nova planilha.
 - A associação de cada serviço ao CNES foi feita pelo nome e aguarda confirmação da equipe responsável pela planilha.

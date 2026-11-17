@@ -1,11 +1,14 @@
 /* ============================================================
    Painel de Qualificação · Maternidades Estratégicas — app
    Dados: const DADOS (dados_qualificacao.js, gerado por build_dados.py a partir da planilha de acompanhamento):
-     DADOS.maternidades[] = {cnes, nome, nomePlanilha, uf, regiao, municipio, aba, grupo, lat, lon, c[40][5]}
+     DADOS.maternidades[] = {cnes, nome, nomePlanilha, uf, regiao, municipio, aba, rs, rsNome, macro, macroNome, lat, lon, c[39][5]}
        c[indicador][avaliação] = índice do nível (0 a 4, ordem de DADOS.niveis) ou null (sem informação)
-     DADOS.niveis[] = {id, rot, cod, cor}; DADOS.avaliacoes[] = {n, rot, periodo, meses, realizada}
-     DADOS.eixos[], DADOS.dimensoes[] = {id, eixo, rot}; DADOS.indicadores[] = {id, eixo, dim, rot, texto, nPlanilha}
-     DADOS.grupos[] = {aba, rot, regiao} (abas regionais da planilha); DADOS.correcoes[], DADOS.anomalias[]
+     DADOS.niveis[] = {id, rot, cod, cor}; DADOS.avaliacoes[] = {n, rot, ref, sigla, arq, periodo, meses, realizada}
+       (a primeira é a linha de base, n = 0; "ref" é a forma usada no meio das frases)
+     DADOS.eixos[], DADOS.dimensoes[] = {id, eixo, rot}
+     DADOS.indicadores[] = {id, eixo, dim, rot, texto, nPlanilha, pergunta, criterios[4] ou null}
+       criterios = descrição dos níveis Não Iniciado, Intermediário, Avançado e Qualificado no instrumento de avaliação
+     DADOS.correcoes[], DADOS.anomalias[]; GEO = {W, H, uf[], macro[], rs[]} (estados, macrorregiões e regiões de saúde)
    Seções: visão geral, indicadores, regiões e estados, maternidades (quadro), mudanças de nível, preenchimento,
    notas e perfil da unidade (página sobreposta). Mesma família visual dos painéis de Nascimentos, Internação,
    Mortalidade e Habilitações.
@@ -13,7 +16,7 @@
 "use strict";
 
 const MAT = DADOS.maternidades, NIV = DADOS.niveis, AVS = DADOS.avaliacoes, IND = DADOS.indicadores;
-const DIM = DADOS.dimensoes, EIX = DADOS.eixos, GRP = DADOS.grupos;
+const DIM = DADOS.dimensoes, EIX = DADOS.eixos;
 const TODOS = IND.map((_, i) => i);
 const REALIZADAS = AVS.map((a, i) => a.realizada ? i : -1).filter(i => i >= 0);
 const PRIM = REALIZADAS.length ? REALIZADAS[0] : 0;
@@ -32,7 +35,7 @@ const HAB_URL = "https://anamazza.github.io/Indicadores_Brasil/habilitacoes/";
 
 /* estado: recorte geral (vale para todas as seções) e escolhas de cada seção */
 const S = {av: ULT, regiao: "", uf: ""};
-const E = {ind: null, escopo: "todos", modo: "regioes", ordem: "uf", busca: "", de: PRIM, para: ULT, nivelMapa: "ep", pontos: true, escopoRes: "todos", eixoMat: ""};
+const E = {ind: null, escopo: "todos", divisao: "macro", ordem: "uf", busca: "", de: PRIM, para: ULT, nivelMapa: "ep", pontos: true, escopoRes: "todos", eixoMat: ""};
 
 /* ---------------- utilidades ---------------- */
 const $ = id => document.getElementById(id);
@@ -45,6 +48,7 @@ const plural = (n, s, p) => `${fmtInt(n)} ${n === 1 ? s : p}`;
 const normTxt = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 const tip = html => ` data-tip="${esc(html)}"`;
 const rotAv = i => `${AVS[i].rot} (${AVS[i].periodo})`;
+const N_AVAL = AVS.filter(a => a.n > 0).length, N_AVAL_FEITAS = AVS.filter(a => a.n > 0 && a.realizada).length;   // sem contar a linha de base
 const rotRecorte = () => S.uf ? UF_NOME[S.uf] : (S.regiao ? `Região ${S.regiao}` : "Brasil");
 const recorte = () => MAT.filter(m => (!S.regiao || m.regiao === S.regiao) && (!S.uf || m.uf === S.uf));
 const porUFNome = (a, b) => a.uf.localeCompare(b.uf) || a.nome.localeCompare(b.nome, "pt-BR");
@@ -145,26 +149,27 @@ function montarCabecalho(){
   $("statMatSub").textContent = `em ${ufs.size} unidades da federação`;
   $("statInd").textContent = fmtInt(IND.length);
   $("statIndSub").textContent = `${DIM.length} dimensões em ${EIX.length} eixos`;
-  $("statAv").textContent = `${REALIZADAS.length} de ${AVS.length}`;
-  $("statAvSub").textContent = `última: ${AVS[ULT].periodo}`;
+  $("statAv").textContent = `${N_AVAL_FEITAS} de ${N_AVAL}`;
+  $("statAvSub").textContent = `e a linha de base (${AVS[0].periodo}) · última: ${AVS[ULT].periodo}`;
   $("statCls").textContent = fmtInt(d.cls);
-  $("statClsSub").textContent = `de ${fmtInt(d.total)} na ${AVS[ULT].rot}`;
+  $("statClsSub").textContent = `de ${fmtInt(d.total)} na ${AVS[ULT].ref}`;
   $("statEP").textContent = epTxt(d);
-  $("statEPSub").textContent = `dos itens avaliados na ${AVS[ULT].rot}`;
+  $("statEPSub").textContent = `dos itens avaliados na ${AVS[ULT].ref}`;
   $("statQual").textContent = pct(d.n[4], d.cls);
-  $("statQualSub").textContent = `dos classificados na ${AVS[ULT].rot}`;
+  $("statQualSub").textContent = `dos classificados na ${AVS[ULT].ref}`;
   $("btnNotas").addEventListener("click", () => $("secNotas").scrollIntoView({behavior: "smooth"}));
 
   /* notas */
   $("notaFonte").innerHTML = `
-    <p><b>Acompanhamento trimestral.</b> Os dados vêm do acompanhamento das práticas de atenção e gestão das maternidades, realizado pela coordenação do projeto. A cada avaliação trimestral, cada maternidade recebe um nível de classificação em cada indicador. Esta versão reúne os registros recebidos até ${versao}.</p>
+    <p><b>Acompanhamento trimestral.</b> Os dados vêm do acompanhamento das práticas de atenção e gestão das maternidades, realizado pela coordenação do projeto. A linha de base (${esc(AVS[0].periodo)}) registra a situação inicial de cada maternidade; a cada avaliação trimestral, cada maternidade recebe um nível de classificação em cada indicador. Esta versão reúne os registros recebidos até ${versao}.</p>
     <p><b>Indicadores e níveis.</b> Os eixos, as dimensões, os indicadores, os níveis de classificação e as suas cores, o período de cada avaliação e os níveis de análise (Brasil, regiões, estados e maternidades) foram definidos pela coordenação.</p>
-    <p>Este painel não usa dados dos sistemas de informação do Ministério da Saúde. Os critérios de cada nível em cada indicador pertencem ao instrumento de avaliação da coordenação; o painel reproduz a classificação registrada.</p>`;
+    <p>Este painel não usa dados dos sistemas de informação do Ministério da Saúde. A descrição de cada nível, por indicador, pertence ao instrumento de avaliação da coordenação e aparece ao abrir o indicador na seção Indicadores; ${IND.filter(i => i.criterios).length} dos ${IND.length} indicadores têm essa descrição registrada. O painel reproduz a classificação registrada.</p>
+    <p><b>Regiões e macrorregiões de saúde.</b> Os limites e os nomes são os da base territorial do Ministério da Saúde usada no Painel de Habilitações. Cada maternidade está associada à região e à macrorregião de saúde do seu município.</p>`;
   $("notaNiveis").innerHTML = `
     <p><b>Níveis de classificação:</b></p>
     <ul>${NIV.map((n, k) => `<li><i class="q n${k}" style="vertical-align:-2px"></i> <b>${esc(n.rot)}</b> (sigla ${esc(n.cod)} no quadro das maternidades)</li>`).join("")}
     <li><i class="q nsi" style="vertical-align:-2px"></i> <b>Sem informação</b>: item ainda sem nível registrado</li></ul>
-    <p><b>Avaliações:</b></p>
+    <p><b>Linha de base e avaliações:</b></p>
     <ul>${AVS.map(a => `<li><b>${esc(a.rot)}</b>: ${esc(a.periodo)} (${esc(a.meses)})${a.realizada ? "" : " · a realizar"}</li>`).join("")}</ul>`;
   $("notaRegras").innerHTML = `<ul>
     <li><b>Contagens.</b> Cada item é o nível de um indicador em uma maternidade, em uma avaliação. Todos os totais e percentuais são calculados pelo painel a partir desses itens.</li>
@@ -174,11 +179,11 @@ function montarCabecalho(){
     <li><b>Mudanças de nível.</b> Avanço e recuo seguem a ordem Não Iniciado, Intermediário, Avançado e Qualificado, e só comparam itens classificados nas duas avaliações. Mudanças de ou para "Não se Aplica" são contadas separadamente.</li>
   </ul>`;
   const semNenhuma = TODOS.filter(i => MAT.every(m => m.c[i][ULT] == null)).map(i => IND[i]);
-  const porGrupo = GRP.map(g => { const ms = MAT.filter(m => m.aba === g.aba); return {g, n: ms.length, com: TODOS.filter(i => ms.some(m => m.c[i][ULT] != null)).length}; });
+  const porRegiao = REGIOES.map(r => { const ms = MAT.filter(m => m.regiao === r); return {r, n: ms.length, com: TODOS.filter(i => ms.some(m => m.c[i][ULT] != null)).length}; }).filter(x => x.n);
   $("notaCobertura").innerHTML = `
     <p><b>Versão prévia.</b> O painel mostra apenas o que já foi registrado. O que ainda não foi preenchido aparece em branco, como "sem informação", e o painel é atualizado a cada nova remessa de dados.</p>
-    <p><b>Cobertura na ${esc(AVS[ULT].rot)}.</b> ${fmtInt(d.cls)} dos ${fmtInt(d.total)} itens (${fmtInt(MAT.length)} maternidades × ${IND.length} indicadores) estão classificados. Indicadores com pelo menos uma maternidade classificada, por grupo de estados:</p>
-    <ul>${porGrupo.map(x => `<li><b>${esc(x.g.rot)}</b> (${plural(x.n, "maternidade", "maternidades")}): ${x.com} de ${IND.length} indicadores</li>`).join("")}</ul>
+    <p><b>Cobertura na ${esc(AVS[ULT].ref)}.</b> ${fmtInt(d.cls)} dos ${fmtInt(d.total)} itens (${fmtInt(MAT.length)} maternidades × ${IND.length} indicadores) estão classificados. Indicadores com pelo menos uma maternidade classificada, por região:</p>
+    <ul>${porRegiao.map(x => `<li><b>${esc(x.r)}</b> (${plural(x.n, "maternidade", "maternidades")}): ${x.com} de ${IND.length} indicadores</li>`).join("")}</ul>
     ${semNenhuma.length ? `<p><b>Indicadores sem classificação em nenhuma maternidade:</b> ${semNenhuma.map(i => `${esc(i.rot)} (${esc(DIM_POR[i.dim].rot)})`).join("; ")}.</p>` : ""}
     <p><b>Avaliações a realizar:</b> ${AVS.filter(a => !a.realizada).map(a => `${esc(a.rot)} (${esc(a.periodo)})`).join("; ") || "nenhuma"}.</p>
     <p><b>Identificação das maternidades.</b> Cada maternidade está identificada pelo código do Cadastro Nacional de Estabelecimentos de Saúde (CNES) e pelo nome usados nos painéis de Nascimentos, Internação, Mortalidade e Habilitações. As ${fmtInt(MAT.length)} maternidades pertencem ao grupo de maternidades apoiadas (estratégicas) desses painéis.</p>`;
@@ -186,7 +191,7 @@ function montarCabecalho(){
 
 /* ---------------- recorte geral ---------------- */
 function montarRecorte(){
-  $("segAv").innerHTML = AVS.map((a, i) => `<button data-av="${i}" class="${i === S.av ? "ativo" : ""}"${a.realizada ? "" : " disabled title=\"Avaliação a realizar\""}>${a.n}ª <small>${esc(a.periodo)}</small></button>`).join("");
+  $("segAv").innerHTML = AVS.map((a, i) => `<button data-av="${i}" class="${i === S.av ? "ativo" : ""}"${a.realizada ? "" : " disabled title=\"Avaliação a realizar\""}>${esc(a.sigla)} <small>${esc(a.periodo)}</small></button>`).join("");
   segmento("segAv", d => { S.av = +d.av; renderTudo(); });
   const selR = $("selRegiao"), selU = $("selUF");
   REGIOES.filter(r => MAT.some(m => m.regiao === r)).forEach(r => selR.appendChild(new Option(`${r} (${MAT.filter(m => m.regiao === r).length})`, r)));
@@ -214,6 +219,7 @@ function sincronizaRecorte(){
    ============================================================ */
 const NS = "http://www.w3.org/2000/svg";
 const TEM_GEO = typeof GEO !== "undefined" && GEO && Array.isArray(GEO.uf);
+const TEM_SAUDE = TEM_GEO && Array.isArray(GEO.macro) && Array.isArray(GEO.rs);     // malha das macrorregiões e das regiões de saúde
 const REGIAO_UFS = {Norte:["AC","AM","AP","PA","RO","RR","TO"],Nordeste:["AL","BA","CE","MA","PB","PE","PI","RN","SE"],
 "Centro-Oeste":["DF","GO","MS","MT"],Sudeste:["ES","MG","RJ","SP"],Sul:["PR","RS","SC"]};
 const PROJ = {lon0: -54, lat0: -14, deg: 3,
@@ -263,6 +269,14 @@ function ajustaEscalaMapa(){
     t.setAttribute("font-size", (13 * k).toFixed(2)); t.setAttribute("y", (Number(t.dataset.cy) + 4.5 * k).toFixed(1));
     t.style.display = Number(t.dataset.w) >= 22 * k && Number(t.dataset.h) >= 16 * k ? "" : "none";
   });
+  /* nome da macrorregião de saúde: aparece quando cabe dentro do contorno, em uma ou duas linhas */
+  svgMapa.querySelectorAll("text.nome-macro").forEach(t => {
+    const fs = 9.5 * k, w = Number(t.dataset.w), h = Number(t.dataset.h), ls = JSON.parse(t.dataset.linhas);
+    const largura = Math.max(...ls.map(l => l.length)) * fs * .56;
+    t.setAttribute("font-size", fs.toFixed(2));
+    [...t.children].forEach((sp, i) => sp.setAttribute("y", (Number(t.dataset.cy) + (i - (ls.length - 1) / 2) * fs * 1.12 + fs * .35).toFixed(1)));
+    t.style.display = w >= largura && h >= ls.length * fs * 1.2 ? "" : "none";
+  });
 }
 function animaMapa(alvo){
   cancelAnimationFrame(animMapa);
@@ -293,7 +307,9 @@ function renderMapa(){
       <div class="kpi"><span>${EP_ROT}</span><span class="v">${epTxt(dRec)}</span></div>
     </div>
     <div style="margin-top:.8rem">${pilha(dRec, "pct")}</div>
-    ${S.uf ? `<ul class="lista-unid" style="margin-top:.8rem">${mats.slice().sort(porUFNome).map(m => `<li><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}</small></li>`).join("")}</ul>` : ""}
+    ${S.uf ? `<ul class="lista-unid" style="margin-top:.8rem">${mats.slice().sort(porUFNome).map(m => `<li><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)} · macrorregião de saúde ${esc(m.macroNome)} · região de saúde ${esc(m.rsNome)}</small></li>`).join("")}</ul>` +
+      (TEM_SAUDE ? (() => { const mc = GEO.macro.filter(t => t.uf === S.uf).map(t => t.nome).sort((a, b) => a.localeCompare(b, "pt-BR"));
+        return `<p class="sub" style="margin-top:.8rem"><b>Macrorregiões de saúde · ${esc(UF_NOME[S.uf])} (${mc.length}):</b> ${mc.map(esc).join("; ")}.</p>`; })() : "") : ""}
     ${S.regiao || S.uf ? `<p style="margin-top:.8rem"><button class="chip chip-botao" data-limpar="1">✕ voltar ao Brasil</button></p>` : ""}`;
   const box = $("mapaSvg");
   if(!TEM_GEO){ box.innerHTML = `<p class="suave" style="padding:1rem">Malha dos estados não disponível nesta montagem.</p>`; return; }
@@ -320,9 +336,33 @@ function renderMapa(){
     g.appendChild(el);
   });
   svgMapa.appendChild(g); box.appendChild(svgMapa);
+  /* divisões de saúde sobre os estados: macrorregiões ou regiões de saúde (limites, nome na dica e, quando cabe, no mapa) */
+  const div = TEM_SAUDE && E.divisao !== "uf" ? E.divisao : null, comZoom = !!(S.regiao || S.uf);
+  if(div){
+    const rotDiv = div === "macro" ? "Macrorregião de saúde" : "Região de saúde";
+    GEO[div].filter(t => noRecorte(t.uf)).forEach(t => {
+      const el = document.createElementNS(NS, "path"); el.setAttribute("d", t.d); el.setAttribute("class", "div " + div);
+      const ms = MAT.filter(m => String(m[div]) === String(t.id)), d = dist(ms, TODOS, S.av);
+      el.dataset.tip = `<b>${esc(t.nome)}</b><br>${rotDiv} · ${esc(UF_NOME[t.uf])}<br>` + (ms.length
+        ? `${plural(ms.length, "maternidade", "maternidades")} no painel` + (d.cls ? ` · <b>${EP_ROT}</b>: ${epTxt(d)}` : "") + "<br>" + ms.slice().sort(porUFNome).map(m => "· " + esc(m.nome)).join("<br>")
+        : "sem maternidade no painel");
+      el.addEventListener("click", () => cliqueUF(t.uf));
+      g.appendChild(el);
+      if(div === "macro" && comZoom){
+        const bb = el.getBBox(), tx = document.createElementNS(NS, "text"), ls = quebraTexto(t.nome, 18);
+        tx.setAttribute("class", "nome-macro"); tx.setAttribute("text-anchor", "middle");
+        tx.dataset.cy = t.cy; tx.dataset.w = bb.width.toFixed(1); tx.dataset.h = bb.height.toFixed(1); tx.dataset.linhas = JSON.stringify(ls);
+        ls.forEach(l => { const sp = document.createElementNS(NS, "tspan"); sp.setAttribute("x", t.cx); sp.textContent = l; tx.appendChild(sp); });
+        g.appendChild(tx);
+      }
+    });
+    /* o limite dos estados fica por cima, mais forte, para não se confundir com o das divisões de saúde */
+    GEO.uf.filter(u => noRecorte(u.id)).forEach(u => { const b = document.createElementNS(NS, "path"); b.setAttribute("d", u.d); b.setAttribute("class", "borda-uf"); g.appendChild(b); });
+  }
   const escuro = cls => cls >= 3 && !ehEP && nv !== 0 && nv !== 2;             // sigla branca só sobre cor escura
   svgMapa.querySelectorAll("path.t").forEach(el => {
     if(!noRecorte(el.dataset.uf) || S.uf) return;      // com um só estado na tela, o nome já está no resumo ao lado
+    if(div === "macro" && comZoom) return;             // na região ampliada, o mapa mostra os nomes das macrorregiões de saúde
     const bb = el.getBBox(), tx = document.createElementNS(NS, "text");
     /* a sigla fica dentro do estado: se o centro da caixa cai fora do contorno (estado com ilha distante ou forma
        recortada), usa o centro dos vértices */
@@ -344,7 +384,7 @@ function renderMapa(){
     MAT.filter(m => m._xy && noRecorte(m.uf)).sort((a, b) => a._xy[1] - b._xy[1]).forEach(m => {
       const c = document.createElementNS(NS, "circle"), d = dist([m], TODOS, S.av);
       c.setAttribute("cx", m._xy[0].toFixed(1)); c.setAttribute("cy", m._xy[1].toFixed(1)); c.setAttribute("class", "ponto");
-      c.dataset.tip = `<b>${esc(m.nome)}</b><br>${esc(m.municipio)} · ${m.uf} · CNES ${m.cnes}<br>${d.cls} de ${d.total} indicadores classificados` +
+      c.dataset.tip = `<b>${esc(m.nome)}</b><br>${esc(m.municipio)} · ${m.uf} · CNES ${m.cnes}<br>Macrorregião de saúde: ${esc(m.macroNome)}<br>Região de saúde: ${esc(m.rsNome)}<br>${d.cls} de ${d.total} indicadores classificados` +
         (d.cls ? "<br>" + NIV.map((n, k) => d.n[k] ? `${esc(n.rot)}: ${d.n[k]}` : "").filter(Boolean).join(" · ") : "") + (emProc(d).den ? `<br><b>${EP_ROT}</b>: ${epTxt(d)}` : "") + `<br><i>toque para abrir o perfil da unidade</i>`;
       c.addEventListener("click", () => abrirPerfil(m.cnes));
       gp.appendChild(c);
@@ -362,7 +402,8 @@ function renderMapa(){
   ajustaEscalaMapa(); animaMapa(alvo);
   $("tituloLegenda").innerHTML = (ehEP ? `Percentual dos itens de cada estado <b>em processo de qualificação</b>` : `Percentual dos itens classificados de cada estado no nível <b>${esc(NIV[nv].rot)}</b>`) + ` · ${esc(rotAv(S.av))}`;
   $("legendaMapa").innerHTML = classes.map((c, i) => presentes.has(i) ? `<span><i class="q" style="background:${mistura(corMapa, PASSOS_MAPA[i])}; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></i>${c.rot}</span>` : "").join("") +
-    (presentes.has(-1) ? `<span><i class="q" style="background:#E4EBE5"></i>sem item classificado</span>` : "") + `<span><i class="ponto-leg"></i>maternidade</span>`;
+    (presentes.has(-1) ? `<span><i class="q" style="background:#E4EBE5"></i>sem item classificado</span>` : "") + `<span><i class="ponto-leg"></i>maternidade</span>` +
+    (div ? `<span><i class="linha-leg"></i>limite de ${div === "macro" ? "macrorregião de saúde" : "região de saúde"}</span><span><i class="linha-leg forte"></i>limite de estado</span>` : "");
 }
 function montarMapa(){
   encaixaPontos();
@@ -372,6 +413,10 @@ function montarMapa(){
   $("pillsNivel").innerHTML = `<button data-nivel="ep"><i class="q" style="background:${EP_COR}"></i>${EP_ROT}</button>` + NIV.map((n, k) => `<button data-nivel="${k}"><i class="q n${k}"></i>${esc(n.rot)}</button>`).join("");
   $("pillsNivel").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; E.nivelMapa = b.dataset.nivel === "ep" ? "ep" : +b.dataset.nivel; renderMapa(); });
   $("chkPontos").addEventListener("change", e => { E.pontos = e.target.checked; renderMapa(); });
+  if(TEM_SAUDE){
+    $("segDivisao").querySelectorAll("button").forEach(b => b.classList.toggle("ativo", b.dataset.div === E.divisao));
+    segmento("segDivisao", d => { E.divisao = d.div; renderMapa(); });
+  } else { E.divisao = "uf"; $("cardDivisao").hidden = true; }
   $("mapaResumo").addEventListener("click", e => { if(e.target.closest("[data-limpar]")){ S.regiao = ""; S.uf = ""; renderTudo(); } });
 }
 
@@ -396,10 +441,10 @@ function renderGeral(){
   const varia = k => {
     if(S.av === PRIM || !d.cls || !d0.cls) return "";
     const pp = Math.round((d.n[k] / d.cls * 100 - d0.n[k] / d0.cls * 100) * 10) / 10;
-    return `<small>${pp > 0 ? "+" : pp < 0 ? "−" : ""}${fmt1(Math.abs(pp))} p.p. desde a ${AVS[PRIM].n}ª avaliação</small>`;
+    return `<small>${pp > 0 ? "+" : pp < 0 ? "−" : ""}${fmt1(Math.abs(pp))} p.p. desde a ${AVS[PRIM].ref}</small>`;
   };
   const ppEP = (S.av === PRIM || emProc(d).pct == null || emProc(d0).pct == null) ? null : Math.round((emProc(d).pct - emProc(d0).pct) * 10) / 10;
-  const variaEP = ppEP == null ? "" : `. Variação desde a ${AVS[PRIM].n}ª avaliação: ${ppEP > 0 ? "+" : ppEP < 0 ? "−" : ""}${fmt1(Math.abs(ppEP))} p.p.`;
+  const variaEP = ppEP == null ? "" : `. Variação desde a ${AVS[PRIM].ref}: ${ppEP > 0 ? "+" : ppEP < 0 ? "−" : ""}${fmt1(Math.abs(ppEP))} p.p.`;
   $("kpisGeral").innerHTML = `
     <p class="eyebrow">${esc(rotRecorte())} · ${esc(rotAv(S.av))}</p>
     <div class="num-grande" style="margin-top:.5rem">${epTxt(d)}</div>
@@ -439,6 +484,11 @@ function detalheInd(mats){
   return `<div class="detalhe-ind">
     <p class="sub"><b>${esc(EIXO_ROT[ind.eixo])}</b> · ${esc(DIM_POR[ind.dim].rot)} · ${esc(rotRecorte())} · ${esc(rotAv(S.av))} · ${fmtInt(d.cls)} de ${plural(d.total, "maternidade classificada", "maternidades classificadas")}</p>
     ${ind.texto !== ind.rot ? `<p class="sub"><b>Descrição completa:</b> ${esc(ind.texto)}</p>` : ""}
+    ${ind.pergunta && /\?\s*$/.test(ind.pergunta) ? `<p class="sub"><b>Pergunta do instrumento de avaliação:</b> ${esc(ind.pergunta)}</p>` : ""}
+    <p class="grupo-tit">Descrição de cada nível no instrumento de avaliação</p>
+    ${ind.criterios ? `<div class="criterios">${[1, 2, 3, 4].map(k => `<div><p class="niv-tit"><i class="q n${k}"></i>${esc(NIV[k].rot)}</p><p class="crit-txt">${esc(ind.criterios[k - 1])}</p></div>`).join("")}</div>`
+      : `<p class="sub">A descrição dos níveis deste indicador ainda não foi registrada.</p>`}
+    <p class="grupo-tit">Maternidades em cada nível</p>
     <div class="niveis-grid">${grupos.map(g => `<div><p class="niv-tit"><i class="q ${g.v == null ? "nsi" : "n" + g.v}"></i>${esc(nivelRot(g.v))} <small>${fmtInt(g.lista.length)}</small></p>
       <ul class="lista-unid">${g.lista.map(m => `<li><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}/${m.uf}</small></li>`).join("")}</ul></div>`).join("")}</div>
   </div>`;
@@ -457,8 +507,7 @@ function rotEscopo(escopo = E.escopo){
 }
 function linhasLocal(){
   const inds = indsEscopo(), rows = [{tipo: "br", rot: "Brasil", mats: MAT, regiao: "", uf: ""}];
-  if(E.modo === "grupos") GRP.forEach(g => rows.push({tipo: "grupo", rot: g.rot, sub: "", mats: MAT.filter(m => m.aba === g.aba)}));
-  else REGIOES.forEach(r => {
+  REGIOES.forEach(r => {
     const mr = MAT.filter(m => m.regiao === r); if(!mr.length) return;
     rows.push({tipo: "reg", rot: r, mats: mr, regiao: r, uf: ""});
     [...new Set(mr.map(m => m.uf))].sort((a, b) => UF_NOME[a].localeCompare(UF_NOME[b], "pt-BR")).forEach(uf => rows.push({tipo: "uf", rot: UF_NOME[uf], mats: mr.filter(m => m.uf === uf), regiao: r, uf}));
@@ -468,9 +517,9 @@ function linhasLocal(){
 }
 function renderLocal(){
   const rows = linhasLocal();
-  const sel = r => r.tipo !== "grupo" && r.regiao === S.regiao && r.uf === S.uf && (r.tipo === "br" ? !S.regiao && !S.uf : r.tipo === "reg" ? !S.uf : true);
+  const sel = r => r.regiao === S.regiao && r.uf === S.uf && (r.tipo === "br" ? !S.regiao && !S.uf : r.tipo === "reg" ? !S.uf : true);
   $("tabLocal").innerHTML = `<thead><tr><th>Local</th><th class="r">Maternidades</th><th class="r">Itens classificados</th><th class="r">Sem informação</th><th>Distribuição dos itens classificados</th><th class="r">${EP_ROT}</th><th class="r">Não Iniciado</th><th class="r">Qualificado</th></tr></thead><tbody>` +
-    rows.map((r, k) => `<tr class="${r.tipo === "grupo" ? "reg" : r.tipo}${sel(r) ? " sel" : ""}"><td>${r.tipo === "grupo" ? `${esc(r.rot)} <small>${esc(r.sub)}</small>` : `<button class="lk" data-k="${k}">${esc(r.rot)}</button>`}</td>
+    rows.map((r, k) => `<tr class="${r.tipo}${sel(r) ? " sel" : ""}"><td><button class="lk" data-k="${k}">${esc(r.rot)}</button></td>
       <td class="r">${fmtInt(r.mats.length)}</td><td class="r">${fmtInt(r.d.cls)}</td><td class="r">${fmtInt(r.d.si)}</td><td>${pilha(r.d, "pct")}</td>
       <td class="r ep-col"><b>${epTxt(r.d)}</b></td><td class="r">${pct(r.d.n[1], r.d.cls)}</td><td class="r">${pct(r.d.n[4], r.d.cls)}</td></tr>`).join("") + `</tbody>`;
   $("tabLocal")._rows = rows;
@@ -478,9 +527,9 @@ function renderLocal(){
 }
 function csvLocal(){
   const rows = linhasLocal();
-  baixarCSV(`qualificacao_local_${AVS[S.av].n}a_avaliacao.csv`, [cabecalhoCSV(`${rotEscopo()} · ${rotAv(S.av)}`),
+  baixarCSV(`qualificacao_local_${AVS[S.av].arq}.csv`, [cabecalhoCSV(`${rotEscopo()} · ${rotAv(S.av)}`),
     ["Local", "Tipo", "Maternidades", "Itens classificados", "Sem informação", ...NIV.map(n => n.rot), "Intermediário + Avançado + Qualificado", EP_ROT + " (%)"],
-    ...rows.map(r => [r.rot, {br: "país", reg: "região", uf: "estado", grupo: "grupo de estados"}[r.tipo], r.mats.length, r.d.cls, r.d.si, ...r.d.n, emProc(r.d).num, emProc(r.d).pct == null ? "" : fmt1(emProc(r.d).pct)])]);
+    ...rows.map(r => [r.rot, {br: "país", reg: "região", uf: "estado"}[r.tipo], r.mats.length, r.d.cls, r.d.si, ...r.d.n, emProc(r.d).num, emProc(r.d).pct == null ? "" : fmt1(emProc(r.d).pct)])]);
 }
 function montarLocal(){
   const sel = $("selEscopo");
@@ -493,7 +542,6 @@ function montarLocal(){
   DIM.forEach(d => { const g = document.createElement("optgroup"); g.label = `Indicadores · ${d.rot}`;
     INDS_DIM[d.id].forEach(i => g.appendChild(new Option(`${IND[i].id}. ${IND[i].rot}`, "i:" + i))); sel.appendChild(g); });
   sel.addEventListener("change", () => { E.escopo = sel.value; renderLocal(); });
-  segmento("segModo", d => { E.modo = d.modo; renderLocal(); });
   $("btnCsvLocal").addEventListener("click", csvLocal);
   $("tabLocal").addEventListener("click", e => {
     const b = e.target.closest("button[data-k]"); if(!b) return;
@@ -531,7 +579,7 @@ function renderMatriz(){
 }
 function csvMatriz(){
   const lista = matsQuadro();
-  baixarCSV(`qualificacao_quadro_${AVS[S.av].n}a_avaliacao.csv`, [cabecalhoCSV(`${rotRecorte()} · ${rotAv(S.av)}`),
+  baixarCSV(`qualificacao_quadro_${AVS[S.av].arq}.csv`, [cabecalhoCSV(`${rotRecorte()} · ${rotAv(S.av)}`),
     ["CNES", "Maternidade", "Município", "UF", "Região", ...IND.map(i => `${i.id}. ${i.rot}`)],
     ...lista.map(m => [m.cnes, m.nome, m.municipio, m.uf, m.regiao, ...TODOS.map(i => nivelRot(m.c[i][S.av]))])]);
 }
@@ -598,7 +646,7 @@ function renderMud(){
   }
   const r = mudancas(mats, E.de, E.para);
   const k = (n, t, s) => `<div class="k"><div class="n">${n}</div><div class="t">${t}</div><div class="s">${s}</div></div>`;
-  $("kpisMud").innerHTML = k(fmtInt(r.comp), "Itens comparáveis", `classificados na ${AVS[E.de].n}ª e na ${AVS[E.para].n}ª avaliação · ${esc(rotRecorte())}`) +
+  $("kpisMud").innerHTML = k(fmtInt(r.comp), "Itens comparáveis", `classificados na ${AVS[E.de].ref} e na ${AVS[E.para].ref} · ${esc(rotRecorte())}`) +
     k(fmtInt(r.av), "Avançaram de nível", `${pct(r.av, r.comp)} dos comparáveis`) +
     k(fmtInt(r.rec), "Recuaram de nível", `${pct(r.rec, r.comp)} dos comparáveis`) +
     k(fmtInt(r.ig), "Mantiveram o nível", `${pct(r.ig, r.comp)} dos comparáveis`) +
@@ -621,7 +669,7 @@ function renderMud(){
     NIV.map((n, y) => ({y, q: r.T[x][y]})).filter(o => o.q && o.y !== x)
       .forEach((o, i) => partes.push(`${fmtInt(o.q)} ${i === 0 ? (o.q === 1 ? "passou a " : "passaram a ") : "a "}${NIV[o.y].rot}`));
     const lista = partes.length > 1 ? partes.slice(0, -1).join(", ") + " e " + partes[partes.length - 1] : partes[0];
-    return `<p class="sub" style="margin-top:.6rem"><b>Como ler:</b> ${tot === 1 ? "do único item que estava" : `dos ${fmtInt(tot)} itens que estavam`} em ${esc(NIV[x].rot)} na ${esc(AVS[E.de].rot)}, ${esc(lista)} na ${esc(AVS[E.para].rot)}. Verde indica avanço e vermelho indica recuo; quanto mais forte a cor, mais itens.</p>`;
+    return `<p class="sub" style="margin-top:.6rem"><b>Como ler:</b> ${tot === 1 ? "do único item que estava" : `dos ${fmtInt(tot)} itens que estavam`} em ${esc(NIV[x].rot)} na ${esc(AVS[E.de].ref)}, ${esc(lista)} na ${esc(AVS[E.para].ref)}. Verde indica avanço e vermelho indica recuo; quanto mais forte a cor, mais itens.</p>`;
   })();
   $("transicao").innerHTML = `<div style="overflow-x:auto"><table class="trans"><thead><tr><th class="lin-rot">${esc(AVS[E.de].rot)} ↓<br>${esc(AVS[E.para].rot)} →</th>${NIV.map((n, y) => `<th><i class="q n${y}" style="vertical-align:-2px"></i><br>${esc(n.rot)}</th>`).join("")}</tr></thead><tbody>` +
     NIV.map((n, x) => `<tr><th class="lin-rot"><i class="q n${x}" style="vertical-align:-2px"></i> ${esc(n.rot)}</th>${NIV.map((_, y) => cel(x, y)).join("")}</tr>`).join("") + `</tbody></table></div>
@@ -643,7 +691,7 @@ function montarMud(){
 }
 
 /* ============================================================
-   6. PREENCHIMENTO — % de itens classificados por grupo da planilha e dimensão (sempre o país inteiro)
+   6. PREENCHIMENTO — % de itens classificados por região e dimensão (sempre o país inteiro)
    ============================================================ */
 const RAMPA = ["#E4F3E8", "#BFE3CB", "#8FCFA6", "#4FA97B", "#1B5F51"];
 function celPre(mats, inds, rot){
@@ -653,8 +701,8 @@ function celPre(mats, inds, rot){
   return `<td class="c" style="${st}; font-variant-numeric:tabular-nums"${tip(`<b>${esc(rot)}</b><br>${fmtInt(d.cls)} de ${fmtInt(d.total)} itens classificados`)}><b>${Math.round(p)}%</b></td>`;
 }
 function renderPre(){
-  const linhas = [...GRP.map(g => ({rot: g.rot, sub: "", mats: MAT.filter(m => m.aba === g.aba), cls: ""})), {rot: "Brasil", sub: "", mats: MAT, cls: "br"}];
-  $("tabPre").innerHTML = `<thead><tr><th>Grupo de estados</th><th class="r">Maternidades</th>${DIM.map(d => `<th class="c" style="white-space:normal; overflow-wrap:anywhere; min-width:96px; max-width:128px"${tip(`<b>${esc(EIXO_ROT[d.eixo])}</b><br>${esc(d.rot)} · ${plural(INDS_DIM[d.id].length, "indicador", "indicadores")}`)}>${esc(d.rot)}</th>`).join("")}<th class="c">Todos</th></tr></thead><tbody>` +
+  const linhas = [...REGIOES.map(r => ({rot: r, sub: "", mats: MAT.filter(m => m.regiao === r), cls: ""})).filter(l => l.mats.length), {rot: "Brasil", sub: "", mats: MAT, cls: "br"}];
+  $("tabPre").innerHTML = `<thead><tr><th>Região</th><th class="r">Maternidades</th>${DIM.map(d => `<th class="c" style="white-space:normal; overflow-wrap:anywhere; min-width:96px; max-width:128px"${tip(`<b>${esc(EIXO_ROT[d.eixo])}</b><br>${esc(d.rot)} · ${plural(INDS_DIM[d.id].length, "indicador", "indicadores")}`)}>${esc(d.rot)}</th>`).join("")}<th class="c">Todos</th></tr></thead><tbody>` +
     linhas.map(l => `<tr class="${l.cls}"><td>${esc(l.rot)}${l.sub ? ` <small>${esc(l.sub)}</small>` : ""}</td><td class="r">${fmtInt(l.mats.length)}</td>${DIM.map(d => celPre(l.mats, INDS_DIM[d.id], `${l.rot} · ${d.rot}`)).join("")}${celPre(l.mats, TODOS, `${l.rot} · todos os indicadores`)}</tr>`).join("") + `</tbody>`;
 }
 
@@ -678,7 +726,7 @@ function abrirPerfil(cnes){
   /* evolução: uma barra por avaliação realizada, para um conjunto de indicadores */
   const evol = inds => REALIZADAS.map(a => { const dd = dist([m], inds, a); return linBarra(a === ULT ? "atual" : "", AVS[a].rot, AVS[a].periodo, dd, "n", nInd(dd)); }).join("");
   const tabela = e => `<div style="overflow-x:auto; margin-top:.7rem"><table class="perfil">
-      <thead><tr><th>Nº</th><th>Indicador</th>${AVS.map(a => `<th>${esc(a.rot)}<small>${esc(a.periodo)}${a.realizada ? "" : " · a realizar"}</small></th>`).join("")}<th>Mudança<small>${AVS[PRIM].n}ª → ${AVS[ULT].n}ª</small></th></tr></thead>
+      <thead><tr><th>Nº</th><th>Indicador</th>${AVS.map(a => `<th>${esc(a.rot)}<small>${esc(a.periodo)}${a.realizada ? "" : " · a realizar"}</small></th>`).join("")}<th>Mudança<small>${esc(AVS[PRIM].sigla)} → ${esc(AVS[ULT].sigla)}</small></th></tr></thead>
       <tbody>${DIM.filter(dm => dm.eixo === e.id).map(dm => `<tr class="g"><td colspan="${AVS.length + 3}">${esc(dm.rot)}</td></tr>` +
         INDS_DIM[dm.id].map(i => `<tr><td class="num">${IND[i].id}</td><td${IND[i].texto !== IND[i].rot ? tip(esc(IND[i].texto)) : ""}>${esc(IND[i].rot)}</td>${AVS.map((av, a) => `<td class="cn">${av.realizada ? chip(m.c[i][a]) : `<span class="suave">—</span>`}</td>`).join("")}<td class="cn">${mudancaItem(m.c[i][PRIM], m.c[i][ULT])}</td></tr>`).join("")).join("")}</tbody></table></div>`;
   const blocoEixo = e => { const dimsE = DIM.filter(dm => dm.eixo === e.id);
@@ -694,14 +742,14 @@ function abrirPerfil(cnes){
           return `<div class="mini-lin"><span${tip(esc(rotAv(a)))}>${esc(AVS[a].rot)}</span>${pilha(dd, "n", true)}${epChip(dd)}</div>`; }).join("")}</div>`).join("")}</div>
       </div>
       <div class="card bloco-eixo eixo-${e.id}"><h3>${esc(e.rot)}: nível de cada indicador nas avaliações</h3>
-        <p class="sub">A última coluna compara a ${AVS[PRIM].n}ª com a ${AVS[ULT].n}ª avaliação.</p>${tabela(e)}</div>`; };
+        <p class="sub">A última coluna compara a ${esc(AVS[PRIM].ref)} com a ${esc(AVS[ULT].ref)}.</p>${tabela(e)}</div>`; };
   $("perfilConteudo").innerHTML = `
     <div class="perfil-topo">
       <div>
-        <p class="eyebrow" style="color:#C5E3CC">Perfil da unidade · Painel de Qualificação</p>
+        <p class="eyebrow" style="color:#C5E3CC">Perfil da unidade · Painel de Qualificação<span class="so-impressao"> · relatório da maternidade gerado em ${new Date().toLocaleDateString("pt-BR")}</span></p>
         <h2 style="margin-top:.4rem; color:#FFF">${esc(m.nome)}</h2>
         <div class="meta">
-          <span>${esc(m.municipio)} · ${esc(UF_NOME[m.uf])}</span><span>Região ${esc(m.regiao)}</span><span class="mono">CNES ${m.cnes}</span><span>Grupo ${esc(m.grupo)}</span>
+          <span>${esc(m.municipio)} · ${esc(UF_NOME[m.uf])}</span><span>Região ${esc(m.regiao)}</span><span class="mono">CNES ${m.cnes}</span><span>Macrorregião de saúde ${esc(m.macroNome)}</span><span>Região de saúde ${esc(m.rsNome)}</span>
         </div>
         ${normTxt(m.nomePlanilha) !== normTxt(m.nome) ? `<p style="margin-top:.6rem; font-size:.82rem; color:#C5E3CC">Nome no registro de acompanhamento: ${esc(m.nomePlanilha)}</p>` : ""}
       </div>
@@ -710,14 +758,14 @@ function abrirPerfil(cnes){
         <div class="k"><div class="n">${epTxt(d)}</div><div class="t">em processo de qualificação</div></div>
         <div class="k"><div class="n">${d.n[4]}</div><div class="t">em Qualificado</div></div>
         <div class="k"><div class="n">${d.n[1]}</div><div class="t">em Não Iniciado</div></div>
-        <div class="k"><div class="n">▲ ${mu.av} · ▼ ${mu.rec}</div><div class="t">avanços e recuos desde a ${AVS[PRIM].n}ª</div></div>
+        <div class="k"><div class="n">▲ ${mu.av} · ▼ ${mu.rec}</div><div class="t">avanços e recuos desde a ${esc(AVS[PRIM].ref)}</div></div>
       </div>
     </div>
-    <p class="suave" style="font-size:.8rem; margin-top:.6rem">Números do quadro acima: ${esc(rotAv(ULT))}, última avaliação realizada. Avanços e recuos comparam a ${AVS[PRIM].n}ª e a ${AVS[ULT].n}ª avaliação.</p>
+    <p class="suave" style="font-size:.8rem; margin-top:.6rem">Números do quadro acima: ${esc(rotAv(ULT))}, última avaliação realizada. Avanços e recuos comparam a ${esc(AVS[PRIM].ref)} e a ${esc(AVS[ULT].ref)}.</p>
     <div class="perfil-cards">
       <div class="card">
         <div class="eixo-cab"><h3>Evolução da unidade nas avaliações</h3><span class="chip">${IND.length} indicadores</span><button class="chip chip-botao png" data-png="perfil:geral" title="Baixar este gráfico em PNG">⬇ PNG</button></div>
-        <p class="sub">Uma barra para cada avaliação realizada. O número em cada cor é a quantidade de indicadores naquele nível; o valor em azul-claro é o percentual em processo de qualificação.</p>
+        <p class="sub">Uma barra para a linha de base e para cada avaliação realizada. O número em cada cor é a quantidade de indicadores naquele nível; o valor em azul-claro é o percentual em processo de qualificação.</p>
         <div class="linhas">${evol(TODOS)}</div>
         <div class="legenda">${legendaHtml(true)}</div>
       </div>
@@ -815,12 +863,12 @@ function graficoParaPng(chave){
   if(tipo === "evolucao") return {nome: `qualificacao_evolucao_${nomeArq(rec)}`, titulo: "Evolução por avaliação", subtitulo: `${rec} · percentual dos itens classificados em cada nível`, modo: "pct",
     linhas: AVS.map((a, i) => { const d = dist(mats, TODOS, i); return {rot: a.rot, sub: a.periodo, d, nota: a.realizada ? itens(d) : "", vazio: a.realizada ? null : "a realizar"}; })};
   if(tipo === "eixo"){ const e = EIX.find(x => x.id === arg), de = dist(mats, INDS_EIXO[arg], S.av);
-    return {nome: `qualificacao_${nomeArq(e.rot)}_${nomeArq(rec)}_${AVS[S.av].n}a`, titulo: `${e.rot}, por dimensão`, subtitulo: `${rec} · ${av} · percentual dos itens classificados em cada nível`, modo: "pct",
+    return {nome: `qualificacao_${nomeArq(e.rot)}_${nomeArq(rec)}_${AVS[S.av].arq}`, titulo: `${e.rot}, por dimensão`, subtitulo: `${rec} · ${av} · percentual dos itens classificados em cada nível`, modo: "pct",
       linhas: [{rot: "Todas as dimensões do eixo", forte: true, d: de, nota: itens(de)}, ...DIM.filter(dm => dm.eixo === arg).map(dm => { const d = dist(mats, INDS_DIM[dm.id], S.av); return {rot: dm.rot, d, nota: itens(d)}; })]}; }
   if(tipo === "ind"){ const e = EIX.find(x => x.id === arg), linhas = [];
     DIM.filter(dm => dm.eixo === arg).forEach(dm => { linhas.push({grupo: dm.rot}); INDS_DIM[dm.id].forEach(i => { const d = dist(mats, [i], S.av); linhas.push({rot: `${IND[i].id}. ${IND[i].rot}`, d, nota: `${d.cls} de ${d.total} classificadas`}); }); });
-    return {nome: `qualificacao_indicadores_${nomeArq(e.rot)}_${nomeArq(rec)}_${AVS[S.av].n}a`, titulo: `${e.rot}: maternidades em cada nível, por indicador`, subtitulo: `${rec} · ${av} · número de maternidades`, modo: "n", linhas}; }
-  if(tipo === "local") return {nome: `qualificacao_local_${AVS[S.av].n}a`, titulo: E.modo === "grupos" ? "Classificação por grupo de estados" : "Classificação por região e por estado", subtitulo: `${rotEscopo()} · ${av} · percentual dos itens classificados em cada nível`, modo: "pct",
+    return {nome: `qualificacao_indicadores_${nomeArq(e.rot)}_${nomeArq(rec)}_${AVS[S.av].arq}`, titulo: `${e.rot}: maternidades em cada nível, por indicador`, subtitulo: `${rec} · ${av} · número de maternidades`, modo: "n", linhas}; }
+  if(tipo === "local") return {nome: `qualificacao_local_${AVS[S.av].arq}`, titulo: "Classificação por região e por estado", subtitulo: `${rotEscopo()} · ${av} · percentual dos itens classificados em cada nível`, modo: "pct",
     linhas: linhasLocal().map(r => ({rot: (r.tipo === "uf" ? "· " : "") + r.rot, forte: r.tipo !== "uf", d: r.d, nota: plural(r.mats.length, "maternidade", "maternidades")}))};
   if(tipo === "perfil" && perfilAtual){ const m = perfilAtual;
     const ev = inds => REALIZADAS.map(a => { const d = dist([m], inds, a); return {rot: AVS[a].rot, sub: AVS[a].periodo, d, nota: `${d.cls} de ${d.total} classificados`}; });

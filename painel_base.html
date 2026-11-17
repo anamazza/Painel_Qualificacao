@@ -241,6 +241,17 @@ table.matriz thead th.tot{padding:0 .45rem; font-size:.66rem; top:0; height:72px
 .mapa-svg-box .t:hover{stroke:var(--indigo); stroke-width:1.6}
 .mapa-svg-box .t.sel{stroke:var(--indigo); stroke-width:1.4}
 .mapa-svg-box .sigla{pointer-events:none; font-weight:800}
+.mapa-svg-box .div{fill:transparent; stroke:var(--indigo); stroke-opacity:.5; stroke-width:.8; vector-effect:non-scaling-stroke; cursor:pointer}   /* limites das macrorregiões e das regiões de saúde */
+.mapa-svg-box .div.rs{stroke-opacity:.38; stroke-width:.55}
+.mapa-svg-box .borda-uf{fill:none; stroke:var(--indigo); stroke-width:1.7; vector-effect:non-scaling-stroke; pointer-events:none}
+.linha-leg.forte{border-top-width:3px; opacity:1}
+.mapa-svg-box .div:hover{stroke-opacity:1; stroke-width:1.8}
+.mapa-svg-box .nome-macro{pointer-events:none; font-weight:700; fill:var(--indigo); paint-order:stroke; stroke:rgba(255,255,255,.85); stroke-width:2.2px; stroke-linejoin:round}
+.linha-leg{display:inline-block; width:18px; height:0; border-top:2px solid var(--indigo); opacity:.6; vertical-align:middle; margin-right:.35rem}
+.seg-quebra{flex-wrap:wrap}
+.criterios{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:.6rem 1rem; margin:.4rem 0 .2rem}
+.criterios .crit-txt{font-size:.82rem; line-height:1.5; color:var(--texto-suave); margin-top:.2rem}
+.so-impressao{display:none}
 .mapa-svg-box .ponto{cursor:pointer; fill:var(--indigo); stroke:#FFF; stroke-width:1.6; vector-effect:non-scaling-stroke}
 .mapa-svg-box .ponto:hover{fill:var(--verde-lima); stroke:var(--indigo)}
 .mapa-rodape{display:flex; gap:.6rem 1.2rem; flex-wrap:wrap; align-items:center; padding:.3rem .5rem .2rem; font-size:.8rem; color:var(--texto-suave)}
@@ -331,6 +342,7 @@ footer a{color:var(--verde-lima)}
   .lin .n{text-align:left}
 }
 @media print{
+  .so-impressao{display:inline}
   .trilho,.pd-topo,footer,.recorte,.png{display:none !important}
   body{padding-left:0 !important; background:#FFF}
   body.perfil-aberto{overflow:visible}
@@ -398,11 +410,14 @@ footer a{color:var(--verde-lima)}
         <div id="mapaSvg"></div>
         <div class="mapa-rodape">
           <label class="toggle"><input type="checkbox" id="chkPontos" checked/> mostrar as maternidades</label>
-          <span>Posição aproximada dos pontos sobre a malha dos estados.</span>
+          <span>Posição aproximada dos pontos sobre a malha dos estados. Passe o cursor sobre o mapa para ver o nome de cada macrorregião ou região de saúde.</span>
         </div>
       </div>
       <div class="col-dir">
         <div class="card"><span class="rotulo-bloco">Região</span><div class="pills" id="pillsRegiao"></div></div>
+        <div class="card" id="cardDivisao"><span class="rotulo-bloco">Divisões no mapa</span>
+          <div class="seg seg-quebra" id="segDivisao"><button data-div="uf">Estados</button><button data-div="macro" class="ativo">Macrorregiões de saúde</button><button data-div="rs">Regiões de saúde</button></div>
+          <p class="sub" style="margin-top:.6rem">As cores continuam por estado. Com uma região ou um estado escolhido, o mapa mostra o nome de cada macrorregião de saúde que cabe no contorno; os demais nomes aparecem ao passar o cursor e, com um estado escolhido, no quadro do recorte.</p></div>
         <div class="card"><span class="rotulo-bloco">Nível mostrado no mapa</span><div class="pills" id="pillsNivel"></div>
           <p class="sub" id="tituloLegenda" style="margin-top:.8rem"></p><div class="legenda legenda-v" id="legendaMapa"></div></div>
         <div class="card" id="mapaResumo"></div>
@@ -454,11 +469,10 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Regiões e estados</p>
       <h2>Classificação por região e por estado</h2>
-      <p>Escolha o que comparar (todos os indicadores, um eixo, uma dimensão ou um indicador) e a forma de agrupar. Toque em uma linha para aplicar o recorte a todas as seções.</p>
+      <p>Escolha o que comparar (todos os indicadores, um eixo, uma dimensão ou um indicador). Toque em uma linha para aplicar o recorte a todas as seções.</p>
     </div>
     <div class="controles">
       <label class="filtro" style="min-width:300px; flex:1; max-width:560px"><span>O que comparar</span><select id="selEscopo"></select></label>
-      <div class="filtro"><span>Agrupar por</span><div class="seg" id="segModo"><button data-modo="regioes" class="ativo">Regiões e estados</button><button data-modo="grupos">Grupos de estados</button></div></div>
       <button class="chip chip-botao" id="btnCsvLocal" style="align-self:end">⬇ Baixar tabela (CSV)</button>
       <button class="chip chip-botao" data-png="local" style="align-self:end" title="Baixar o gráfico desta tabela em PNG">⬇ Gráfico (PNG)</button>
     </div>
@@ -473,7 +487,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Maternidades</p>
       <h2>Quadro das maternidades por indicador</h2>
-      <p>Cada linha é uma maternidade do recorte e cada coluna, um indicador, na avaliação escolhida. A cor e a sigla indicam o nível. Toque no nome da maternidade para abrir o perfil da unidade, com as cinco avaliações.</p>
+      <p>Cada linha é uma maternidade do recorte e cada coluna, um indicador, na avaliação escolhida. A cor e a sigla indicam o nível. Toque no nome da maternidade para abrir o perfil da unidade, com a linha de base e as avaliações. No perfil, o botão "Relatório da maternidade (PDF)" gera o relatório da unidade, com os gráficos e os quadros, para imprimir ou salvar.</p>
     </div>
     <div class="controles">
       <label class="filtro" style="min-width:320px; flex:1; max-width:520px"><span>Perfil da unidade</span><select id="selPerfil"></select></label>
@@ -523,7 +537,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Preenchimento</p>
       <h2>Proporção de itens classificados</h2>
-      <p>Percentual de itens classificados em cada grupo de estados e em cada dimensão, na avaliação escolhida. O restante está sem informação. Este quadro considera sempre todas as maternidades.</p>
+      <p>Percentual de itens classificados em cada região e em cada dimensão, na avaliação escolhida. O restante está sem informação. Este quadro considera sempre todas as maternidades.</p>
     </div>
     <div class="tab-wrap"><table class="tab" id="tabPre"></table></div>
   </div>
@@ -554,7 +568,7 @@ footer a{color:var(--verde-lima)}
       <div style="display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; min-width:0; max-width:100%">
         <select id="selPerfilPd" style="min-width:min(280px, 100%); max-width:100%" aria-label="Trocar de unidade"></select>
         <button class="chip chip-botao" id="btnCsvPerfil" title="Baixar a classificação desta unidade em CSV">⬇ CSV</button>
-        <button class="chip chip-botao" id="btnPdfPerfil" title="Imprimir ou salvar o perfil em PDF">⬇ Baixar PDF</button>
+        <button class="chip chip-botao" id="btnPdfPerfil" title="Gera o relatório desta maternidade, com os gráficos e os quadros, para imprimir ou salvar em PDF">⬇ Relatório da maternidade (PDF)</button>
       </div>
     </div>
   </div>

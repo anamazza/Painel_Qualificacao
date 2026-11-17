@@ -1,0 +1,51 @@
+﻿cnes;cod_municipio;municipio;regiao_saude;regiao_saude_nome;macrorregiao;macrorregiao_nome
+2376334;500320;Corumbá;50010;Pantanal;5009;Região Pantanal
+2339196;520870;Goiânia;52001;Central;5208;Macrorregião Centro-Oeste
+5717515;530010;Brasília;53001;Distrito Federal;5302;Distrito Federal
+0010537;530010;Brasília;53001;Distrito Federal;5302;Distrito Federal
+0009725;500270;Campo Grande;50011;Centro;5010;Região Centro
+2396866;510760;Rondonópolis;51013;Sul Matogrossense;5101;Macrorregião Sul
+2311682;510340;Cuiabá;51002;Baixada Cuiabana;5105;Macrorregião Centro-Norte
+2012480;130260;Manaus;13001;Manaus, Entorno e Alto Rio Negro;1304;Central
+3151794;130260;Manaus;13001;Manaus, Entorno e Alto Rio Negro;1304;Central
+2329905;150680;Santarém;15002;Baixo Amazonas;1510;Macrorregional III
+2752700;150140;Belém;15006;Metropolitana I;1512;Macrorregional I
+2755157;172100;Palmas;17006;Capim Dourado;1702;Macrorregião Centro-Sul
+2755165;170210;Araguaína;17001;Médio Norte Araguaia;1701;Macrorregião de Saúde Norte
+4001303;110020;Porto Velho;11004;Madeira-Mamoré;1102;Macrorregião I - Porto Velho
+2566168;140010;Boa Vista;14001;Centro Norte;1401;Macro-Roraima
+2000733;120040;Rio Branco;12002;Baixo Acre e Purus;1201;Macro Única
+2000296;120020;Cruzeiro do Sul;12003;Juruá e Tarauacá/Envira;1201;Macro Única
+2020068;160030;Macapá;16001;Área Central;1601;Macro Única
+2481286;230440;Fortaleza;23001;1ª RS Fortaleza;2310;Fortaleza
+2309254;211130;São Luís;21016;São Luís;2110;Macrorregião Norte
+2323397;221100;Teresina;22004;Entre Rios;2208;Meio Norte
+6848710;231290;Sobral;23011;5ª RS Sobral;2309;Sobral
+2452383;210530;Imperatriz;21008;Imperatriz;2109;Macrorregião Sul
+8015899;220770;Parnaíba;22005;Planície Litorânea;2209;Litoral
+3956369;292740;Salvador;29020;Salvador;2915;Leste - (NRS - Salvador)
+3972925;290320;Barreiras;29002;Barreiras;2912;Oeste (NBS - Barreiras)
+6602533;291080;Feira de Santana;29006;Feira de Santana;2917;Centro-Leste (NRS - Feira Santana)
+2430711;261110;Petrolina;26009;V III Região de Saúde;2605;Vale do S.Francisco e Araripe
+0000434;261160;Recife;26010;I Região de Saúde;2607;Metropolitana
+2427427;261160;Recife;26010;I Região de Saúde;2607;Metropolitana
+2410281;240800;Mossoró;24002;2ª Região de Saúde - Mossoró;2401;Macrorregião II
+2408570;240810;Natal;24007;7ª Região de Saúde - Metropolitana;2402;Macrorregião I
+2362287;250400;Campina Grande;25016;16ª Região;2502;Macrorregião II- Campina Grande
+9923837;270430;Maceió;27001;1ª Região de Saúde;2704;1ª Macrorregião de Saúde
+2005050;270030;Arapiraca;27007;7ª Região de Saúde;2703;2ª Macrorregião de Saúde
+2707527;250750;João Pessoa;25001;1ª Região Mata Atlântica;2503;Macrorregião I - João Pessoa
+0002232;280030;Aracaju;28001;Aracaju;2801;Macro Única
+2298120;330455;Rio de Janeiro;33005;Metropolitana I;3312;Macrorregião I
+2149990;314330;Montes Claros;31084;Montes Claros;3108;Norte
+7257406;320500;Serra;32002;Metropolitana;3207;Metropolitana
+2077396;354980;São José do Rio Preto;35155;São José do Rio Preto;3531;RRAS12
+0026794;310620;Belo Horizonte;31016;Belo Horizonte/Nova Lima/Santa Luzia;3103;Centro
+2290227;330170;Duque de Caxias;33005;Metropolitana I;3312;Macrorregião I
+2082187;354340;Ribeirão Preto;35132;Aquífero Guarani;3530;RRAS13
+2246988;431410;Passo Fundo;43017;Região 17 - Planalto;4311;Norte
+0015369;410690;Curitiba;41002;2ª RS Metropolitana;4107;Macrorregional Leste
+2715864;410690;Curitiba;41002;2ª RS Metropolitana;4107;Macrorregional Leste
+2522691;420820;Itajaí;42005;Foz do Rio Itajaí;4215;Foz do Rio Itajaí
+2237571;431490;Porto Alegre;43010;Região 10 - Capital e Vale do Gravataí;4313;Metropolitana
+6854729;420200;Balneário Camboriú;42005;Foz do Rio Itajaí;4215;Foz do Rio Itajaí
