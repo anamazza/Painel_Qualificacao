@@ -266,6 +266,7 @@ def main():
             maternidades[chave] = {"cnes": m["cnes"], "nome": m["nome_painel"], "nomePlanilha": s, "uf": uf, "regiao": m["regiao"],
                                    "municipio": m["municipio"], "aba": aba,
                                    "rs": tr["regiao_saude"], "rsNome": tr["regiao_saude_nome"], "macro": tr["macrorregiao"], "macroNome": tr["macrorregiao_nome"],
+                                   "latSede": float(tr["lat_sede"]), "lonSede": float(tr["lon_sede"]),      # sede do município
                                    "lat": float(m["lat"]) if m["lat"] else None, "lon": float(m["lon"]) if m["lon"] else None,
                                    "c": [[None] * 5 for _ in range(N_IND)]}
         for pos, b in enumerate(bl, 1):

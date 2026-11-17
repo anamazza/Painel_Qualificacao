@@ -217,22 +217,20 @@ function sincronizaRecorte(){
 /* ============================================================
    0. MAPA — estados coloridos pelo percentual de um nível; tocar no estado ou na região filtra o painel inteiro.
    Malha: const GEO (geo_uf.json, a mesma dos demais painéis). Os pontos usam a latitude e a longitude do CNES,
-   convertidas para a malha pela aproximação do Painel de Habilitações (polinômio de grau 3) e, quando caem fora
-   do próprio estado, deslocadas para dentro dele. Por isso a posição é aproximada.
+   convertidas para a malha por uma relação linear (ver PROJ). Se um ponto ainda cair fora da região de saúde da
+   maternidade (limite simplificado da malha), é levado para dentro dela.
    ============================================================ */
 const NS = "http://www.w3.org/2000/svg";
 const TEM_GEO = typeof GEO !== "undefined" && GEO && Array.isArray(GEO.uf);
 const TEM_SAUDE = TEM_GEO && Array.isArray(GEO.macro) && Array.isArray(GEO.rs);     // malha das macrorregiões e das regiões de saúde
 const REGIAO_UFS = {Norte:["AC","AM","AP","PA","RO","RR","TO"],Nordeste:["AL","BA","CE","MA","PB","PE","PI","RN","SE"],
 "Centro-Oeste":["DF","GO","MS","MT"],Sudeste:["ES","MG","RJ","SP"],Sul:["PR","RS","SC"]};
-const PROJ = {lon0: -54, lat0: -14, deg: 3,
-  cx: [389.6693924797041,-25.669375918899323,2.2974764087746746,6.94771717316214,227.5848973996615,10.44407831174322,-15.59958425479866,2.614872436012288,11.203067014348914,-9.255000451100843],
-  cy: [384.79217286263037,-206.11315840845927,-1.297115372976244,0.4508034745453812,5.709727699623541,5.132886143071913,2.0589199190583702,3.9090790755116522,2.524876252788176,-5.129157042018251]};
-function projeta(lon, lat){
-  const u = (lon - PROJ.lon0) / 10, v = (lat - PROJ.lat0) / 10, t = [];
-  for(let a = 0; a <= PROJ.deg; a++) for(let b = 0; b <= PROJ.deg - a; b++) t.push(Math.pow(u, a) * Math.pow(v, b));
-  return [t.reduce((s, x, k) => s + x * PROJ.cx[k], 0), t.reduce((s, x, k) => s + x * PROJ.cy[k], 0)];
-}
+/* (17/11/2026) A malha é linear em longitude e latitude (cerca de 20,14 px por grau nos dois eixos). A conversão abaixo
+   foi aferida pelos extremos geográficos de 12 estados (resíduo de até 1 px, cerca de 5 km). Substitui a aproximação
+   por polinômio de grau 3 usada até então, que errava até 90 km na região Norte e punha pontos na região de saúde
+   vizinha. */
+const PROJ = {ax: 20.1374, bx: 1489.96, ay: -20.1485, by: 106.00};
+function projeta(lon, lat){ return [PROJ.ax * lon + PROJ.bx, PROJ.ay * lat + PROJ.by]; }
 function encaixaPontos(){
   if(!TEM_GEO) return;
   const svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", `0 0 ${GEO.W} ${GEO.H}`);
@@ -270,14 +268,20 @@ function encaixaPontos(){
   MAT.slice().sort(porUFNome).forEach(m => {
     if(m.lat == null || m.lon == null){ m._xy = null; return; }
     let xy = projeta(m.lon, m.lat); const p = pathsRs[String(m.rs)] || paths[m.uf];
+    /* coordenada do CNES fora da região de saúde da maternidade: o cadastro está com a coordenada errada (em 17/11/2026,
+       Hospital Dom Orione, a 98 km de Araguaína, e Hospital Santa Isabel, a 37 km de Aracaju). Usa-se a sede do município. */
+    m._sede = false;
+    if(p && !dentro(p, xy) && m.latSede != null){ const s = projeta(m.lonSede, m.latSede); if(dentro(p, s)){ xy = s; m._sede = true; } }
     m._ajustado = !!p && !dentro(p, xy);
     if(p) xy = paraDentro(p, xy);
     const vizinhos = postos.filter(q => Math.hypot(q[0] - xy[0], q[1] - xy[1]) < 5).length;   // maternidades do mesmo município
     if(vizinhos){
       let posto = null;
       for(const raio of [6, 4.5, 3]){ for(let v = 0; v < 8 && !posto; v++){ const ang = vizinhos * 2.1 + v * .785, q = [xy[0] + raio * Math.cos(ang), xy[1] + raio * Math.sin(ang)]; if(!p || dentro(p, q)) posto = q; } if(posto) break; }
-      xy = posto || xy;
-    }
+      m._des = posto ? [posto[0] - xy[0], posto[1] - xy[1]] : [0, 0];
+    } else m._des = [0, 0];
+    /* m._xy é a posição da maternidade; m._des, o afastamento usado só para separar pontos sobrepostos. O afastamento
+       acompanha a aproximação do mapa: vale cerca de 30 km com o país inteiro na tela e diminui ao aproximar. */
     postos.push(xy); m._xy = xy;
   });
   svg.remove();
@@ -291,7 +295,8 @@ let svgMapa = null, animMapa = null, vbMapa = null;
 function ajustaEscalaMapa(){
   if(!svgMapa) return;
   const k = Number(svgMapa.getAttribute("viewBox").split(" ")[2]) / GEO.W;
-  svgMapa.querySelectorAll("circle.ponto").forEach(c => c.setAttribute("r", (5.2 * k).toFixed(2)));
+  svgMapa.querySelectorAll("circle.ponto").forEach(c => { c.setAttribute("r", (5.2 * k).toFixed(2));
+    c.setAttribute("cx", (Number(c.dataset.x) + Number(c.dataset.dx) * k).toFixed(2)); c.setAttribute("cy", (Number(c.dataset.y) + Number(c.dataset.dy) * k).toFixed(2)); });
   svgMapa.querySelectorAll("text.sigla").forEach(t => {
     t.setAttribute("font-size", (13 * k).toFixed(2)); t.setAttribute("y", (Number(t.dataset.cy) + 4.5 * k).toFixed(1));
     t.style.display = Number(t.dataset.w) >= 22 * k && Number(t.dataset.h) >= 16 * k ? "" : "none";
@@ -409,7 +414,7 @@ function renderMapa(){
     const gp = document.createElementNS(NS, "g");
     MAT.filter(m => m._xy && noRecorte(m.uf)).sort((a, b) => a._xy[1] - b._xy[1]).forEach(m => {
       const c = document.createElementNS(NS, "circle"), d = dist([m], TODOS, S.av);
-      c.setAttribute("cx", m._xy[0].toFixed(1)); c.setAttribute("cy", m._xy[1].toFixed(1)); c.setAttribute("class", "ponto");
+      c.dataset.x = m._xy[0].toFixed(2); c.dataset.y = m._xy[1].toFixed(2); c.dataset.dx = m._des[0].toFixed(2); c.dataset.dy = m._des[1].toFixed(2); c.setAttribute("class", "ponto");
       c.dataset.tip = `<b>${esc(m.nome)}</b><br>${esc(m.municipio)} · ${m.uf} · CNES ${m.cnes}<br>Macrorregião de saúde: ${esc(m.macroNome)}<br>${d.cls} de ${d.total} indicadores classificados` +
         (d.cls ? "<br>" + NIV.map((n, k) => d.n[k] ? `${esc(n.rot)}: ${d.n[k]}` : "").filter(Boolean).join(" · ") : "") + (emProc(d).den ? `<br><b>${EP_ROT}</b> (${EP_EXP}): ${epTxt(d)}` : "") + `<br><i>toque para abrir o perfil da unidade</i>`;
       c.addEventListener("click", () => abrirPerfil(m.cnes));
