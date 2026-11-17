@@ -419,14 +419,13 @@ footer a{color:var(--verde-lima)}
         <div id="mapaSvg"></div>
         <div class="mapa-rodape">
           <label class="toggle"><input type="checkbox" id="chkPontos" checked/> mostrar as maternidades</label>
-          <span>Posição aproximada dos pontos sobre a malha dos estados. Passe o cursor sobre o mapa para ver o nome de cada macrorregião ou região de saúde.</span>
+          <span>Posição aproximada dos pontos sobre a malha dos estados.</span>
         </div>
       </div>
       <div class="col-dir">
         <div class="card"><span class="rotulo-bloco">Região</span><div class="pills" id="pillsRegiao"></div></div>
         <div class="card" id="cardDivisao"><span class="rotulo-bloco">Divisões no mapa</span>
-          <div class="seg seg-quebra" id="segDivisao"><button data-div="uf">Estados</button><button data-div="macro" class="ativo">Macrorregiões de saúde</button><button data-div="rs">Regiões de saúde</button></div>
-          <p class="sub" style="margin-top:.6rem">As cores continuam por estado. Com uma região ou um estado escolhido, o mapa mostra o nome de cada macrorregião de saúde que cabe no contorno; os demais nomes aparecem ao passar o cursor e, com um estado escolhido, no quadro do recorte.</p></div>
+          <div class="seg seg-quebra" id="segDivisao"><button data-div="uf">Estados</button><button data-div="macro" class="ativo">Macrorregiões de saúde</button><button data-div="rs">Regiões de saúde</button></div></div>
         <div class="card"><span class="rotulo-bloco">Nível mostrado no mapa</span><div class="pills" id="pillsNivel"></div>
           <p class="sub" id="tituloLegenda" style="margin-top:.8rem"></p><div class="legenda legenda-v" id="legendaMapa"></div></div>
         <div class="card" id="mapaResumo"></div>
@@ -496,7 +495,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Maternidades</p>
       <h2>Quadro das maternidades por indicador</h2>
-      <p>Cada linha é uma maternidade do recorte e cada coluna, um indicador, na avaliação escolhida. A cor e a sigla indicam o nível. Toque no nome da maternidade para abrir o perfil da unidade, com a linha de base e as avaliações. No perfil, o botão "Relatório da maternidade (PDF)" gera o relatório da unidade, com os gráficos e os quadros, para imprimir ou salvar.</p>
+      <p>Cada linha é uma maternidade do recorte e cada coluna, um indicador, na avaliação escolhida. A cor e a sigla indicam o nível. Toque no nome da maternidade para abrir o perfil da unidade, com a linha de base e as avaliações.</p>
     </div>
     <div class="controles">
       <label class="filtro" style="min-width:320px; flex:1; max-width:520px"><span>Perfil da unidade</span><select id="selPerfil"></select></label>

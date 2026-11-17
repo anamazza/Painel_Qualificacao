@@ -161,10 +161,10 @@ function montarCabecalho(){
 
   /* notas */
   $("notaFonte").innerHTML = `
-    <p><b>Acompanhamento trimestral.</b> Os dados vêm do acompanhamento das práticas de atenção e gestão das maternidades, realizado pela coordenação do projeto. A linha de base (${esc(AVS[0].periodo)}) registra a situação inicial de cada maternidade; a cada avaliação trimestral, cada maternidade recebe um nível de classificação em cada indicador. Esta versão reúne os registros recebidos até ${versao}.</p>
+    <p><b>Acompanhamento trimestral.</b> Os dados vêm do acompanhamento das práticas de atenção e gestão das maternidades, realizado pela coordenação do projeto. Na linha de base (${esc(AVS[0].periodo)}) e a cada avaliação trimestral, cada maternidade recebe um nível de classificação em cada indicador. Esta versão reúne os registros recebidos até ${versao}.</p>
     <p><b>Indicadores e níveis.</b> Os eixos, as dimensões, os indicadores, os níveis de classificação e as suas cores, o período de cada avaliação e os níveis de análise (Brasil, regiões, estados e maternidades) foram definidos pela coordenação.</p>
-    <p>Este painel não usa dados dos sistemas de informação do Ministério da Saúde. A descrição de cada nível, por indicador, pertence ao instrumento de avaliação da coordenação e aparece ao abrir o indicador na seção Indicadores; ${IND.filter(i => i.criterios).length} dos ${IND.length} indicadores têm essa descrição registrada. O painel reproduz a classificação registrada.</p>
-    <p><b>Regiões e macrorregiões de saúde.</b> Os limites e os nomes são os da base territorial do Ministério da Saúde usada no Painel de Habilitações. Cada maternidade está associada à região e à macrorregião de saúde do seu município.</p>`;
+    <p>Este painel não usa dados dos sistemas de informação do Ministério da Saúde. Os critérios de cada nível em cada indicador pertencem ao instrumento de avaliação da coordenação; o painel reproduz a classificação registrada.</p>
+    <p><b>Regiões e macrorregiões de saúde.</b> Limites e nomes da base territorial do Ministério da Saúde.</p>`;
   $("notaNiveis").innerHTML = `
     <p><b>Níveis de classificação:</b></p>
     <ul>${NIV.map((n, k) => `<li><i class="q n${k}" style="vertical-align:-2px"></i> <b>${esc(n.rot)}</b> (sigla ${esc(n.cod)} no quadro das maternidades)</li>`).join("")}
@@ -307,7 +307,7 @@ function renderMapa(){
       <div class="kpi"><span>${EP_ROT}</span><span class="v">${epTxt(dRec)}</span></div>
     </div>
     <div style="margin-top:.8rem">${pilha(dRec, "pct")}</div>
-    ${S.uf ? `<ul class="lista-unid" style="margin-top:.8rem">${mats.slice().sort(porUFNome).map(m => `<li><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)} · macrorregião de saúde ${esc(m.macroNome)} · região de saúde ${esc(m.rsNome)}</small></li>`).join("")}</ul>` +
+    ${S.uf ? `<ul class="lista-unid" style="margin-top:.8rem">${mats.slice().sort(porUFNome).map(m => `<li><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}</small></li>`).join("")}</ul>` +
       (TEM_SAUDE ? (() => { const mc = GEO.macro.filter(t => t.uf === S.uf).map(t => t.nome).sort((a, b) => a.localeCompare(b, "pt-BR"));
         return `<p class="sub" style="margin-top:.8rem"><b>Macrorregiões de saúde · ${esc(UF_NOME[S.uf])} (${mc.length}):</b> ${mc.map(esc).join("; ")}.</p>`; })() : "") : ""}
     ${S.regiao || S.uf ? `<p style="margin-top:.8rem"><button class="chip chip-botao" data-limpar="1">✕ voltar ao Brasil</button></p>` : ""}`;
@@ -384,7 +384,7 @@ function renderMapa(){
     MAT.filter(m => m._xy && noRecorte(m.uf)).sort((a, b) => a._xy[1] - b._xy[1]).forEach(m => {
       const c = document.createElementNS(NS, "circle"), d = dist([m], TODOS, S.av);
       c.setAttribute("cx", m._xy[0].toFixed(1)); c.setAttribute("cy", m._xy[1].toFixed(1)); c.setAttribute("class", "ponto");
-      c.dataset.tip = `<b>${esc(m.nome)}</b><br>${esc(m.municipio)} · ${m.uf} · CNES ${m.cnes}<br>Macrorregião de saúde: ${esc(m.macroNome)}<br>Região de saúde: ${esc(m.rsNome)}<br>${d.cls} de ${d.total} indicadores classificados` +
+      c.dataset.tip = `<b>${esc(m.nome)}</b><br>${esc(m.municipio)} · ${m.uf} · CNES ${m.cnes}<br>Macrorregião de saúde: ${esc(m.macroNome)}<br>${d.cls} de ${d.total} indicadores classificados` +
         (d.cls ? "<br>" + NIV.map((n, k) => d.n[k] ? `${esc(n.rot)}: ${d.n[k]}` : "").filter(Boolean).join(" · ") : "") + (emProc(d).den ? `<br><b>${EP_ROT}</b>: ${epTxt(d)}` : "") + `<br><i>toque para abrir o perfil da unidade</i>`;
       c.addEventListener("click", () => abrirPerfil(m.cnes));
       gp.appendChild(c);
@@ -484,11 +484,8 @@ function detalheInd(mats){
   return `<div class="detalhe-ind">
     <p class="sub"><b>${esc(EIXO_ROT[ind.eixo])}</b> · ${esc(DIM_POR[ind.dim].rot)} · ${esc(rotRecorte())} · ${esc(rotAv(S.av))} · ${fmtInt(d.cls)} de ${plural(d.total, "maternidade classificada", "maternidades classificadas")}</p>
     ${ind.texto !== ind.rot ? `<p class="sub"><b>Descrição completa:</b> ${esc(ind.texto)}</p>` : ""}
-    ${ind.pergunta && /\?\s*$/.test(ind.pergunta) ? `<p class="sub"><b>Pergunta do instrumento de avaliação:</b> ${esc(ind.pergunta)}</p>` : ""}
-    <p class="grupo-tit">Descrição de cada nível no instrumento de avaliação</p>
-    ${ind.criterios ? `<div class="criterios">${[1, 2, 3, 4].map(k => `<div><p class="niv-tit"><i class="q n${k}"></i>${esc(NIV[k].rot)}</p><p class="crit-txt">${esc(ind.criterios[k - 1])}</p></div>`).join("")}</div>`
-      : `<p class="sub">A descrição dos níveis deste indicador ainda não foi registrada.</p>`}
-    <p class="grupo-tit">Maternidades em cada nível</p>
+    ${ind.criterios ? `<p class="grupo-tit">Descrição de cada nível</p><div class="criterios">${[1, 2, 3, 4].map(k => `<div><p class="niv-tit"><i class="q n${k}"></i>${esc(NIV[k].rot)}</p><p class="crit-txt">${esc(ind.criterios[k - 1])}</p></div>`).join("")}</div>
+    <p class="grupo-tit">Maternidades em cada nível</p>` : ""}
     <div class="niveis-grid">${grupos.map(g => `<div><p class="niv-tit"><i class="q ${g.v == null ? "nsi" : "n" + g.v}"></i>${esc(nivelRot(g.v))} <small>${fmtInt(g.lista.length)}</small></p>
       <ul class="lista-unid">${g.lista.map(m => `<li><button data-cnes="${m.cnes}">${esc(m.nome)}</button><small>${esc(m.municipio)}/${m.uf}</small></li>`).join("")}</ul></div>`).join("")}</div>
   </div>`;
