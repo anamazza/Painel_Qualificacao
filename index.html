@@ -350,6 +350,15 @@ footer a{color:var(--verde-lima)}
   .pagina-perfil{position:static !important; overflow:visible !important; background:#FFF}
   .card{break-inside:auto; box-shadow:none}
   table.perfil tr{break-inside:avoid}
+  /* relatório da maternidade: a tabela dos indicadores cabe na largura da folha, com todas as colunas */
+  @page{size:A4 portrait; margin:11mm}
+  #perfilConteudo div[style*="overflow-x:auto"]{overflow:visible !important}
+  table.perfil{font-size:.68rem; table-layout:fixed; width:100%}
+  table.perfil th,table.perfil td{padding:.24rem .18rem; overflow-wrap:anywhere}
+  table.perfil thead th{font-size:.6rem}
+  table.perfil thead th:first-child{width:5%} table.perfil thead th:nth-child(2){width:25%}
+  table.perfil td.cn{white-space:normal}
+  .nivel{min-width:0; display:block; font-size:.6rem; padding:.12rem .1rem}
   *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
 }
 </style>
