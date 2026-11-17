@@ -1324,7 +1324,7 @@ function abrirPerfil(cnes){
         <p class="sub">Cada barra reúne os indicadores do eixo em uma avaliação. O número em cada cor é a quantidade de indicadores naquele nível.</p>
         <div class="linhas">${evol(INDS_EIXO[e.id])}</div>
         <p class="grupo-tit" style="margin-top:1.3rem">Evolução em cada dimensão</p>
-        <p class="sub">Um quadro por dimensão e uma linha por avaliação. O número em cada cor é a quantidade de indicadores da dimensão naquele nível. À direita, o percentual em processo de qualificação: indicadores em Intermediário, Avançado ou Qualificado sobre os que têm nível de progresso. Ele fica em 100% sempre que nenhum indicador está em Não Iniciado, mesmo que os níveis mudem de uma avaliação para a outra.</p>
+        <p class="sub">Um quadro por dimensão e uma linha por avaliação. O número em cada cor é a quantidade de indicadores da dimensão naquele nível. À direita, o percentual em processo de qualificação (${EP_EXP}). Ele fica em 100% sempre que nenhum indicador está em Não Iniciado, mesmo que os níveis mudem de uma avaliação para a outra.</p>
         <div class="legenda" style="margin:.5rem 0 .2rem">${legendaHtml(true)}</div>
         <div class="mini-grid">${dimsE.map(dm => `<div class="mini"><p class="mini-tit">${esc(dm.rot)}<small>${plural(INDS_DIM[dm.id].length, "indicador", "indicadores")}</small></p>
           <div class="mini-lin mini-cab"><span>Avaliação</span><span>Indicadores em cada nível</span><span>${EP_HTML}</span></div>${REALIZADAS.map(a => { const dd = dist([m], INDS_DIM[dm.id], a);
