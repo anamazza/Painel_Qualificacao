@@ -214,6 +214,15 @@ def main():
     serv_csv = {(x["aba"], x["uf"], x["servico_planilha"]): x for x in ler_csv("servicos_cnes.csv")}
     terr = {x["cnes"]: x for x in ler_csv("territorio_saude.csv")}      # região e macrorregião de saúde de cada maternidade
     criterios, criterios_sem_par = ler_criterios(wb)
+    # (17/11/2026) a coordenação confirmou que, na aba "Indicadores", os textos de "Não iniciado" do indicador de
+    # vinculação (Mapa, posição 25) e do de visita prévia (posição 26) estão trocados entre si. Enquanto a planilha
+    # vier assim, o painel destroca; quando ela for corrigida, a condição deixa de valer e nada é alterado.
+    trocas_criterios = []
+    ca, cb = criterios.get(25), criterios.get(26)
+    if (ca and cb and ca["niveis"] and cb["niveis"] and ca["niveis"][0].startswith("A visita prévia")
+            and cb["niveis"][0].startswith("O mapa de vinculação")):
+        ca["niveis"][0], cb["niveis"][0] = cb["niveis"][0], ca["niveis"][0]
+        trocas_criterios.append('texto de "Não iniciado" trocado entre "Mapa" e "Visita prévia da gestante e família" (confirmado pela coordenação em 17/11/2026)')
 
     # eixos, dimensões e indicadores (ordem do documento)
     dimensoes, indicadores = [], []
@@ -367,6 +376,7 @@ def main():
     L += ["", "## Descrição dos níveis (aba \"Indicadores\")", "",
           f"- Indicadores com a descrição dos quatro níveis: {N_IND - len(sem_txt)} de {N_IND}.",
           "- Sem descrição: " + ("; ".join(f"{i['id']}. {i['rot']}" for i in sem_txt) or "nenhum") + ".",
+          "- Textos corrigidos na leitura: " + ("; ".join(trocas_criterios) or "nenhum") + ".",
           "- Perguntas da aba sem indicador correspondente nas abas regionais: " + ("; ".join(f"{p['pergunta']} ({p['grupo']})" for p in criterios_sem_par) or "nenhuma") + "."]
     with open(os.path.join(BASE, "relatorio_leitura.md"), "w", encoding="utf-8") as fh:
         fh.write("\n".join(L) + "\n")

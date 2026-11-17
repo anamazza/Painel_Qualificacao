@@ -1,7 +1,7 @@
 # Relatório de leitura da planilha de qualificação
 
 - Planilha: `planilha_qualificacao_2026-11-16.xlsx` (arquivo modificado em 2026-11-16)
-- Leitura em 2026-11-16 · 50 maternidades em 27 UFs · 39 indicadores · linha de base e 4 avaliações
+- Leitura em 2026-11-17 · 50 maternidades em 27 UFs · 39 indicadores · linha de base e 4 avaliações
 
 ## Itens por avaliação (maternidade x indicador)
 
@@ -58,4 +58,5 @@
 
 - Indicadores com a descrição dos quatro níveis: 30 de 39.
 - Sem descrição: 1. Acolhimento com Classificação de Risco em Obstetrícia; 5. Escore de alerta precoce: MEOWS; 6. Fluxo para acesso à UTI Adulto; 8. Monitoramento do puerpério imediato; 16. Monitoramento e publicização dos resultados; 36. ASEG; 37. Módulo parto e nascimento; 38. Módulo abortamento; 39. Módulo Neonatal.
+- Textos corrigidos na leitura: texto de "Não iniciado" trocado entre "Mapa" e "Visita prévia da gestante e família" (confirmado pela coordenação em 17/11/2026).
 - Perguntas da aba sem indicador correspondente nas abas regionais: Protocolo multiprofissional (SUGESTÂO) (Cuidado ao Luto Materno e Parental); Monitoramento o cumprimento da Lei (SUGESTÂO) (Cuidado ao Luto Materno e Parental); Estratégias de humanização do Luto (SUGESTÂO) (Cuidado ao Luto Materno e Parental); Garantia das Profilaxias (ISTs e Gestação) (SUGESTÃO) (Atenção Integral às Mulheres em Situação de Violência Sexual Sala Lilás).
