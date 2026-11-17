@@ -252,6 +252,8 @@ table.matriz thead th.tot{padding:0 .45rem; font-size:.66rem; top:0; height:72px
 .criterios{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:.6rem 1rem; margin:.4rem 0 .2rem}
 .criterios .crit-txt{font-size:.82rem; line-height:1.5; color:var(--texto-suave); margin-top:.2rem}
 .so-impressao{display:none}
+.ep-exp{font-weight:600; font-size:.86em; letter-spacing:0; text-transform:none; opacity:.9}
+.pills button .ep-exp{white-space:normal}
 .mapa-svg-box .ponto{cursor:pointer; fill:var(--indigo); stroke:#FFF; stroke-width:1.6; vector-effect:non-scaling-stroke}
 .mapa-svg-box .ponto:hover{fill:var(--verde-lima); stroke:var(--indigo)}
 .mapa-rodape{display:flex; gap:.6rem 1.2rem; flex-wrap:wrap; align-items:center; padding:.3rem .5rem .2rem; font-size:.8rem; color:var(--texto-suave)}
@@ -390,7 +392,6 @@ footer a{color:var(--verde-lima)}
   <div class="stat"><div class="num" id="statMat">—</div><div class="rot">Maternidades</div><div class="sub" id="statMatSub"></div></div>
   <div class="stat"><div class="num" id="statInd">—</div><div class="rot">Indicadores</div><div class="sub" id="statIndSub"></div></div>
   <div class="stat"><div class="num" id="statAv">—</div><div class="rot">Avaliações realizadas</div><div class="sub" id="statAvSub"></div></div>
-  <div class="stat"><div class="num" id="statCls">—</div><div class="rot">Itens classificados</div><div class="sub" id="statClsSub"></div></div>
   <div class="stat" style="background:#EAF3FB"><div class="num" id="statEP">—</div><div class="rot">Em processo de qualificação</div><div class="sub" id="statEPSub"></div></div>
   <div class="stat"><div class="num" id="statQual">—</div><div class="rot">Qualificado</div><div class="sub" id="statQualSub"></div></div>
   <button class="stat stat-btn" id="btnNotas" title="Fonte, regras de cálculo e cobertura"><div class="num" style="font-size:1.5rem">ⓘ</div><div class="rot">Notas metodológicas</div></button>
@@ -415,7 +416,7 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Território</p>
       <h2>Mapa das maternidades</h2>
-      <p>Escolha a região ou toque em um estado para que todas as seções mostrem apenas as maternidades daquele local. O mapa aproxima e passa a mostrar somente a região ou o estado escolhido. Toque novamente no estado para voltar à região. A cor de cada estado indica o percentual dos itens classificados que estão no nível escolhido ao lado, na avaliação selecionada. Cada ponto é uma maternidade; toque no ponto para abrir o perfil da unidade.</p>
+      <p>Escolha a região ou toque em um estado para que todas as seções mostrem apenas as maternidades daquele local. O mapa aproxima e passa a mostrar somente a região ou o estado escolhido. Toque novamente no estado para voltar à região. A cor de cada estado indica o percentual no nível escolhido ao lado, na avaliação selecionada. Cada ponto é uma maternidade; toque no ponto para abrir o perfil da unidade.</p>
     </div>
     <div class="mapa-layout">
       <div class="card mapa-svg-box">
@@ -443,12 +444,12 @@ footer a{color:var(--verde-lima)}
     <div class="sec-head">
       <p class="eyebrow">Visão geral</p>
       <h2 id="geralTitulo">Distribuição dos níveis de classificação</h2>
-      <p>Cada item é a classificação de um indicador em uma maternidade. Os percentuais consideram apenas os itens classificados; os itens sem informação aparecem separadamente. A avaliação, a região e o estado escolhidos na barra acima valem para todas as seções.</p>
+      <p>Os percentuais consideram apenas o que já foi classificado. A avaliação, a região e o estado escolhidos na barra acima valem para todas as seções.</p>
     </div>
     <div class="grid-2">
       <div class="card">
         <div class="eixo-cab"><h3>Evolução por avaliação</h3><button class="chip chip-botao png" data-png="evolucao" title="Baixar este gráfico em PNG">⬇ PNG</button></div>
-        <p class="sub">Percentual dos itens classificados em cada nível. Toque em uma linha para escolher a avaliação.</p>
+        <p class="sub">Percentual em cada nível. Toque em uma linha para escolher a avaliação.</p>
         <div class="linhas" id="evolucao"></div>
         <div class="legenda" id="legendaGeral"></div>
         <details class="tabela"><summary>Ver os números em tabela</summary><div class="tab-wrap" style="margin-top:.6rem"><table class="tab" id="tabEvolucao"></table></div></details>
@@ -456,7 +457,7 @@ footer a{color:var(--verde-lima)}
       <div class="card" id="kpisGeral"></div>
     </div>
     <h3 class="sub-sec" id="dimTitulo">Por eixo e dimensão</h3>
-    <p class="suave sub-sec-txt">Um bloco para cada eixo. As barras mostram o percentual dos itens classificados em cada nível, na avaliação escolhida; em azul-claro, o percentual em processo de qualificação.</p>
+    <p class="suave sub-sec-txt">Um bloco para cada eixo. As barras mostram o percentual em cada nível, na avaliação escolhida; em azul-claro, o percentual em processo de qualificação (% da soma de Intermediário, Avançado e Qualificado).</p>
     <div class="blocos-eixo" id="porEixo"></div>
   </div>
 </section>
@@ -527,8 +528,8 @@ footer a{color:var(--verde-lima)}
       <label class="filtro"><span>Para</span><select id="selPara"></select></label>
     </div>
     <div class="card" style="margin-bottom:1.1rem">
-      <h3>Resumo por nível e percentual em processo de qualificação</h3>
-      <p class="sub">Número de itens em cada nível nas duas avaliações escolhidas, a soma de Intermediário, Avançado e Qualificado e o percentual em processo de qualificação. Quando se escolhe um único indicador, cada item é uma maternidade.</p>
+      <h3>Resumo por nível</h3>
+      <p class="sub">Número de classificações em cada nível nas duas avaliações escolhidas e o percentual em processo de qualificação (% da soma de Intermediário, Avançado e Qualificado).</p>
       <div class="controles" style="margin:.7rem 0 .6rem"><label class="filtro" style="min-width:300px; flex:1; max-width:560px"><span>O que resumir</span><select id="selEscopoRes"></select></label></div>
       <div class="tab-wrap"><table class="tab" id="tabResumo"></table></div>
       <p class="fonte" id="notaResumo"></p>
@@ -542,17 +543,6 @@ footer a{color:var(--verde-lima)}
   </div>
 </section>
 
-<!-- ========================= PREENCHIMENTO ========================= -->
-<section id="secPre">
-  <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Preenchimento</p>
-      <h2>Proporção de itens classificados</h2>
-      <p>Percentual de itens classificados em cada região e em cada dimensão, na avaliação escolhida. O restante está sem informação. Este quadro considera sempre todas as maternidades.</p>
-    </div>
-    <div class="tab-wrap"><table class="tab" id="tabPre"></table></div>
-  </div>
-</section>
 
 <!-- ========================= NOTAS ========================= -->
 <section id="secNotas" class="alt">
