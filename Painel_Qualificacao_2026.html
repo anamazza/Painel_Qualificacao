@@ -783,7 +783,7 @@ function montarCabecalho(){
     <ul>${porRegiao.map(x => `<li><b>${esc(x.r)}</b> (${plural(x.n, "maternidade", "maternidades")}): ${x.com} de ${IND.length} indicadores</li>`).join("")}</ul>
     ${semNenhuma.length ? `<p><b>Indicadores sem classificação em nenhuma maternidade:</b> ${semNenhuma.map(i => `${esc(i.rot)} (${esc(DIM_POR[i.dim].rot)})`).join("; ")}.</p>` : ""}
     <p><b>Avaliações a realizar:</b> ${AVS.filter(a => !a.realizada).map(a => `${esc(a.rot)} (${esc(a.periodo)})`).join("; ") || "nenhuma"}.</p>
-    <p><b>Identificação das maternidades.</b> Cada maternidade está identificada pelo código do Cadastro Nacional de Estabelecimentos de Saúde (CNES) e pelo nome usados nos painéis de Nascimentos, Internação, Mortalidade e Habilitações. As ${fmtInt(MAT.length)} maternidades pertencem ao grupo de maternidades apoiadas (estratégicas) desses painéis.</p>`;
+    <p><b>Identificação das maternidades.</b> Cada maternidade está identificada pelo código do Cadastro Nacional de Estabelecimentos de Saúde (CNES) e pelo nome usados nos painéis de Nascimentos, Internação, Mortalidade e Habilitações. As ${fmtInt(MAT.length)} maternidades pertencem ao grupo Estratégicas desses painéis.</p>`;
 }
 
 /* ---------------- recorte geral ---------------- */
