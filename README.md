@@ -1,4 +1,6 @@
-# Painel de Qualificação · Maternidades Estratégicas
+# Monitoramento das Ações de Apoio Institucional nas Maternidades Estratégicas para Qualificação da Gestão do Cuidado
+
+(antes, Painel de Qualificação; nome novo desde 21/11/2026)
 
 Painel da classificação trimestral das práticas de atenção obstétrica, atenção neonatal e gestão nas maternidades
 apoiadas pelo projeto Qualificação do Modelo de Gestão em Maternidades Estratégicas (IFF/Fiocruz). Mesma identidade

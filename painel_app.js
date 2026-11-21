@@ -63,7 +63,8 @@ function baixarCSV(nome, linhas){
   a.href = URL.createObjectURL(new Blob([txt], {type: "text/csv;charset=utf-8"}));
   a.download = nome; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
-const cabecalhoCSV = txt => [`Painel de Qualificação · dados de ${dataBR(DADOS.fonte.modificadoEm)} · ${txt}`];
+const NOME_PAINEL = "Monitoramento das Ações de Apoio Institucional nas Maternidades Estratégicas para Qualificação da Gestão do Cuidado";      // nome do painel desde 21/11/2026
+const cabecalhoCSV = txt => [`${NOME_PAINEL} · dados de ${dataBR(DADOS.fonte.modificadoEm)} · ${txt}`];
 function segmento(id, aoMudar){
   const el = $(id);
   el.addEventListener("click", e => {
@@ -741,7 +742,7 @@ function abrirPerfil(cnes){
   $("perfilConteudo").innerHTML = `
     <div class="perfil-topo">
       <div>
-        <p class="eyebrow" style="color:#C5E3CC">Perfil da unidade · Painel de Qualificação<span class="so-impressao"> · relatório da maternidade gerado em ${new Date().toLocaleDateString("pt-BR")}</span></p>
+        <p class="eyebrow" style="color:#C5E3CC">Perfil da unidade · ${NOME_PAINEL}<span class="so-impressao"> · relatório da maternidade gerado em ${new Date().toLocaleDateString("pt-BR")}</span></p>
         <h2 style="margin-top:.4rem; color:#FFF">${esc(m.nome)}</h2>
         <div class="meta">
           <span>${esc(m.municipio)} · ${esc(UF_NOME[m.uf])}</span><span>Região ${esc(m.regiao)}</span><span class="mono">CNES ${m.cnes}</span><span>Macrorregião de saúde ${esc(m.macroNome)}</span><span>Região de saúde ${esc(m.rsNome)}</span>
@@ -800,7 +801,7 @@ function quebraTexto(txt, max){
 }
 function svgGrafico({titulo, subtitulo, linhas, modo}){
   const W = 1280, mL = 440, mR = 250, bw = W - mL - mR, lh = 52, bh = 32, topo = 108;
-  const H = topo + linhas.reduce((s, l) => s + (l.grupo ? 42 : lh), 0) + 132;
+  const H = topo + linhas.reduce((s, l) => s + (l.grupo ? 42 : lh), 0) + 150;
   const claro = k => k === 0 || k === 2;
   let y = topo;
   let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">` +
@@ -837,7 +838,7 @@ function svgGrafico({titulo, subtitulo, linhas, modo}){
   NIV.forEach(nv => { s += `<rect x="${lx}" y="${ly - 12}" width="14" height="14" rx="3" fill="${nv.cor}"/><text x="${lx + 20}" y="${ly}" font-size="13" fill="#4E6A5C">${esc(nv.rot)}</text>`; lx += 36 + nv.rot.length * 7.4; });
   if(modo === "n") s += `<rect x="${lx}" y="${ly - 12}" width="14" height="14" rx="3" fill="url(#hach)" stroke="#D8E8DC"/><text x="${lx + 20}" y="${ly}" font-size="13" fill="#4E6A5C">Sem informação</text>`;
   s += `<rect x="36" y="${ly + 12}" width="34" height="18" rx="9" fill="#DCEBF7" stroke="#A9CBE8"/><text x="53" y="${ly + 26}" text-anchor="middle" font-size="12" font-weight="800" fill="#0A213D">%</text><text x="78" y="${ly + 26}" font-size="13" fill="#4E6A5C">${EP_ROT}: ${EP_EXP}</text>`;
-  s += `<text x="36" y="${ly + 58}" font-size="12" fill="#4E6A5C">Painel de Qualificação · versão prévia · acompanhamento trimestral da coordenação, dados de ${dataBR(DADOS.fonte.modificadoEm)} · IFF/Fiocruz · dados sujeitos a revisão</text>`;
+  s += `<text x="36" y="${ly + 58}" font-size="12" fill="#4E6A5C">${NOME_PAINEL}</text><text x="36" y="${ly + 76}" font-size="12" fill="#4E6A5C">Versão prévia · acompanhamento trimestral da coordenação, dados de ${dataBR(DADOS.fonte.modificadoEm)} · IFF/Fiocruz · dados sujeitos a revisão</text>`;
   return s + "</svg>";
 }
 function baixarPNG(svg, nome){
