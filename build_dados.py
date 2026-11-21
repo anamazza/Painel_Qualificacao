@@ -59,9 +59,15 @@ AVALIACOES = [
     {"n": 3, "rot": "3ª avaliação", "ref": "3ª avaliação", "sigla": "3ª", "arq": "3a_avaliacao", "periodo": "3º trim./2026", "meses": "julho a setembro de 2026", "col": 25},
     {"n": 4, "rot": "4ª avaliação", "ref": "4ª avaliação", "sigla": "4ª", "arq": "4a_avaliacao", "periodo": "4º trim./2026", "meses": "outubro a dezembro de 2026", "col": 31},
 ]
-N_IND = 39
+N_IND = 36
 # indicador retirado do instrumento: (início do rótulo da dimensão, texto do indicador)
-RETIRADOS = [("2. Vinculação", "M&A")]
+RETIRADOS = [("2. Vinculação", "M&A"),
+             # (21/11/2026) a dimensão Gestão Colegiada Perinatal ficou com um só indicador
+             ("1. Gestão Colegiada", "Encontros periódicos"), ("1. Gestão Colegiada", "M&A dos encaminhamentos"),
+             ("1. Gestão Colegiada", "Publicização das prioridades")]
+# (21/11/2026) a equipe da planilha pediu para desconsiderar a aba "Indicadores" por enquanto: os critérios de
+# classificação estão em redefinição. Voltar a True quando a aba for liberada (e rever CRITERIOS_GRUPOS).
+USAR_CRITERIOS = False
 # aba "Indicadores": grupos (coluna A), na ordem, e a posição na planilha (n_planilha) de cada pergunta (coluna B) do
 # grupo; None = pergunta sem indicador correspondente nas abas regionais (as marcadas como sugestão)
 CRITERIOS_ABA = "Indicadores"
@@ -213,7 +219,7 @@ def main():
     por_planilha = {int(x["n_planilha"]): x for x in ind_csv}          # posição na planilha -> indicador do painel
     serv_csv = {(x["aba"], x["uf"], x["servico_planilha"]): x for x in ler_csv("servicos_cnes.csv")}
     terr = {x["cnes"]: x for x in ler_csv("territorio_saude.csv")}      # região e macrorregião de saúde de cada maternidade
-    criterios, criterios_sem_par = ler_criterios(wb)
+    criterios, criterios_sem_par = ler_criterios(wb) if USAR_CRITERIOS else ({}, [])
     # (17/11/2026) a coordenação confirmou que, na aba "Indicadores", os textos de "Não iniciado" do indicador de
     # vinculação (Mapa, posição 25) e do de visita prévia (posição 26) estão trocados entre si. Enquanto a planilha
     # vier assim, o painel destroca; quando ela for corrigida, a condição deixa de valer e nada é alterado.
@@ -233,7 +239,7 @@ def main():
             dimensoes.append({"id": f"d{len(dimensoes) + 1}", "eixo": e, "rot": x["dimensao"]})
         cr = criterios.get(int(x["n_planilha"]))
         indicadores.append({"id": int(x["id"]), "eixo": e, "dim": dimensoes[-1]["id"], "rot": x["indicador"],
-                            "texto": x["texto_planilha"], "nPlanilha": int(x["n_planilha"]),
+                            "texto": x["texto_planilha"].split("|")[0], "nPlanilha": int(x["n_planilha"]),
                             "pergunta": cr["pergunta"] if cr else None, "criterios": cr["niveis"] if cr else None})
     idx_painel = {i["nPlanilha"]: k for k, i in enumerate(indicadores)}  # posição na planilha -> índice no painel
 
@@ -271,7 +277,7 @@ def main():
                                    "c": [[None] * 5 for _ in range(N_IND)]}
         for pos, b in enumerate(bl, 1):
             alvo = por_planilha[pos]
-            if limpa(alvo["texto_planilha"]) != b["ind"]:
+            if b["ind"] not in [limpa(x) for x in alvo["texto_planilha"].split("|")]:     # o texto pode ter mais de uma forma aceita
                 sys.exit(f"ERRO: aba {aba}: indicador {pos} mudou de texto: {b['ind']!r} (esperado {alvo['texto_planilha']!r})")
             atual = [(limpa(ws.cell(r, 4).value), limpa(ws.cell(r, 5).value)) for r in b["linhas"]]
             if atual != servicos:
